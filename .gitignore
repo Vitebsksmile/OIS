@@ -1,1 +1,40 @@
- 
+# Файлы сборки
+$BuildDir
+*.pro.user
+*.user
+*.pri.user
+*.qmake.cache
+
+# Логи и кэш
+*.log
+*.log.*
+*.txt
+
+# Прочие временные файлы
+*.obj
+*.o
+*.a
+*.so
+*.dll
+*.lib
+*.pch
+*.ilk
+*.exp
+*.manifest
+.qmake.project
+*.qm
+*.ts
+.moc
+
+# Qt Creator (дополнительно)
+.cxx/
+build/
+.qmlcache/
+.qmltypes
+app/
+
+# CMake (дополнительно)
+build-***/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
