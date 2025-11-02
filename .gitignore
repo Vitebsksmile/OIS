@@ -31,7 +31,7 @@ $BuildDir
 build/
 .qmlcache/
 .qmltypes
-app/
+
 
 # CMake (дополнительно)
 build-***/
