@@ -1,6 +1,7 @@
 #include <QApplication>
-#include <QWidget>
 #include <iostream>
+
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,7 +9,8 @@ int main(int argc, char *argv[])
 
 
 
-    QWidget widget;
+    MainWindow widget;
+    widget.setWindowTitle("OIS");
     widget.show();
 
     std::cout << "YES" << std::endl;
