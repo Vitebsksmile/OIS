@@ -1,10 +1,9 @@
-#ifndef VISUALIZATIONMODULE_GLOBAL_H
-#define VISUALIZATIONMODULE_GLOBAL_H
+/*#pragma once
+#include <QtCore/qglobal.h>
 
-class Visualizationmodule_global
-{
-public:
-    Visualizationmodule_global();
-};
-
-#endif // VISUALIZATIONMODULE_GLOBAL_H
+#if defined(VISUALIZATIONMODULE_LIBRARY)
+#  define VISUALIZATIONMODULE_EXPORT Q_DECL_EXPORT
+#else
+#  define VISUALIZATIONMODULE_EXPORT Q_DECL_IMPORT
+#endif
+*/
