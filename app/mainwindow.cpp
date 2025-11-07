@@ -1,5 +1,6 @@
 #include <iostream>
 #include "mainwindow.h"
+#include "visualizer.h"
 
 // 1. Реализация конструктора
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) // Инициализируем базовый класс
@@ -18,13 +19,9 @@ void MainWindow::setupUI()
 {
     QSplitter *centralSplitter = new QSplitter(Qt::Horizontal);
 
-    btn1 = new QPushButton("кнопка 1", this);
-    btn2 = new QPushButton("кнопка 2", this);
-
-    centralSplitter->addWidget(btn1);
-    centralSplitter->addWidget(btn2);
-
-    setCentralWidget(centralSplitter);
+    Visualizer *viz = new Visualizer(this);
+    setCentralWidget(viz);
+    //setCentralWidget(centralSplitter);
 
     // Настройка панели инструментов
     mainToolBar = addToolBar(tr("Основные инструменты"));
