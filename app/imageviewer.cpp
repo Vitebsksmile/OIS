@@ -1,3 +1,3 @@
 #include "imageviewer.h"
 
-ImageViewer::ImageViewer() {}
+ImageViewer::ImageViewer(QWidget *parent) {}

@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QSplitter>
+#include <QToolBar>
 
 class MainWindow : public QMainWindow
 {
@@ -18,6 +19,10 @@ public:
 
 private:
     QPushButton *btn1, *btn2;   // указатель на кнопку
+
+    // Панели инструментов
+    QToolBar *mainToolBar;
+    QStatusBar *statusBar;
 
     // Приватный указатель на пользовательский виджет:
 //    ImageViewer *imageViewer;

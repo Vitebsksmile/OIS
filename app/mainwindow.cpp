@@ -4,7 +4,7 @@
 // 1. Реализация конструктора
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) // Инициализируем базовый класс
 {
-    setMinimumSize(300,300);
+    setMinimumSize(600,300);
     setupUI();
 }
 
@@ -25,6 +25,11 @@ void MainWindow::setupUI()
     centralSplitter->addWidget(btn2);
 
     setCentralWidget(centralSplitter);
+
+    // Настройка панели инструментов
+    mainToolBar = addToolBar(tr("Основные инструменты"));
+    //setupToolBar();
+
 }
 
 
