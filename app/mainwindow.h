@@ -18,7 +18,7 @@ public:
     ~MainWindow();
 
 private:
-    QPushButton *btn1, *btn2;   // указатель на кнопку
+    //QPushButton *btn1, *btn2;   // указатель на кнопку
 
     // Панели инструментов
     QToolBar *mainToolBar;

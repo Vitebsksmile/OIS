@@ -26,7 +26,6 @@ void MainWindow::setupUI()
     // Настройка панели инструментов
     mainToolBar = addToolBar(tr("Основные инструменты"));
     //setupToolBar();
-
 }
 
 

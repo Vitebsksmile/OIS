@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     widget.setWindowTitle("OIS");
     widget.show();
 
-    std::cout << "YES" << std::endl;
 
     return a.exec();
 }
