@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
 
     // Загружаем файл. Путь формируется автоматически через CMake (см. ниже)
-    const QUrl url("qrc:/qt/qml/modules.VisualizationModule/Visualization.qml");
+    const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
 
     //  логируем ошибки создания объектов qml
     QObject::connect(&engine,
