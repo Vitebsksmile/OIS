@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/qt/qml">
+        <file>Visualization.qml</file>
+        <file>ImageView.qml</file>
+        <file>ButtonSideBar.qml</file>
+    </qresource>
+</RCC>
