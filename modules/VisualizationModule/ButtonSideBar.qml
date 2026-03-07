@@ -1,5 +1,4 @@
-import QtQuick 2.15
-import QtCore
+import QtQuick
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import QtQuick.Controls 2.15

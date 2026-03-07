@@ -1,37 +1,30 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-//#include <QQmlContext>  //  нужен для передачи модели в QML
+//#include <QtQml>
+//#include <QtQml/qqml.h>
 
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    //Q_INIT_RESOURCE(VisualizationModule);
+
     QQmlApplicationEngine engine;
 
 
-    // Загружаем файл. Путь формируется автоматически через CMake (см. ниже)
-    const QUrl url("qrc:/qt/qml/modules.VisualizationModule/Visualization.qml");
+    //engine.addImportPath("qrc:/qt/qml/");
 
-    //  логируем ошибки создания объектов qml
-    QObject::connect(&engine,
-                     &QQmlApplicationEngine::objectCreationFailed,
-                     &app,
-                     []() {
-                         qCritical() << "Failed to load QML componrnt!";
-                         QCoreApplication::exit(-1);
-                     },
-                     Qt::QueuedConnection);
+    const QUrl url("qrc:/qt/qml/modules/VisualizationModule/MyWindow.qml");
 
-    //  логирование предупреждений qml (qt 6.1 - 6.3)
-    QObject::connect(&engine,
-                     &QQmlApplicationEngine::warnings,
-                     [](const QList<QQmlError> &warnings){
-                         for (const auto &warn : warnings)
-                         {
-                             qCritical() << warn.toString();
-                         }
-                     });
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+                         if (!obj && url == objUrl)
+                             QCoreApplication::exit(-1);
+                     }, Qt::QueuedConnection);
+
+    if (engine.rootObjects().isEmpty())
+        return -1;
 
     engine.load(url);  //   загружаем интерфейс
 
