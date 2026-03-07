@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-//#include <QtQml>
-//#include <QtQml/qqml.h>
+#include <QtQml>
+#include <QtQml/qqml.h>
 
 
 int main(int argc, char *argv[])
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     //engine.addImportPath("qrc:/qt/qml/");
 
-    const QUrl url("qrc:/qt/qml/modules/VisualizationModule/MyWindow.qml");
+    const QUrl url("qrc:/qt/qml/VisualizationModule/MyWindow.qml");
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
