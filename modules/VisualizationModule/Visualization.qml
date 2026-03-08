@@ -1,14 +1,15 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+//import QtQuick.Dialogs
 
 
 ApplicationWindow {
     width: 640; height: 480
     visible: true
-    title: "OIS by QML"
+    title: "OIS by Visualization"
 
-    /*
+
     //  1. Описываем действия (Actions), чтобы не дублировать код
     Action {
         id: openAction
@@ -84,7 +85,7 @@ ApplicationWindow {
                 Layout.fillHeight: true
             }
         }
-    }*/
+    }
 
 
     /*ListView {

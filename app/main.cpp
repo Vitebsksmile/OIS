@@ -4,6 +4,7 @@
 #include <QtQml/qqml.h>
 
 
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -15,18 +16,21 @@ int main(int argc, char *argv[])
 
     //engine.addImportPath("qrc:/qt/qml/");
 
-    const QUrl url("qrc:/qt/qml/VisualizationModule/MyWindow.qml");
+    const QUrl url("qrc:/qt/qml/VisualizationModulePath/Visualization.qml");
+    //const QUrl url("qrc:/path/Main.qml");
 
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+    engine.load(url);  //   загружаем интерфейс
+
+    /*QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
                          if (!obj && url == objUrl)
                              QCoreApplication::exit(-1);
                      }, Qt::QueuedConnection);
 
     if (engine.rootObjects().isEmpty())
-        return -1;
+        return -1;*/
 
-    engine.load(url);  //   загружаем интерфейс
+
 
 
     return app.exec();

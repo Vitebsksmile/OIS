@@ -1,11 +1,14 @@
+import QtCore
 import QtQuick
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import QtQuick.Controls 2.15
+import QtQuick.Controls
 import QtQuick.Controls.Basic
 
 
 ColumnLayout {
+
+    id: root
 
     //  связи (мостики) к внешним объектам
     property var targetHandler: null
@@ -16,11 +19,12 @@ ColumnLayout {
     spacing: 3
 
     Button {
+        id: openButton
         text: "Выбрать фото"
         Layout.fillWidth: true
 
         background: Rectangle {
-            color: parent.down ? "#bbbbbb" : "#ffffff"
+            color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
             border.color: "#333333"
             radius: 10
         }
@@ -29,10 +33,11 @@ ColumnLayout {
     }
 
     Button {
+        id: saveButton
         text: "Сохранить фото"
         Layout.fillWidth: true
         background: Rectangle {
-            color: parent.down ? "#bbbbbb" : "#ffffff"
+            color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
             border.color: "#333333"
             radius: 10
         }
@@ -50,9 +55,9 @@ ColumnLayout {
         nameFilters: ["Изображения (*.png *.jpg *.jpeg)"]
         onAccepted: {
             //  вызываем метод у переданного Handler
-            if (targetHandler)
+            if (root.targetHandler)
             {
-                targetHandler.selectImage(selectedFile)
+                root.targetHandler.selectImage(selectedFile)
             }
 
             //mainImage.source = selectedFile
@@ -69,11 +74,11 @@ ColumnLayout {
 
         onAccepted: {
             //  Здесь была бы логика сохранения файла через C++*/
-            if (targetHandler && targetPopup)
+            if (root.targetHandler && root.targetPopup)
             {
-                let success = targetHandler.saveImage(targetHandler.currentImagePath, selectedFile)
-                targetPopup.message = success ? "Сохранено успешно!" : "Ошибка сохранения"
-                targetPopup.open()
+                let success = root.targetHandler.saveImage(root.targetHandler.currentImagePath, selectedFile)
+                root.targetPopup.message = success ? "Сохранено успешно!" : "Ошибка сохранения"
+                root.targetPopup.open()
             }
         }
     }

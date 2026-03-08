@@ -5,5 +5,5 @@ ApplicationWindow {
     width: 640
     height: 480
     visible: true
-    title: "OIS by QML"
+    //title: "OIS by QML"
 }
