@@ -1,10 +1,11 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-//import QtQuick.Dialogs
+import QtQuick.Dialogs
 
 
 ApplicationWindow {
+    id: window
     width: 640; height: 480
     visible: true
     title: "OIS by Visualization"
@@ -41,12 +42,20 @@ ApplicationWindow {
         }
 
         Menu {
+            id: helpMenu
             title: "&Помощь"
             MenuItem {
                 text: "О программе"
                 onTriggered: aboutDialog.open()
             }
         }
+    }
+
+    MessageDialog {
+        id: aboutDialog
+        title: "О программе"
+        text: "${APP_NAME} System\nВерсия 1.0.0\nРазработано на Qt 6"
+        buttons: MessageDialog.Ok
     }
 
 

@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
-#include <QtQml/qqml.h>
+//#include <QtQml/qqml.h>
 
 
 
@@ -21,14 +21,14 @@ int main(int argc, char *argv[])
 
     engine.load(url);  //   загружаем интерфейс
 
-    /*QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
                          if (!obj && url == objUrl)
                              QCoreApplication::exit(-1);
                      }, Qt::QueuedConnection);
 
     if (engine.rootObjects().isEmpty())
-        return -1;*/
+        return -1;
 
 
 
