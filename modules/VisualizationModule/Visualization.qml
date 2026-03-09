@@ -8,7 +8,10 @@ ApplicationWindow {
     id: window
     width: 640; height: 480
     visible: true
-    title: "OIS by Visualization"
+
+
+    //  Подхватываем значение из C++ и сохраняем в типизированное св-во
+    readonly property string appName: Qt.application.name
 
 
     //  1. Описываем действия (Actions), чтобы не дублировать код
@@ -54,7 +57,7 @@ ApplicationWindow {
     MessageDialog {
         id: aboutDialog
         title: "О программе"
-        text: "${APP_NAME} System\nВерсия 1.0.0\nРазработано на Qt 6"
+        text: window.appName + "\nВерсия 1.0.0\nРазработано на Qt 6"
         buttons: MessageDialog.Ok
     }
 

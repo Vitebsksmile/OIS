@@ -7,6 +7,7 @@ set(APP_TARGET OISApp)
 set(APP_NAME "OIS by SHCHERBAKOV")
 
 
+
 #   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Qml и Quick
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 QuickDialogs2 Gui)
 
@@ -61,9 +62,9 @@ target_link_libraries(${APP_TARGET} PRIVATE
     Qt6::Gui
 
     #   Сторонние библиотеки и плагины
-    ${OpenCV_LIBS}
+    #${OpenCV_LIBS}
 
-    #   Личные библиотеки и плагины
+    #   Личные библиотеки и плагины {-->>
 
     #   Для доступа к .h файлам и C++ логике
     #DatabaseModule
@@ -74,6 +75,14 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #   Для гарантии регистрации QML-типов при static build
     VisualizationModuleLibplugin
 
+    #   --<<}
+
+)
+
+
+#   Передает переменную APP_NAME как строку
+target_compile_definitions(${APP_TARGET} PRIVATE
+    APP_NAME_STR="${APP_NAME}"
 )
 
 

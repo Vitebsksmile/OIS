@@ -13,8 +13,9 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+    //  Устанавливаем официальное имя приложения для системы
+    app.setApplicationName(APP_NAME_STR);
 
-    //engine.addImportPath("qrc:/qt/qml/");
 
     const QUrl url("qrc:/qt/qml/VisualizationModulePath/Visualization.qml");
     //const QUrl url("qrc:/path/Main.qml");
