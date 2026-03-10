@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     app.setApplicationName(APP_NAME_STR);
 
 
-    const QUrl url("qrc:/qt/qml/VisualizationModulePath/Visualization.qml");
+    const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
     //const QUrl url("qrc:/path/Main.qml");
 
     engine.load(url);  //   загружаем интерфейс

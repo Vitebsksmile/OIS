@@ -35,7 +35,7 @@ list(APPEND MODULE_QML_FILES
 qt_add_qml_module(${VISUALIZATION_TARGET}
 
     #   Логическое имя для QML (import VisualizationModule 1.0)
-    URI VisualizationModulePath
+    URI VisualizationModule
     VERSION 1.0
 
     #   Базовый путь в системе ресурсов (будет доступно как qrc:/qt/qml/...)
