@@ -2,7 +2,6 @@
 #   (имя цели в CMake для компиляции)
 set(VISUALIZATION_TARGET VisualizationModuleLib)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core)
 
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
@@ -27,9 +26,6 @@ list(APPEND MODULE_QML_FILES
 )
 
 
-#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
-#qt_policy(SET QTP0001 NEW)
-
 #   Регистрирует QML-модуль для основной цели приложения
 #   Превращает созданную библиотеку в полноценный QML-модуль
 qt_add_qml_module(${VISUALIZATION_TARGET}
@@ -42,13 +38,7 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     RESOURCE_PREFIX /qt/qml/
     QML_FILES
         ${MODULE_QML_FILES}
-
-    # КРИТИЧНО ДЛЯ СТАТИЧЕСКОЙ СБОРКИ:
-    DEPENDENCIES
-        QtCore
 )
-
-#qt_add_resources(VisualizationModule VisualizationModule.qrc)
 
 
 # Указывает, что папка с этим модулем должна быть доступна для поиска заголовков (.h)

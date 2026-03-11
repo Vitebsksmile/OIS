@@ -64,13 +64,18 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #   Сторонние библиотеки и плагины
     #${OpenCV_LIBS}
 
-    #   Личные библиотеки и плагины {-->>
-
-    #   Для доступа к .h файлам и C++ логике
+    #   Библиотеки проекта для доступа к .h файлам и C++ логике
     #DatabaseModule
     #ImageProcessingModule
     #IntegrationModule
     VisualizationModuleLib
+
+
+    #   --- для static build --- {-->>
+
+    #   Стандартные библиотеки Qt
+    #Qt6::qquicklayoutsplugin
+
 
     #   Для гарантии регистрации QML-типов при static build
     VisualizationModuleLibplugin
