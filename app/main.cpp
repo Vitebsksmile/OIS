@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
-//#include <QtQml/qqml.h>
+#include <imageprocessor.h>
 
 
 
@@ -9,16 +9,14 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    //Q_INIT_RESOURCE(VisualizationModule);
-
     QQmlApplicationEngine engine;
 
     //  Устанавливаем официальное имя приложения для системы
     app.setApplicationName(APP_NAME_STR);
 
+    engine.addImageProvider(QLatin1String("opencv"), new ImageProcessor);
 
     const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
-    //const QUrl url("qrc:/path/Main.qml");
 
     engine.load(url);  //   загружаем интерфейс
 

@@ -24,9 +24,9 @@ qt_add_executable(${APP_TARGET}
 #   Регистрирует QML-модуль для основной цели приложения
 #   Превращает созданную библиотеку в полноценный QML-модуль
 qt_add_qml_module(${APP_TARGET}
+
     #   Уникальный логический адрес модуля (для 'import Primary')
     URI Primary
-    #URI path
 
     #   Базовый путь в системе ресурсов (будет доступно как qrc:/qt/qml/...)
     RESOURCE_PREFIX /qt/qml/
@@ -66,7 +66,7 @@ target_link_libraries(${APP_TARGET} PRIVATE
 
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
     #DatabaseModule
-    #ImageProcessingModule
+    ImageProcessingModuleLib
     #IntegrationModule
     VisualizationModuleLib
 

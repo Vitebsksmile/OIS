@@ -6,15 +6,19 @@ set(VISUALIZATION_TARGET VisualizationModuleLib)
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
     #visualization.cpp
-    filehandler.h filehandler.cpp
-    mymodel.h mymodel.cpp
 )
 
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 qt_add_library(${VISUALIZATION_TARGET} STATIC
-        ${MODULE_SOURCE_FILES}
+    ${MODULE_SOURCE_FILES}
+)
+
+
+list(APPEND MODULE_SOURCE_FILES_FOR_QML
+    filehandler.h filehandler.cpp
+    mymodel.h mymodel.cpp
 )
 
 
@@ -23,6 +27,7 @@ list(APPEND MODULE_QML_FILES
     Visualization.qml
     ImageView.qml
     ButtonSideBar.qml
+    PreProcessedImageView.qml
 )
 
 
@@ -38,6 +43,8 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     RESOURCE_PREFIX /qt/qml/
     QML_FILES
         ${MODULE_QML_FILES}
+    SOURCES
+        ${MODULE_SOURCE_FILES_FOR_QML}
 )
 
 

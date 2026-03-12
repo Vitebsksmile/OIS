@@ -39,7 +39,8 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
 #   Ищет модуль Qt QuickControls (расширяет возможности Quick)
 find_package(Qt6 6.5 REQUIRED COMPONENTS QuickControls2)
 
-#   Ищет модуль Qt QuickControls (расширяет возможности Quick)
+
+#   Ищет модуль Qt QuickDialogs2 (расширяет возможности Quick)
 find_package(Qt6 6.5 REQUIRED COMPONENTS QuickDialogs2)
 
 
@@ -51,8 +52,8 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS QuickDialogs2)
 find_package(Qt6 6.5 REQUIRED COMPONENTS Gui)
 
 
-#   Ищет модуль OpenCV (модуль компьютерного зрения)
-#find_package(OpenCV REQUIRED)
+   #Ищет модуль OpenCV (модуль компьютерного зрения)
+find_package(OpenCV REQUIRED)
 
 
 #   Устанавливает политику QTP0001 виртуального расположения qml-файлов
@@ -61,7 +62,7 @@ qt_policy(SET QTP0001 NEW)
 
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
 #add_subdirectory(modules/DatabaseModule)
-#add_subdirectory(modules/ImageProcessingModule)
+add_subdirectory(modules/ImageProcessingModule)
 #add_subdirectory(modules/IntegrationModule)
 add_subdirectory(modules/VisualizationModule)
 

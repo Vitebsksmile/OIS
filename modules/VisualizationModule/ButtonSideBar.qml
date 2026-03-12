@@ -20,7 +20,7 @@ ColumnLayout {
 
     Button {
         id: openButton
-        text: "Выбрать фото"
+        text: "Выбрать изображение"
         Layout.fillWidth: true
 
         background: Rectangle {
@@ -34,7 +34,7 @@ ColumnLayout {
 
     Button {
         id: saveButton
-        text: "Сохранить фото"
+        text: "Сохранить изображение"
         Layout.fillWidth: true
         background: Rectangle {
             color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
@@ -45,6 +45,17 @@ ColumnLayout {
         onClicked: saveDialog.open()
     }
 
+    Button {
+        id: preProcessingButton
+        text: "Предварительная обработка"
+        Layout.fillWidth: true
+        background: Rectangle {
+            color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
+            border.color: "#333333"
+            radius: 10
+        }
+    }
+
     Item { Layout.fillHeight: true }
 
     //  диалоги
@@ -53,15 +64,13 @@ ColumnLayout {
         title: "Выберите изображение"
         currentFolder: StandardPaths.writableLocation(StandardPaths.PicturesLocation)
         nameFilters: ["Изображения (*.png *.jpg *.jpeg)"]
+
         onAccepted: {
             //  вызываем метод у переданного Handler
             if (root.targetHandler)
             {
                 root.targetHandler.selectImage(selectedFile)
             }
-
-            //mainImage.source = selectedFile
-            //console.log("Выбран файл: ", fileHandler.getCleanPath(selectedFile))
         }
     }
 
@@ -81,5 +90,10 @@ ColumnLayout {
                 root.targetPopup.open()
             }
         }
+    }
+
+    FileDialog {
+        id: preProcessingDialog
+        title: ""
     }
 }
