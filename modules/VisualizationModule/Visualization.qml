@@ -1,7 +1,7 @@
 //import QtCore
 import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
-import QtQuick.Layouts  //  Продвинутая расстановка элементов (ColumnLayout, RowLayout)
+//import QtQuick.Layouts  //  Продвинутая расстановка элементов (ColumnLayout, RowLayout)
 import QtQuick.Dialogs  //  Системные окна (MessageDialog)
 
 

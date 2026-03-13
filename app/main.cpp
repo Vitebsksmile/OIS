@@ -2,12 +2,15 @@
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <imageprocessor.h>
+//#include <QQuickStyle>  //  for STATIC
 
 
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+//    QQuickStyle::setStyle("Windows");   //  for STATIC
 
     QQmlApplicationEngine engine;
 

@@ -18,6 +18,7 @@ qt_add_library(${IMAGE_PROCESSING_TARGET} STATIC
 )
 
 
+#   Создает список файлов исходного кода и заголовков интегрированных в QML
 list(APPEND MODULE_SOURCE_FILES_FOR_QML
     imageprocessor.h imageprocessor.cpp
 )
@@ -49,12 +50,10 @@ qt_add_qml_module(${IMAGE_PROCESSING_TARGET}
 # Указывает, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
 # PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
 target_include_directories(${IMAGE_PROCESSING_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR})
-
-
-target_include_directories(${IMAGE_PROCESSING_TARGET} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${OpenCV_INCLUDE_DIRS}
 )
+
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
 target_link_libraries(${IMAGE_PROCESSING_TARGET} PUBLIC

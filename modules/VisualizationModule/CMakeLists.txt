@@ -16,6 +16,7 @@ qt_add_library(${VISUALIZATION_TARGET} STATIC
 )
 
 
+#   Создает список файлов исходного кода и заголовков интегрированных в QML
 list(APPEND MODULE_SOURCE_FILES_FOR_QML
     filehandler.h filehandler.cpp
     mymodel.h mymodel.cpp
@@ -59,7 +60,10 @@ target_link_libraries(${VISUALIZATION_TARGET} PUBLIC
     Qt6::Core
     Qt6::Qml
     Qt6::Quick
+    #Qt6::QuickLayouts                   #   for STATIC
     Qt6::QuickControls2
+    #Qt6::QuickControls2Basic            #   for STATIC
+    #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
     Qt6::QuickDialogs2
     Qt6::Gui
 )

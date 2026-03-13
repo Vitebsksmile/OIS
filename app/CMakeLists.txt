@@ -9,7 +9,7 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 
 
 #   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Qml и Quick
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 QuickDialogs2 Gui)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Gui)
 
 
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
@@ -58,14 +58,18 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #   Стандартные библиотеки Qt
     Qt6::Qml
     Qt6::Quick
+    #Qt6::QuickLayouts                   #   for STATIC
     Qt6::QuickControls2
+    #Qt6::QuickControls2Basic            #   for STATIC
+    #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
     Qt6::Gui
+    Qt6::Sql
 
     #   Сторонние библиотеки и плагины
     #${OpenCV_LIBS}
 
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
-    #DatabaseModule
+    DatabaseModuleLib
     ImageProcessingModuleLib
     #IntegrationModule
     VisualizationModuleLib
@@ -73,19 +77,22 @@ target_link_libraries(${APP_TARGET} PRIVATE
 
     #   --- для static build --- {-->>
 
-    #   Стандартные библиотеки Qt
+    #   Стандартные библиотеки Qt for STATIC
     #Qt6::qquicklayoutsplugin
+    #Qt6::qtquickcontrols2plugin
+    #Qt6::qtquickcontrols2basicstyleplugin
 
 
     #   Для гарантии регистрации QML-типов при static build
     VisualizationModuleLibplugin
+    ImageProcessingModuleLibplugin
 
     #   --<<}
 
 )
 
 
-#   Передает переменную APP_NAME как строку
+#   Передает переменную APP_NAME как строку в main.cpp
 target_compile_definitions(${APP_TARGET} PRIVATE
     APP_NAME_STR="${APP_NAME}"
 )
