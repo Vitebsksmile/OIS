@@ -28,9 +28,8 @@ list(APPEND MODULE_QML_FILES
     Visualization.qml
     ImageView.qml
     PreProcessedImageView.qml
-    ButtonSideBar.qml
     SideBar.qml
-    ImageOpenDialog.qml
+    SideBarButton.qml
 )
 
 
@@ -48,7 +47,6 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
         ${MODULE_QML_FILES}
     SOURCES
         ${MODULE_SOURCE_FILES_FOR_QML}
-        QML_FILES SideBarButton.qml
 )
 
 

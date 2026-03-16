@@ -87,7 +87,7 @@ ApplicationWindow {
         anchors.margins: 5
 
         //  Левая панель - боковое меню
-        Rectangle {
+        /*Rectangle {
 
             id: oldSideBar
             color: Qt.rgba(44/255, 62/255, 80/255, 0.9) //  Midnight Blue
@@ -106,7 +106,7 @@ ApplicationWindow {
                 targetPopup: sourceImageViewer.popup
             }
 
-        }
+        }*/
 
         //  Новая левая панель - боковое меню
         SideBar {

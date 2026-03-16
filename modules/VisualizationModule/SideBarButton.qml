@@ -12,7 +12,6 @@ Button {
     text: "Default"
 
 
-
     background: Rectangle {
 
         color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
@@ -22,9 +21,7 @@ Button {
     }
 
 
-
     contentItem: Row {
-
 
         spacing: 10 //  расстояние между иконкой и названием кнопки
 
