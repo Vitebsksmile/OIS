@@ -1,9 +1,9 @@
 import QtCore
-import QtQuick
-import QtQuick.Dialogs
-import QtQuick.Layouts
-import QtQuick.Controls
-import QtQuick.Controls.Basic
+import QtQuick                  //  Базовые элементы (Rectangle, Image, Text)
+import QtQuick.Dialogs          //  Системные окна (MessageDialog)
+import QtQuick.Layouts          //  Продвинутая расстановка элементов (ColumnLayout, RowLayout)
+import QtQuick.Controls         //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
+import QtQuick.Controls.Basic   //  style
 
 
 ColumnLayout {
@@ -11,15 +11,16 @@ ColumnLayout {
     id: root
 
     //  связи (мостики) к внешним объектам
-    property var targetHandler: null
+    property var oldTargetHandler: null
     property var targetPopup: null
 
     anchors.fill: parent
     anchors.margins: 3
     spacing: 3
 
+
     Button {
-        id: openButton
+        id: oldOpenButton
         text: "Выбрать изображение"
         Layout.fillWidth: true
 
@@ -47,7 +48,7 @@ ColumnLayout {
 
     Button {
         id: preProcessingButton
-        text: "Предварительная обработка"
+        text: "Начать предварительную \nобработку"
         Layout.fillWidth: true
         background: Rectangle {
             color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
@@ -55,6 +56,7 @@ ColumnLayout {
             radius: 10
         }
     }
+
 
     Item { Layout.fillHeight: true }
 
@@ -67,9 +69,9 @@ ColumnLayout {
 
         onAccepted: {
             //  вызываем метод у переданного Handler
-            if (root.targetHandler)
+            if (root.oldTargetHandler)
             {
-                root.targetHandler.selectImage(selectedFile)
+                root.oldTargetHandler.selectImage(selectedFile)
             }
         }
     }
@@ -83,9 +85,9 @@ ColumnLayout {
 
         onAccepted: {
             //  Здесь была бы логика сохранения файла через C++*/
-            if (root.targetHandler && root.targetPopup)
+            if (root.oldTargetHandler && root.targetPopup)
             {
-                let success = root.targetHandler.saveImage(root.targetHandler.currentImagePath, selectedFile)
+                let success = root.oldTargetHandler.saveImage(root.oldTargetHandler.currentImagePath, selectedFile)
                 root.targetPopup.message = success ? "Сохранено успешно!" : "Ошибка сохранения"
                 root.targetPopup.open()
             }

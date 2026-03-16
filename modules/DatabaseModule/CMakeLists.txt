@@ -4,13 +4,16 @@ set(DATABASEMODULE_TARGET DatabaseModuleLib)
 
 
 #   Создает список файлов исходного кода и заголовков
-list(APPEND MODULE_SOURCE_FILES)
+list(APPEND MODULE_SOURCE_FILES
+    databasehandler.h databasehandler.cpp
+)
 
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается прямо в исполняемый файл при сборке
 qt_add_library(${DATABASEMODULE_TARGET} STATIC
     ${MODULE_SOURCE_FILES}
+
 )
 
 

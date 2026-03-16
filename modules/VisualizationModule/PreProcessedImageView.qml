@@ -16,4 +16,6 @@ Rectangle {
     //property alias popup: statusPopup
 
 
+
+
 }

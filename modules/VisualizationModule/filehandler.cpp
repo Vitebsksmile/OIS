@@ -20,7 +20,7 @@ QUrl FileHandler::currentImagePath() const
     return m_currentImagePath;
 }
 
-//  Метод для копирования/сохранения файла
+//  Метод для копирования/сохранения изображения
 //  (например, из папки 'StandardPaths' в папку '/OIS/module/DatabaseModule/')
 bool FileHandler::saveImage(QUrl sourceUrl, QUrl targetUrl)
 {

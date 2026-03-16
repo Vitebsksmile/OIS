@@ -1,7 +1,6 @@
-//import QtCore
+import QtCore
 import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
-//import QtQuick.Layouts  //  Продвинутая расстановка элементов (ColumnLayout, RowLayout)
 import QtQuick.Dialogs  //  Системные окна (MessageDialog)
 
 
@@ -90,7 +89,7 @@ ApplicationWindow {
         //  Левая панель - боковое меню
         Rectangle {
 
-            id: sideBar
+            id: oldSideBar
             color: Qt.rgba(44/255, 62/255, 80/255, 0.9) //  Midnight Blue
             radius: 10
 
@@ -103,9 +102,26 @@ ApplicationWindow {
             ButtonSideBar {
                 //  Прокидываем в ButtonSideBar.qml ссылки (alias) из ImageView.qml,
                 //  используя экземпляр его объекта с id: sourceImageViewer
-                targetHandler: sourceImageViewer.handler
+                oldTargetHandler: sourceImageViewer.handler
                 targetPopup: sourceImageViewer.popup
             }
+
+        }
+
+        //  Новая левая панель - боковое меню
+        SideBar {
+
+            id: sideBar
+
+            //  Настройки размеров для mainSplitView
+            SplitView.preferredWidth: 200   //  Желаемая ширина при старте
+            SplitView.minimumWidth: 100     //  Минимальный порог сжатия
+            SplitView.maximumWidth: 300     //  Максимальный порог растяжения
+
+            //  Прокидываем в SideBar.qml ссылки (alias) из ImageView.qml,
+            //  используя экземпляр его объекта с id: sourceImageViewer
+            targetHandler: sourceImageViewer.handler
+            targetPopup: sourceImageViewer.popup
 
         }
 
