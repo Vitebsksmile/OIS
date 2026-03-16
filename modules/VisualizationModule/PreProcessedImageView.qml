@@ -4,7 +4,7 @@ import QtQuick.Controls //  Высокоуровневые компоненты 
 
 Rectangle {
 
-    id: root
+    //id: root
     implicitWidth: 200
     implicitHeight: 200
     color: "lightgreen"

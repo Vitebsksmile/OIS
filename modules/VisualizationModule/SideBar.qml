@@ -1,17 +1,18 @@
 import QtCore
-import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
-import QtQuick.Layouts  //  Продвинутая расстановка элементов (ColumnLayout, RowLayout)
-import QtQuick.Dialogs  //  Системные окна (MessageDialog)
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Dialogs
+
 
 Rectangle {
 
     id: sideBarRoot
 
-    //  связи (мостики) к внешним объектам
+    //  Связи (мостики) к внешним ресурсам
     property var targetHandler: null
     property var targetPopup: null
 
-    color: Qt.rgba(44/255, 62/255, 80/255, 0.9) //  Midnight Blue
+    color: Qt.rgba(44/255, 62/255, 80/255, 0.9)    //  Midnight Blue
     radius: 10
 
 
@@ -26,11 +27,14 @@ Rectangle {
 
             Layout.fillWidth: true
 
-            text: "Open image"
+            text: qsTr("Open image")
+
 
             onClicked: {
+
                 globalDialog.mode = "open"
                 globalDialog.open()
+
             }
 
         }
@@ -40,11 +44,14 @@ Rectangle {
 
             Layout.fillWidth: true
 
-            text: "Save image"
+            text: qsTr("Save image")
+
 
             onClicked: {
+
                 globalDialog.mode = "save"
                 globalDialog.open()
+
             }
 
         }
@@ -54,7 +61,7 @@ Rectangle {
 
             Layout.fillWidth: true
 
-            text: "Start pre-processing"
+            text: qsTr("Start pre-processing")
 
         }
 
@@ -77,14 +84,14 @@ Rectangle {
 
         nameFilters: ["Изображения (*.png *.jpg *.jpeg)"]
 
+
         onAccepted: {
 
             console.log("Выбран режим:", mode)
             console.log("Путь к файлу:", selectedFile, "\n")
 
-
-            if (mode === "open") {
-
+            if (mode === "open")
+            {
                 //  вызываем метод у переданного Handler
                 if (sideBarRoot.targetHandler)
                 {
@@ -93,7 +100,7 @@ Rectangle {
 
             } else {
 
-                //  Здесь была бы логика сохранения файла через C++*/
+                //  Логика сохранения файла через C++
                 if (sideBarRoot.targetHandler && sideBarRoot.targetPopup)
                 {
                     let success = sideBarRoot.targetHandler.saveImage(sideBarRoot.targetHandler.currentImagePath, selectedFile)
@@ -102,6 +109,7 @@ Rectangle {
                 }
 
             }
+
         }
 
     }

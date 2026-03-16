@@ -1,11 +1,12 @@
-import QtCore
 import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 import QtQuick.Dialogs  //  Системные окна (MessageDialog)
 
 
 ApplicationWindow {
+
     id: window
+
     width: 1200; height: 860
     visible: true
 
@@ -16,17 +17,24 @@ ApplicationWindow {
 
     //  1. Описание логики действий (Actions) - это "мозг" кнопок и меню
     Action {
+
         id: openAction
-        text: "&Открыть..."         //  Символ '&' позволяет нажать Alt+О для активации
+
+        text: qsTr("&Open...")         //  Символ '&' позволяет нажать Alt+О для активации
         shortcut: StandardKey.Open  //  Автоматически подхватывает Ctrl+O (Win) или Cmd+O (Mac)
         onTriggered: console.log(`Нажали ${openAction.text}`)
+
     }
 
+
     Action {
+
         id: exitAction
-        text: "&Выход"
+
+        text: qsTr("&Exit")
         shortcut: "Ctrl+Q"  //  Быстрое сочетание клавиш
         onTriggered: console.log(`Нажали ${exitAction.text}`) | Qt.quit()  //  Стандартная ф-ция выхода
+
     }
 
 
@@ -36,7 +44,7 @@ ApplicationWindow {
         Menu {
 
             id: fileMenu
-            title: "&Файл"
+            title: qsTr("&File")
 
             // Привязываем пункты меню к ранее созданным Action
             MenuItem { action: openAction }
@@ -44,23 +52,25 @@ ApplicationWindow {
 
         }
 
+
         Menu {
 
             id: editMenu
-            title: "&Правка"
+            title: qsTr("&Edit")
 
-            MenuItem { text: "Копировать"; enabled: false }    //  Пример неактивного пункта
-            MenuItem { text: "Вставить" }
+            MenuItem { text: qsTr("Copy"); enabled: false }    //  Пример неактивного пункта
+            MenuItem { text: qsTr("Paste") }
 
         }
+
 
         Menu {
 
             id: helpMenu
-            title: "&Помощь"
+            title: qsTr("&Help")
 
             MenuItem {
-                text: "О программе"
+                text: qsTr("About ") + window.appName
                 onTriggered: aboutDialog.open()
             }
 
@@ -70,10 +80,13 @@ ApplicationWindow {
 
     //  Системное окно с информацией о программе
     MessageDialog {
+
         id: aboutDialog
-        title: "О программе"
+
+        title: qsTr("About ") + window.appName
         text: window.appName + "\nВерсия 1.0.0\nРазработано на Qt 6"
         buttons: MessageDialog.Ok
+
     }
 
 
@@ -81,37 +94,16 @@ ApplicationWindow {
     SplitView {
 
         id: mainSplitView
-        orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
 
+        orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
         anchors.fill: parent    //  Заполняем контейнером всю площадь родителя
         anchors.margins: 5
 
+
         //  Левая панель - боковое меню
-        /*Rectangle {
-
-            id: oldSideBar
-            color: Qt.rgba(44/255, 62/255, 80/255, 0.9) //  Midnight Blue
-            radius: 10
-
-            //  Настройки размеров для mainSplitView
-            SplitView.preferredWidth: 200   //  Желаемая ширина при старте
-            SplitView.minimumWidth: 100     //  Минимальный порог сжатия
-            SplitView.maximumWidth: 300     //  Максимальный порог растяжения
-
-            // Пользовательский компонент с кнопками
-            ButtonSideBar {
-                //  Прокидываем в ButtonSideBar.qml ссылки (alias) из ImageView.qml,
-                //  используя экземпляр его объекта с id: sourceImageViewer
-                oldTargetHandler: sourceImageViewer.handler
-                targetPopup: sourceImageViewer.popup
-            }
-
-        }*/
-
-        //  Новая левая панель - боковое меню
         SideBar {
 
-            id: sideBar
+            id: newSideBar
 
             //  Настройки размеров для mainSplitView
             SplitView.preferredWidth: 200   //  Желаемая ширина при старте
@@ -130,6 +122,7 @@ ApplicationWindow {
         SplitView {
 
             id: centralSplitContent
+
             orientation: Qt.Vertical    //  Панели стоят колонной (слева направо)
 
             //  Настройки размеров для mainSplitView
@@ -140,6 +133,7 @@ ApplicationWindow {
             SplitView {
 
                 id: viewSplitContainer
+
                 orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
 
                 //  Настройки размеров для centralSplitContent
@@ -175,6 +169,7 @@ ApplicationWindow {
             SplitView {
 
                 id: buttomSplitContainer
+
                 orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
 
                 //  Настройки размеров для SplitView

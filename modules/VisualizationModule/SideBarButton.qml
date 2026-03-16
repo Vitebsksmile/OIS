@@ -9,7 +9,7 @@ Button {
 
     property var targetHandler: null
 
-    text: "Default"
+    text: qsTr("Default")
 
 
     background: Rectangle {
