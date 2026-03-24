@@ -4,7 +4,8 @@ import QtQuick.Controls //  Высокоуровневые компоненты 
 
 Rectangle {
 
-    //id: root
+    id: root
+
     implicitWidth: 200
     implicitHeight: 200
     color: "lightgreen"
@@ -14,6 +15,9 @@ Rectangle {
     //  чтобы обращаться к ним как root.handler или root.popup
     //property alias handler: fileHandler
     //property alias popup: statusPopup
+
+    //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'
+    FileHandler { id: fileHandler }
 
 
 

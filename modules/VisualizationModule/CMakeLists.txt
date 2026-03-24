@@ -5,7 +5,9 @@ set(VISUALIZATION_TARGET VisualizationModuleLib)
 
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
-    #visualization.cpp
+    filehandler.h filehandler.cpp
+    IVisualizationService.h
+    filehandlerbridge.h filehandlerbridge.cpp
 )
 
 
@@ -18,7 +20,6 @@ qt_add_library(${VISUALIZATION_TARGET} STATIC
 
 #   Создает список файлов исходного кода и заголовков интегрированных в QML
 list(APPEND MODULE_SOURCE_FILES_FOR_QML
-    filehandler.h filehandler.cpp
     mymodel.h mymodel.cpp
 )
 
@@ -53,7 +54,8 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
 # Указывает, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
 # PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
 target_include_directories(${VISUALIZATION_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR})
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями

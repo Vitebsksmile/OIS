@@ -7,22 +7,24 @@
 #include <QDebug>   //  Позволяет выводить сообщения в консоль отладки
 #include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
-// Наследуемся от QObject, чтобы использовать мощь Qt (MOC)
+
+// Наследуемся от QObject, чтобы использовать мощь Qt (MOC), обеспечивая поддержку рефлексии,
+//  механизма сигналов и слотов, а также динамических свойств, не поддерживаемых стандартным C++
 class FileHandler : public QObject
 {
-    //  Обязательный макрос для любого класса, использующего сигналы/свойства
+    //  Обязательный макрос для любого класса, использующего сигналы/слоты (свойства)
     Q_OBJECT
 
-    //  Делает класс доступным в QML (вы сможете написать "FileHandler {}" в .qml)
-    QML_ELEMENT //  регистрируем для qml
+    //  Делает класс доступным в Qml (можно будет написать "FileHandler {}" в .qml)
+    QML_ELEMENT //  регистрируем для Qml
 
-    //  Связываем C++ и QML:
-    //  св-во, к-рое qml будет слушать
+    //  Связываем C++ и Qml: св-во, к-рое Qml будет слушать
     Q_PROPERTY(QUrl currentImagePath READ currentImagePath NOTIFY currentImagePathChanged)
-    //  currentImagePath — имя свойства в QML
+    //  currentImagePath — имя свойства в Qml
     //  READ ... — функция, которая отдает значение
-    //  NOTIFY ... — сигнал, который говорит QML "значение изменилось, перерисуй интерфейс"
-    //  currentImagePathChanged — это «голос» вашего C++ класса, который сообщает графическому интерфейсу (QML): «Данные изменились, обнови картинку!»
+    //  NOTIFY ... — сигнал, который говорит Qml: "значение изменилось, перерисуй интерфейс"
+    //  currentImagePathChanged — это «голос» вашего C++ класса, который сообщает графическому
+    //  интерфейсу (Qml): «Данные изменились, обнови картинку!»
 
 public:
 
@@ -30,28 +32,39 @@ public:
     //  parent = nullptr позволяет объекту существовать без родителя.
     explicit FileHandler(QObject *parent = nullptr);
 
-    //  метод, к-рый вызовем из qml при выборе файла
+
+    //  Метод для выбора файла. Вызываем из qml
     Q_INVOKABLE void selectImage(QUrl url);
 
-    //  Геттер для свойства currentImagePath
-    QUrl currentImagePath() const;
-
-    //  метод для сохранения (копирования) файла
+    //  Метод для сохранения (копирования) файла. Вызываем из qml
     Q_INVOKABLE bool saveImage(QUrl sourceUrl, QUrl targetUrl);
 
     //  метод для подготовки пути
+    //  Вспомогательная функция для получения "чистого" пути
+    //  Нужна для OpenCV, так как cv::imread не понимает префикс "file://"
     Q_INVOKABLE QString getCleanPath(QUrl url);
+
+
+    //  Геттер для свойства в Qml currentImagePath
+    QUrl currentImagePath() const;
+
 
 signals:
 
     //  Сигнал: мы не пишем его реализацию, Qt сделает это за нас
+    //  Создан для отправки в Qml
     //  Вызываем его через emit, когда m_currentImagePath меняется
     void currentImagePathChanged();
+
 
 private:
 
     //  Внутренняя переменная, где реально хранится путь к файлу
-    QUrl m_currentImagePath;    //  храним путь здесь
+    QUrl m_currentImagePath;
+
+    //  Внутренняя переменная в которой храниться ошибка
+    QString m_lastError;
+
 };
 
 #endif // FILEHANDLER_H

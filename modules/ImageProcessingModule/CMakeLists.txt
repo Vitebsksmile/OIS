@@ -3,9 +3,15 @@
 set(IMAGE_PROCESSING_TARGET ImageProcessingModuleLib)
 
 
+#   Создает список файлов внешнего API
+list(APPEND MODULE_PUBLIC_FILES
+    IImageProcessor.h
+)
+
+
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
-    #imageprocessor.h imageprocessor.cpp
+    imageprocessor.h imageprocessor.cpp
     #filters.h filters.cpp
     #calibration.h calibration.cpp
 )
@@ -14,13 +20,14 @@ list(APPEND MODULE_SOURCE_FILES
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 qt_add_library(${IMAGE_PROCESSING_TARGET} STATIC
-        ${MODULE_SOURCE_FILES}
+    ${MODULE_PUBLIC_FILES}
+    ${MODULE_SOURCE_FILES}
 )
 
 
 #   Создает список файлов исходного кода и заголовков интегрированных в QML
 list(APPEND MODULE_SOURCE_FILES_FOR_QML
-    imageprocessor.h imageprocessor.cpp
+    #imageprocessor.h imageprocessor.cpp
 )
 
 
@@ -44,6 +51,7 @@ qt_add_qml_module(${IMAGE_PROCESSING_TARGET}
 
     SOURCES
         ${MODULE_SOURCE_FILES_FOR_QML}
+        SOURCES imageprocessorbridge.h imageprocessorbridge.cpp
 )
 
 

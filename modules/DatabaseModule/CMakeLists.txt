@@ -5,7 +5,7 @@ set(DATABASEMODULE_TARGET DatabaseModuleLib)
 
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
-    databasehandler.h databasehandler.cpp
+    #filehandler.h filehandler.cpp
 )
 
 
@@ -20,7 +20,7 @@ qt_add_library(${DATABASEMODULE_TARGET} STATIC
 #   Указываем, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
 #   PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
 target_include_directories(${DATABASEMODULE_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/public
 )
 
 

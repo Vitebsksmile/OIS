@@ -1,25 +1,28 @@
 import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 
-
+//  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 Rectangle {
 
     id: root
 
-    implicitWidth: 200  //  Рекомендуемая ширина (важно для Layout)
-    implicitHeight: 200 //  Рекомендуемая высота
-    color: "lightblue"
-    radius: 10
-
-
     //  Экспортируем внутренние объекты наружу,
     //  чтобы обращаться к ним как root.handler или root.popup
-    property alias handler: fileHandler
-    property alias popup: statusPopup
-    //property alias imageSource: mainImage.source  //  Прямой доступ к источнику
+    property alias handler: fileHandler         //      Текущий путь к изображению
+    property alias popup: statusPopup           //      Всплывающее окно
+    property alias backgroundColor: root.color  //      Задать цвет снаружи
+    property alias labelText: statusText.text   //      Задать текст статуса загрузки изображения снаружи
+    //property alias imageSource: root.source   //      Прямой доступ к источнику
 
-    //  Создаем экземпляр вашего C++ класса прямо внутри QML
-    FileHandler {id: fileHandler }
+
+    //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'
+    FileHandler { id: fileHandler }
+
+
+    implicitWidth: 200 //  Рекомендуемая ширина (важно для Layout)
+    implicitHeight: 200 //  Рекомендуемая высота
+    color: "lightblue"  //      Цвет по умолчанию
+    radius: 10
 
 
     Image {
@@ -38,24 +41,27 @@ Rectangle {
         source: fileHandler.currentImagePath
 
         //  Анимация: если прозрачность (opacity) изменится, это произойдет плавно за 0.5 сек
-        Behavior on opacity { NumberAnimation { duration: 500 } }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 500
+            }
+        }
 
         //  Отключаем кеш, чтобы увидеть изменения при перезагрузке того же файла
         //  Заставляем QML перечитывать файл с диска каждый раз (нужно для OpenCV)
         cache: false
-
     }
 
     //  Текст виден только если в Image ничего не загружено (Null)
     Text {
 
+        id: statusText
+
         visible: mainImage.status === Image.Null
-        anchors.centerIn: parent    //  Центрируем надпись
-        text: "фото не выбрано"
+        anchors.centerIn: parent        //      Центрируем надпись
+        text: qsTr("No image selected") //      Значение по умолчанию
         color: "gray"
-
     }
-
 
     //  Всплывающее окно для коротких сообщений (аналог Toast в Android)
     Popup {
@@ -72,20 +78,16 @@ Rectangle {
         height: 40
 
         //  Настройки закрытия всплывающего окна
-        modal: false    //  Не блокирует взаимодействие с основным окном
-        focus: false    //  Не перехватывает ввод (Escape не сработает при false)
+        modal: false //  Не блокирует взаимодействие с основным окном
+        focus: false //  Не перехватывает ввод (Escape не сработает при false)
 
         //  Закроется, если нажать Esc (нужен focus: true) или кликнуть мимо
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
-
         Text {
 
-            anchors.centerIn: parent    //  Центрируем надпись
-            text: statusPopup.message   //  Отображаем текст из свойства выше
-
+            anchors.centerIn: parent //  Центрируем надпись
+            text: statusPopup.message //  Отображаем текст из свойства выше
         }
-
     }
-
 }

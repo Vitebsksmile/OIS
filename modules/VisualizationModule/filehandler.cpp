@@ -9,6 +9,7 @@ void FileHandler::selectImage(QUrl url)
     if (m_currentImagePath != url)
     {
         m_currentImagePath = url;
+
         //  уведомляем qml, что пора перерисовать Image
         emit currentImagePathChanged();
     }
@@ -22,6 +23,7 @@ QUrl FileHandler::currentImagePath() const
 
 //  Метод для копирования/сохранения изображения
 //  (например, из папки 'StandardPaths' в папку '/OIS/module/DatabaseModule/')
+//  или через диалоговое окно для пользователя
 bool FileHandler::saveImage(QUrl sourceUrl, QUrl targetUrl)
 {
     QString sourcePath = sourceUrl.toLocalFile();   //  источник

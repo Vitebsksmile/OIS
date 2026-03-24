@@ -7,15 +7,31 @@ set(APP_TARGET OISApp)
 set(APP_NAME "OIS by SHCHERBAKOV")
 
 
-
-#   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Qml и Quick
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Gui)
-
-
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
 qt_add_executable(${APP_TARGET}
     main.cpp
 )
+
+
+#   Добавляет определения (флаги) компиляции для передачи препроцессорных
+#   макросов (#define) в C++ код прямо из CMake
+target_compile_definitions(${APP_TARGET}
+
+    PRIVATE
+
+        #   Включает возможность QML-отладки только если проект собран в режиме Debug
+        #   В коде появится #define QT_QML_DEBUG,
+        #   будет возможным использовать Hot Reload или QML Inspector.
+        #   В финальной версии (Release) этого макроса не будет
+        $<$<CONFIG:Debug>:QT_QML_DEBUG>
+
+        #   Передает переменную APP_NAME как строку в main.cpp
+        APP_NAME_STR="${APP_NAME}"
+)
+
+
+#   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Qml и Quick
+#find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Gui)    //  for static
 
 
 #   Устанавливает политику QTP0001 виртуального расположения qml-файлов
@@ -37,18 +53,6 @@ qt_add_qml_module(${APP_TARGET}
     #   Список QML-файлов, которые будут вшиты в бинарник
     QML_FILES
 
-)
-
-
-#   Добавляет определения (флаги) компиляции для передачи препроцессорных
-#   макросов (#define) в C++ код прямо из CMake
-target_compile_definitions(${APP_TARGET}
-
-    #   Включает возможность QML-отладки только если проект собран в режиме Debug
-    #   В коде появится #define QT_QML_DEBUG,
-    #   будет возможным использовать Hot Reload или QML Inspector.
-    #   В финальной версии (Release) этого макроса не будет
-    PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 
@@ -89,12 +93,6 @@ target_link_libraries(${APP_TARGET} PRIVATE
 
     #   --<<}
 
-)
-
-
-#   Передает переменную APP_NAME как строку в main.cpp
-target_compile_definitions(${APP_TARGET} PRIVATE
-    APP_NAME_STR="${APP_NAME}"
 )
 
 

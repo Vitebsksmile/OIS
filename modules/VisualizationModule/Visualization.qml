@@ -153,7 +153,7 @@ ApplicationWindow {
                 }
 
                 //  Правое окно: Результат обработки (нормализация и т.д.)
-                PreProcessedImageView {
+                ImageView {
 
                     id: processedImageView
 
@@ -161,6 +161,9 @@ ApplicationWindow {
                     SplitView.preferredWidth: viewSplitContainer.width / 2  //  половина ширины
                     //  Минимальный порог сжатия
                     SplitView.minimumWidth: 100
+
+                    backgroundColor: "black"
+                    labelText: "!!!!"
 
                 }
 
