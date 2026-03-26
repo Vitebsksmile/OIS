@@ -10,6 +10,7 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
 qt_add_executable(${APP_TARGET}
     main.cpp
+    #application.h application.cpp
 )
 
 

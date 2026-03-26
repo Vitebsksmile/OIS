@@ -13,11 +13,11 @@
 
 #include <QDebug>
 
-#include "imageprocessorbridge.h"
+#include "imageprocessingservice.h"
 
 
-ImageProcessorBridge::ImageProcessorBridge(QObject *parent)
-    : IImageProcessor(parent)
+ImageProcessingService::ImageProcessingService(QObject *parent)
+    : IImageProcessingService(parent)
 {
 
     //  Создаем "наблюдателя", к-рый будет следить за фоновым потоком
@@ -52,7 +52,7 @@ ImageProcessorBridge::ImageProcessorBridge(QObject *parent)
 
 
 //  Запуск обработки
-void ImageProcessorBridge::processImage(const QUrl &filePath)
+void ImageProcessingService::processImage(const QUrl &filePath)
 {
 
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
@@ -96,7 +96,7 @@ void ImageProcessorBridge::processImage(const QUrl &filePath)
 
 
 //  Алгоритм OpenCV
-cv::Mat ImageProcessorBridge::performProcessing(const cv::Mat &input)
+cv::Mat ImageProcessingService::performProcessing(const cv::Mat &input)
 {
 
     //  Результирующая матрица

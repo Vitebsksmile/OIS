@@ -1,8 +1,8 @@
 //  Интерфейс модуля (публичное API)
 
 
-#ifndef IIMAGEPROCESSOR_H
-#define IIMAGEPROCESSOR_H
+#ifndef IIMAGEPROCESSINGSERVICE_H
+#define IIMAGEPROCESSINGSERVICE_H
 
 #include <QObject>
 #include <QString>
@@ -10,7 +10,7 @@
 
 
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
-class IImageProcessor : public QObject
+class IImageProcessingService : public QObject
 {
 
     Q_OBJECT
@@ -19,13 +19,13 @@ class IImageProcessor : public QObject
 public:
 
     //  explicit — запрещает неявное приведение типов
-    explicit IImageProcessor(QObject *parent = nullptr) : QObject(parent) {}
+    explicit IImageProcessingService(QObject *parent = nullptr) : QObject(parent) {}
 
     //  Виртуальный деструктор
     //  Критически важен для интерфейсов: он гарантирует,
     //  что при удалении объекта через указатель на интерфейс
     //  будет вызван деструктор именно дочернего (реального) класса
-    virtual ~IImageProcessor() = default;
+    virtual ~IImageProcessingService() = default;
 
 
 //  Логика обработки (слоты)
@@ -38,7 +38,7 @@ public slots:
     virtual void processImage(const QUrl &filePath) = 0;
     //  "= 0" в объявлении виртуального метода означает,
     //  что метод является чисто виртуальным (pure virtual)
-    //  Это делает класс абстрактным: нельзя создать объект IImageProcessor,
+    //  Это делает класс абстрактным: нельзя создать объект IImageProcessingService,
     //  обязательно нужно создать класс-наследник и реализовать этот метод там
 
 
@@ -56,4 +56,4 @@ signals:
 
 };
 
-#endif // IIMAGEPROCESSOR_H
+#endif // IIMAGEPROCESSINGSERVICE_H

@@ -19,6 +19,7 @@
 #include <QUrl>     //  Класс для работы с URL (удобен для QML, так как пути там — это URL)
 
 
+//  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IVisualizationService : public QObject
 {
 
@@ -27,25 +28,24 @@ class IVisualizationService : public QObject
 
 public:
 
+    //  explicit — запрещает неявное приведение типов
     explicit IVisualizationService(QObject *parent = nullptr) : QObject(parent) {}
 
+    //  Виртуальный деструктор
+    //  Критически важен для интерфейсов: он гарантирует,
+    //  что при удалении объекта через указатель на интерфейс
+    //  будет вызван деструктор именно дочернего (реального) класса
     virtual ~IVisualizationService() = default;
 
-//  Перенести в FileHandlerBridge
-signals:
 
-    //  Сигнал для отправки пути в ImageProcessingModule
-    //  Вызываем его через emit, когда User нажмет кнопку для запуска обработки
-    void filePathSelected(const QUrl &filePath);
-
-    void showNotification(const QString &title, const QString &message);
-
-
+//  public slots: Методы, которые можно вызывать из других потоков или через connect
 //  Слоты для приема пути к обработанному изображению и его результатов (сообщений)
+//  из ImageProcessingModule
 public slots:
 
     //  в случае успеха обработки
     virtual void onImageProcessed(const QUrl &filePath, bool success) = 0;//!
+
 
     //  в случае ошибки обработки
     virtual void onProcessingError(const QUrl &filePath, const QString &error) = 0;//!

@@ -6,13 +6,13 @@
 */
 
 
-#include <QDebug>
+#include "visualizationservice.h"
 
 #include "filehandlerbridge.h"
 #include "filehandler.h"
 
 
-FileHandlerBridge::FileHandlerBridge(FileHandler *fileHandler, QObject *parent)
+VisualizationService::VisualizationService(FileHandler *fileHandler, QObject *parent)
     : IVisualizationService(parent), m_fileHandler(fileHandler)
 //  IVisualizationService(parent): Вызов конструктора базового класса (интерфейса)
 //  m_fileHandler(fileHandler): Инициализация внутреннего указателя переданным объектом
@@ -26,7 +26,7 @@ FileHandlerBridge::FileHandlerBridge(FileHandler *fileHandler, QObject *parent)
         //  Подключаемся к сигналу FileHandler о выборе файла
         //  Связываем сигнал requestPreprocessingImage со слотом onRequestPreprocessingImage
         connect(m_fileHandler, &FileHandler::requestPreprocessing,
-                this, &FileHandlerBridge::onPreprocessingRequested);
+                this, &VisualizationService::onPreprocessingRequested);
 
     }
 
@@ -34,7 +34,7 @@ FileHandlerBridge::FileHandlerBridge(FileHandler *fileHandler, QObject *parent)
 
 
 //  Динамическая смена обработчика (setFileHandler)
-void FileHandlerBridge::setFileHandler(FileHandler *fileHandler)
+void VisualizationService::setFileHandler(FileHandler *fileHandler)
 {
 
     //  Если старый обработчик уже был, сначала разрываем связь,
@@ -43,7 +43,7 @@ void FileHandlerBridge::setFileHandler(FileHandler *fileHandler)
     {
         //  Разрываем подключение к сигналу FileHandler
         disconnect(m_fileHandler, &FileHandler::requestPreprocessing,
-                   this, &FileHandlerBridge::onPreprocessingRequested);
+                   this, &VisualizationService::onPreprocessingRequested);
 
     }
 
@@ -54,7 +54,7 @@ void FileHandlerBridge::setFileHandler(FileHandler *fileHandler)
     {
         //  Устанавливаем связь с новым объектом
         connect(m_fileHandler, &FileHandler::requestPreprocessing,
-                this, &FileHandlerBridge::onPreprocessingRequested);
+                this, &VisualizationService::onPreprocessingRequested);
 
     }
 
@@ -62,7 +62,7 @@ void FileHandlerBridge::setFileHandler(FileHandler *fileHandler)
 
 
 //  Слот onImageProcessed (успех обработки)
-void FileHandlerBridge::onImageProcessed(const QUrl &filePath, bool success)
+void VisualizationService::onImageProcessed(const QUrl &filePath, bool success)
 {
     qDebug() << "Bridge: Image processing result for: " << filePath << " " << success;
 
@@ -80,7 +80,7 @@ void FileHandlerBridge::onImageProcessed(const QUrl &filePath, bool success)
 
 
 //  Слот onProcessingError (ошибка)
-void FileHandlerBridge::onProcessingError(const QUrl &filePath, const QString &error)
+void VisualizationService::onProcessingError(const QUrl &filePath, const QString &error)
 {
 
     qDebug() << "Bridge: Processing error: " << filePath << " " << error;
@@ -94,7 +94,7 @@ void FileHandlerBridge::onProcessingError(const QUrl &filePath, const QString &e
 
 //  Слот onRequestPreprocessingImage (реакция на на отправку файла из FileHandler)
 //  Слушает сигнал из FileHandler о старте предобработки
-void FileHandlerBridge::onPreprocessingRequested(const QUrl &url)
+void VisualizationService::onPreprocessingRequested(const QUrl &url)
 {
     if (!url.isEmpty())
     {

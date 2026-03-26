@@ -7,7 +7,8 @@ set(VISUALIZATION_TARGET VisualizationModuleLib)
 list(APPEND MODULE_SOURCE_FILES
     filehandler.h filehandler.cpp
     IVisualizationService.h
-    filehandlerbridge.h filehandlerbridge.cpp
+    #filehandlerbridge.h filehandlerbridge.cpp
+    visualizationservice.h visualizationservice.cpp
 )
 
 
@@ -28,7 +29,6 @@ list(APPEND MODULE_SOURCE_FILES_FOR_QML
 list(APPEND MODULE_QML_FILES
     Visualization.qml
     ImageView.qml
-    PreProcessedImageView.qml
     SideBar.qml
     SideBarButton.qml
 )

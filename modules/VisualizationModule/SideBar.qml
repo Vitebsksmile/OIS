@@ -1,98 +1,74 @@
-import QtCore           //  Нужен для работы со StandardPath (пути ОС)
-import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
-import QtQuick.Layouts  //  Работа с ColumnLayout
-import QtQuick.Dialogs  //  Системные окна (MessageDialog)
+import QtCore
+//  Нужен для работы со StandardPath (пути ОС)
+import QtQuick
+//  Базовые элементы (Rectangle, Image, Text)
+import QtQuick.Layouts
+//  Работа с ColumnLayout
+import QtQuick.Dialogs
 
-
+//  Системные окна (MessageDialog)
 Rectangle {
 
     id: sideBarRoot
 
     //  Связи (мостики) к внешним ресурсам
-    property var targetHandler: null    //  Текущий путь к изображению
-    property var targetPopup: null      //  Всплывающее окно
+    property var targetHandler: null //  Текущий путь к изображению
+    property var targetPopup: null //  Всплывающее окно
 
-    color: Qt.rgba(44/255, 62/255, 80/255, 0.9)    //  Midnight Blue
+    color: Qt.rgba(44 / 255, 62 / 255, 80 / 255, 0.9) //  Midnight Blue
     radius: 10
 
 
     ColumnLayout {
 
-        anchors.fill: parent    //  Растягиваем колонку на всю ширину родителя
-        anchors.margins: 10     //  Внутренние отступы от краев родителя
-        spacing: 5              //  Расстояние между кнопками
-
+        anchors.fill: parent //  Растягиваем колонку на всю ширину родителя
+        anchors.margins: 10 //  Внутренние отступы от краев родителя
+        spacing: 5 //  Расстояние между кнопками
 
         SideBarButton {
 
-            Layout.fillWidth: true          //  Растягиваем кнопку на всю ширину родителя
+            Layout.fillWidth: true //  Растягиваем кнопку на всю ширину родителя
 
-            text: qsTr("Open image")        //  Текст с поддержкой перевода
-
+            text: qsTr("Open image") //  Текст с поддержкой перевода
 
             onClicked: {
 
-                globalDialog.mode = "open"  //  Переключаем диалог в режим открытия
-                globalDialog.open()         //  Показываем окно выбора
-
+                globalDialog.mode = "open" //  Переключаем диалог в режим открытия
+                globalDialog.open() //  Показываем окно выбора
             }
-
         }
-
 
         SideBarButton {
 
-            Layout.fillWidth: true          //  Растягиваем кнопку на всю ширину родителя
+            Layout.fillWidth: true //  Растягиваем кнопку на всю ширину родителя
 
-            text: qsTr("Save image")        //  Текст с поддержкой перевода
-
+            text: qsTr("Save image") //  Текст с поддержкой перевода
 
             onClicked: {
 
-                globalDialog.mode = "save"  //  Переключаем диалог в режим открытия
-                globalDialog.open()         //  Показываем окно выбора
-
+                globalDialog.mode = "save" //  Переключаем диалог в режим открытия
+                globalDialog.open() //  Показываем окно выбора
             }
-
         }
 
-
         SideBarButton {
+
+            id: start
 
             Layout.fillWidth: true
 
-            text: qsTr("Start pre-processing")
+            text: qsTr("Start preprocessing")
 
             enabled: sideBarRoot.targetHandler != ""
 
-            //  Метод для копирования изображения в папку '/OIS/module/DatabaseModule/'
-            onClicked: {
-
-                //  Логика сохранения файла через C++
-                if (sideBarRoot.targetHandler && sideBarRoot.targetPopup) {
-
-                    //  Вызываем C++ метод копирования: из (текущий путь) в (путь из диалога)
-                    //let success = sideBarRoot.targetHandler.saveImage(sideBarRoot.targetHandler.currentImagePath, selectedFile)
-
-                    //  Настраиваем Toast-уведомление в зависимости от результата
-                    //sideBarRoot.targetPopup.message = success ? "Saved successfully!" : "Save error!"
-
-                    //  Показываем результат пользователю
-                    sideBarRoot.targetPopup.open()
-
-                }
-
-            }
-
-            //  Вызываем C++ метод копирования: из (текущий путь) в (путь системной папки гду будут храниться обработанные изображения)
-            //let success = sideBarRoot.targetHandler.saveImage(sideBarRoot.targetHandler.currentImagePath, selectedFile)
-
-
+            //  Метод для старта предобработки изображения
+            onClicked: sideBarRoot.startPreprocessing()
         }
 
 
-        Item { Layout.fillHeight: true }
-
+        Item {
+            Layout.fillHeight: true
+        }
     }
 
 
@@ -110,11 +86,11 @@ Rectangle {
         fileMode: mode === "save" ? FileDialog.SaveFile : FileDialog.OpenFile
 
         //  Начинаем обзор в системной папке "Изображения"
-        currentFolder: StandardPaths.writableLocation(StandardPaths.PicturesLocation)
+        currentFolder: StandardPaths.writableLocation(
+                           StandardPaths.PicturesLocation)
 
         //  Фильтр расширений файлов
         nameFilters: ["Изображения (*.png *.jpg *.jpeg)"]
-
 
         onAccepted: {
 
@@ -129,32 +105,37 @@ Rectangle {
 
                     //  Передаем URL в C++, где сработает сигнал изменения пути
                     sideBarRoot.targetHandler.selectImage(selectedFile)
-
                 }
-
             }
 
             //  Логика сохранения
-            if (mode === "save"){
+            if (mode === "save") {
 
                 //  Логика сохранения файла через C++
                 if (sideBarRoot.targetHandler && sideBarRoot.targetPopup) {
 
                     //  Вызываем C++ метод копирования: из (текущий путь) в (путь из диалога)
-                    let success = sideBarRoot.targetHandler.saveImage(sideBarRoot.targetHandler.currentImagePath, selectedFile)
+                    let success = sideBarRoot.targetHandler.saveImage(
+                            sideBarRoot.targetHandler.getCurrentImagePath,
+                            selectedFile)
 
                     //  Настраиваем Toast-уведомление в зависимости от результата
-                    sideBarRoot.targetPopup.message = success ? "Saved successfully!" : "Save error!"
+                    sideBarRoot.targetPopup.message
+                            = success ? "Saved successfully!" : "Save error!"
 
                     //  Показываем результат пользователю
                     sideBarRoot.targetPopup.open()
-
                 }
-
             }
-
         }
-
     }
 
+    function startPreprocessing() {
+
+        if (sideBarRoot.targetHandler) {
+
+            sideBarRoot.targetHandler.startPreprocessing()
+
+        }
+    }
 }

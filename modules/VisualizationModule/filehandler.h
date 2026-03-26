@@ -1,3 +1,10 @@
+/*
+ *  Сигналы (signals): Только объявляем в .h, никогда не пишем тело в .cpp.
+ *  Слоты (public slots): Объявляем в .h и обязательно пишем логику в .cpp.
+ *  Методы (Q_INVOKABLE): Объявляем в .h и обязательно пишем логику в .cpp.
+*/
+
+
 #ifndef FILEHANDLER_H
 #define FILEHANDLER_H
 
@@ -12,11 +19,14 @@
 //  механизма сигналов и слотов, а также динамических свойств, не поддерживаемых стандартным C++
 class FileHandler : public QObject
 {
+
     //  Обязательный макрос для любого класса, использующего сигналы/слоты (свойства)
     Q_OBJECT
 
+
     //  Делает класс доступным в Qml (можно будет написать "FileHandler {}" в .qml)
     QML_ELEMENT //  регистрируем для Qml
+
 
     //  Связываем C++ и Qml: св-во, к-рое Qml будет слушать
     Q_PROPERTY(QUrl currentImagePath READ currentImagePath NOTIFY currentImagePathChanged)
@@ -25,6 +35,7 @@ class FileHandler : public QObject
     //  NOTIFY ... — сигнал, который говорит Qml: "значение изменилось, перерисуй интерфейс"
     //  currentImagePathChanged — это «голос» вашего C++ класса, который сообщает графическому
     //  интерфейсу (Qml): «Данные изменились, обнови картинку!»
+
 
 public:
 
@@ -36,12 +47,17 @@ public:
     //  Метод для выбора файла. Вызываем из qml
     Q_INVOKABLE void selectImage(QUrl url);
 
+
     //  Метод для сохранения (копирования) файла. Вызываем из qml
     Q_INVOKABLE bool saveImage(QUrl sourceUrl, QUrl targetUrl);
 
+
+    //  Метод для старта предобработки. Вызываем из qml
+    Q_INVOKABLE void startPreprocessing();
+
+
     //  метод для подготовки пути
     //  Вспомогательная функция для получения "чистого" пути
-    //  Нужна для OpenCV, так как cv::imread не понимает префикс "file://"
     Q_INVOKABLE QString getCleanPath(QUrl url);
 
 
@@ -49,18 +65,24 @@ public:
     QUrl currentImagePath() const;
 
 
+//  Мы не пишем их реализации, Qt сделает это за нас
 signals:
 
-    //  Сигнал: мы не пишем его реализацию, Qt сделает это за нас
-    //  Создан для отправки в Qml
+    //  Сигнал: создан для отправки в Qml
     //  Вызываем его через emit, когда m_currentImagePath меняется
     void currentImagePathChanged();
+
+
+    //  Создан для отправки в FileHandlerBridge
+    //  Вызываем его через emit, когда user нажимает кнопку 'SrartPreprocessing'
+    void requestPreprocessing(const QUrl &url);
 
 
 private:
 
     //  Внутренняя переменная, где реально хранится путь к файлу
     QUrl m_currentImagePath;
+
 
     //  Внутренняя переменная в которой храниться ошибка
     QString m_lastError;

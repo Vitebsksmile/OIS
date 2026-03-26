@@ -1,7 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
-#include <imageprocessor.h>
 //#include <QQuickStyle>  //  for STATIC
 
 
@@ -16,8 +15,6 @@ int main(int argc, char *argv[])
 
     //  Устанавливаем официальное имя приложения для системы
     app.setApplicationName(APP_NAME_STR);
-
-    engine.addImageProvider(QLatin1String("opencv"), new ImageProcessor);
 
     const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
 

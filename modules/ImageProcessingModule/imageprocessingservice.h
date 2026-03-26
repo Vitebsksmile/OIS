@@ -11,8 +11,8 @@
  * Безопасность: Использование watcher позволяет избежать проблем с синхронизацией потоков (вам не нужны мьютексы в явном виде).
 */
 
-#ifndef IMAGEPROCESSORBRIDGE_H
-#define IMAGEPROCESSORBRIDGE_H
+#ifndef IMAGEPROCESSINGSERVICE_H
+#define IMAGEPROCESSINGSERVICE_H
 
 
 #include <opencv2/opencv.hpp>
@@ -24,12 +24,12 @@
 #include <QtConcurrent/QtConcurrent>
 
 
-#include "IImageProcessor.h"
+#include "IImageProcessingService.h"
 
 
 //  Наследуемся от нашего интерфейса
 //  Теперь этот класс обязан реализовать метод processImage
-class ImageProcessorBridge : public IImageProcessor
+class ImageProcessingService : public IImageProcessingService
 {
 
     Q_OBJECT
@@ -37,7 +37,7 @@ class ImageProcessorBridge : public IImageProcessor
 
 public:
 
-    explicit ImageProcessorBridge(QObject *parent = nullptr);
+    explicit ImageProcessingService(QObject *parent = nullptr);
 
 
 public slots:
@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // IMAGEPROCESSORBRIDGE_H
+#endif // IMAGEPROCESSINGSERVICE_H

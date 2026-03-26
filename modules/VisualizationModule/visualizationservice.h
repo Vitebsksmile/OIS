@@ -5,8 +5,9 @@
 */
 
 
-#ifndef FILEHANDLERBRIDGE_H
-#define FILEHANDLERBRIDGE_H
+#ifndef VISUALIZATIONSERVICE_H
+#define VISUALIZATIONSERVICE_H
+
 
 #include <QObject>
 
@@ -16,7 +17,7 @@
 class FileHandler;  //  Forward declaration
 
 
-class FileHandlerBridge : public IVisualizationService
+class VisualizationService : public IVisualizationService
 {
 
     Q_OBJECT
@@ -24,25 +25,25 @@ class FileHandlerBridge : public IVisualizationService
 
 public:
 
-    explicit FileHandlerBridge(FileHandler *fileHandler, QObject *parent = nullptr);
+    explicit VisualizationService(FileHandler *fileHandler, QObject *parent = nullptr);
 
 
     //  Метод для установки/смены FileHandler
     void setFileHandler(FileHandler *fileHandler);
 
 
-//  Реализация интерфейса IVisualizationService
+    //  Реализация интерфейса IVisualizationService
 public slots:
 
     //  в случае успеха обработки
-    void onImageProcessed(const QUrl &filePath, bool success) override;
+    void onImageProcessed(const QUrl &url, bool success) override;
 
 
     //  в случае ошибки обработки
-    void onProcessingError(const QUrl &filePath, const QString &error) override;
+    void onProcessingError(const QUrl &url, const QString &error) override;
 
 
-//  Мы не пишем их реализации, Qt сделает это за нас
+    //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
 
     //  Создан для отправки в ImageProcessingModule
@@ -64,4 +65,4 @@ private:
 
 };
 
-#endif // FILEHANDLERBRIDGE_H
+#endif // VISUALIZATIONSERVICE_H

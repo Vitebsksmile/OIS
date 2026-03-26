@@ -171,7 +171,7 @@ ApplicationWindow {
 
             SplitView {
 
-                id: buttomSplitContainer
+                id: otherSplitContainer
 
                 orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
 
@@ -185,7 +185,7 @@ ApplicationWindow {
                     color: Qt.rgba(255/255, 71/255, 77/255, 0.9) //  Light Red
                     radius: 10
 
-                    //  Настройки размеров для buttomSplitContainer
+                    //  Настройки размеров для otherSplitContainer
                     SplitView.preferredWidth: 200   //  Желаемая ширина при старте
                     SplitView.minimumWidth: 100     //  Минимальный порог сжатия
                     SplitView.maximumWidth: 500     //  Максимальный порог растяжения
@@ -197,7 +197,7 @@ ApplicationWindow {
                     color: Qt.rgba(255/255, 71/255, 77/255, 0.9) //  Light Red
                     radius: 10
 
-                    //  Настройки размеров для buttomSplitContainer
+                    //  Настройки размеров для otherSplitContainer
                     SplitView.preferredWidth: 200   //  Желаемая ширина при старте
                     SplitView.minimumWidth: 100     //  Минимальный порог сжатия
                     SplitView.maximumWidth: 500     //  Максимальный порог растяжения
@@ -209,7 +209,7 @@ ApplicationWindow {
                     color: Qt.rgba(255/255, 71/255, 77/255, 0.9) //  Light Red
                     radius: 10
 
-                    //  Настройки размеров для buttomSplitContainer
+                    //  Настройки размеров для otherSplitContainer
                     SplitView.fillWidth: true       //  Занимает всё оставшееся место справа
                     SplitView.minimumWidth: 100     //  Минимальный порог сжатия
 
