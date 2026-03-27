@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     //  Устанавливаем официальное имя приложения для системы
     app.setApplicationName(APP_NAME_STR);
 
-    const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
+    const QUrl url("qrc:/qt/qml/VisualizationModule/qml/Visualization.qml");
 
     engine.load(url);  //   загружаем интерфейс
 

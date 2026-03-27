@@ -21,7 +21,7 @@ void Application::initialize()
 {
 
     //  1. Создаем IVisualizationService
-    m_visualizationService = QSharedPointer<IVisualizationService>(new VisualizationService());
+    //m_visualizationService = QSharedPointer<IVisualizationService>(new VisualizationService());
 
 
     //  2. Создаем IImageProcessingService

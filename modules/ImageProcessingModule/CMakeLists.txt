@@ -1,18 +1,25 @@
 #   Создает переменную IMAGE_PROCESSING_TARGET со значением "ImageProcessingModuleLib"
 #   (имя цели в CMake для компиляции)
-set(IMAGE_PROCESSING_TARGET ImageProcessingModuleLib)
+set(IMAGE_PROCESSING_TARGET ImageProcessingModule)
 
 
-#   Создает список файлов внешнего API
-list(APPEND MODULE_PUBLIC_FILES
-    IImageProcessingService.h
+#   Добавляем публичные фасады (внешнее API)
+set(MODULE_PUBLIC_FACADES
+    facade/IImageProcessingService.h
+    facade/imageprocessingservice.h
 )
 
 
-#   Создает список файлов исходного кода и заголовков
-list(APPEND MODULE_SOURCE_FILES
-    imageprocessor.h imageprocessor.cpp
-    imageprocessingservice.h imageprocessingservice.cpp
+#   Добавляем приватные заголовки (не экспортируются)
+set(MODULE_PRIVATE_HEADERS
+    private/imagepreprocessing.h
+)
+
+
+#   Добавляем файлы исходного кода
+set(MODULE_SOURCE_FILES
+    src/imagepreprocessing.cpp
+    src/imageprocessingservice.cpp
     #filters.h filters.cpp
     #calibration.h calibration.cpp
 )
@@ -21,45 +28,19 @@ list(APPEND MODULE_SOURCE_FILES
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 qt_add_library(${IMAGE_PROCESSING_TARGET} STATIC
-    ${MODULE_PUBLIC_FILES}
+    ${MODULE_PUBLIC_FACADES}
+    ${MODULE_PRIVATE_HEADERS}
     ${MODULE_SOURCE_FILES}
 )
 
 
-#   Создает список файлов исходного кода и заголовков интегрированных в QML
-list(APPEND MODULE_SOURCE_FILES_FOR_QML
-    #imageprocessor.h imageprocessor.cpp
-)
-
-
-#   Создает список qml-файлов
-list(APPEND MODULE_QML_FILES )
-
-
-#   Регистрирует QML-модуль для основной цели приложения
-#   Превращает созданную библиотеку в полноценный QML-модуль
-qt_add_qml_module(${IMAGE_PROCESSING_TARGET}
-
-    #   Логическое имя для QML (import ImageProcessingModule 1.0)
-    URI ImageProcessingModuleLib
-    VERSION 1.0
-
-    #   Базовый путь в системе ресурсов (будет доступно как qrc:/qt/qml/...)
-    RESOURCE_PREFIX /qt/qml/
-
-    QML_FILES
-        ${MODULE_QML_FILES}
-
-    SOURCES
-        ${MODULE_SOURCE_FILES_FOR_QML}
-)
-
-
-# Указывает, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
-# PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
-target_include_directories(${IMAGE_PROCESSING_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${OpenCV_INCLUDE_DIRS}
+#   Include директории
+target_include_directories(${IMAGE_PROCESSING_TARGET}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/facade
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 
@@ -68,9 +49,3 @@ target_link_libraries(${IMAGE_PROCESSING_TARGET} PUBLIC
     Qt6::Quick
     ${OpenCV_LIBS}
 )
-
-
-# Установка QML-файлов (если нужны отдельно на диске)
-#install(FILES Visualization.qml ImageView.qml ButtonSideBar.qml
-#    DESTINATION ${CMAKE_INSTALL_DATADIR}/qml/VisualizationModule
-#)

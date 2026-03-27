@@ -1,29 +1,32 @@
-import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
-import QtQuick.Controls //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
+//  Базовые элементы (Rectangle, Image, Text)
+import QtQuick
 
 //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
+import QtQuick.Controls
+
+import VisualizationModule 1.0
+
 Rectangle {
 
     id: root
 
     //  Экспортируем внутренние объекты наружу,
     //  чтобы обращаться к ним как root.handler или root.popup
-    property alias handler: fileHandler         //      Текущий путь к изображению
-    property alias popup: statusPopup           //      Всплывающее окно
-    property alias backgroundColor: root.color  //      Задать цвет снаружи
-    property alias labelText: statusText.text   //      Задать текст статуса загрузки изображения снаружи
+    property alias handler: fileHandler //      Текущий путь к изображению
+    property alias popup: statusPopup //      Всплывающее окно
+    property alias backgroundColor: root.color //      Задать цвет снаружи
+    property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику
 
-
     //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'
-    FileHandler { id: fileHandler }
-
+    FileHandler {
+        id: fileHandler
+    }
 
     implicitWidth: 200 //  Рекомендуемая ширина (важно для Layout)
     implicitHeight: 200 //  Рекомендуемая высота
-    color: "lightblue"  //      Цвет по умолчанию
+    color: "lightblue" //      Цвет по умолчанию
     radius: 10
-
 
     Image {
 
@@ -58,7 +61,7 @@ Rectangle {
         id: statusText
 
         visible: mainImage.status === Image.Null
-        anchors.centerIn: parent        //      Центрируем надпись
+        anchors.centerIn: parent //      Центрируем надпись
         text: qsTr("No image selected") //      Значение по умолчанию
         color: "gray"
     }

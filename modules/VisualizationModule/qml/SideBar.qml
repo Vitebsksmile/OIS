@@ -1,9 +1,6 @@
-import QtCore
-//  Нужен для работы со StandardPath (пути ОС)
-import QtQuick
-//  Базовые элементы (Rectangle, Image, Text)
-import QtQuick.Layouts
-//  Работа с ColumnLayout
+import QtCore           //  Нужен для работы со StandardPath (пути ОС)
+import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
+import QtQuick.Layouts  //  Работа с ColumnLayout
 import QtQuick.Dialogs
 
 //  Системные окна (MessageDialog)
@@ -116,7 +113,7 @@ Rectangle {
 
                     //  Вызываем C++ метод копирования: из (текущий путь) в (путь из диалога)
                     let success = sideBarRoot.targetHandler.saveImage(
-                            sideBarRoot.targetHandler.getCurrentImagePath,
+                            sideBarRoot.targetHandler.currentImagePath,
                             selectedFile)
 
                     //  Настраиваем Toast-уведомление в зависимости от результата

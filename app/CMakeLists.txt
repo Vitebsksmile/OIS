@@ -10,7 +10,7 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
 qt_add_executable(${APP_TARGET}
     main.cpp
-    #application.h application.cpp
+    application.h application.cpp
 )
 
 
@@ -31,30 +31,8 @@ target_compile_definitions(${APP_TARGET}
 )
 
 
-#   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Qml и Quick
-#find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Gui)    //  for static
-
-
-#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
-#qt_policy(SET QTP0001 NEW)
-
-#   Регистрирует QML-модуль для основной цели приложения
-#   Превращает созданную библиотеку в полноценный QML-модуль
-qt_add_qml_module(${APP_TARGET}
-
-    #   Уникальный логический адрес модуля (для 'import Primary')
-    URI Primary
-
-    #   Базовый путь в системе ресурсов (будет доступно как qrc:/qt/qml/...)
-    RESOURCE_PREFIX /qt/qml/
-
-    #   Версия модуля
-    VERSION 1.0
-
-    #   Список QML-файлов, которые будут вшиты в бинарник
-    QML_FILES
-
-)
+#   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Core Qml и т.д.
+#find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Gui)    #  for static
 
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
@@ -74,10 +52,10 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #${OpenCV_LIBS}
 
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
-    DatabaseModuleLib
-    ImageProcessingModuleLib
+    DatabaseModule
+    ImageProcessingModule
     #IntegrationModule
-    VisualizationModuleLib
+    VisualizationModule
 
 
     #   --- для static build --- {-->>
@@ -89,8 +67,8 @@ target_link_libraries(${APP_TARGET} PRIVATE
 
 
     #   Для гарантии регистрации QML-типов при static build
-    VisualizationModuleLibplugin
-    ImageProcessingModuleLibplugin
+    VisualizationModuleplugin
+    #ImageProcessingModuleLibplugin
 
     #   --<<}
 

@@ -1,6 +1,6 @@
 #   Сщздает переменную DATABASEMODULE_TARGET со значением "DatabaseModuleLib"
 #   (имя цели в CMake для компиляции)
-set(DATABASEMODULE_TARGET DatabaseModuleLib)
+set(DATABASEMODULE_TARGET DatabaseModule)
 
 
 #   Создает список файлов исходного кода и заголовков

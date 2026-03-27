@@ -25,7 +25,7 @@ class FileHandler : public QObject
 
 
     //  Делает класс доступным в Qml (можно будет написать "FileHandler {}" в .qml)
-    QML_ELEMENT //  регистрируем для Qml
+    QML_ELEMENT
 
 
     //  Связываем C++ и Qml: св-во, к-рое Qml будет слушать

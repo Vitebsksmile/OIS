@@ -1,36 +1,44 @@
-#   Создает переменную VISUALIZATION_TARGET со значением "VisualizationModuleLib"
+#   Создает переменную VISUALIZATION_TARGET со значением "VisualizationModule"
 #   (имя цели в CMake для компиляции)
-set(VISUALIZATION_TARGET VisualizationModuleLib)
+set(VISUALIZATION_TARGET VisualizationModule)
 
 
-#   Создает список файлов исходного кода и заголовков
-list(APPEND MODULE_SOURCE_FILES
-    filehandler.h filehandler.cpp
-    IVisualizationService.h
-    #filehandlerbridge.h filehandlerbridge.cpp
-    visualizationservice.h visualizationservice.cpp
+#   Добавляем публичные фасады (внешнее API)
+set(MODULE_PUBLIC_FACADES
+    facade/IVisualizationService.h
+    facade/visualizationservice.h
+)
+
+
+#   Добавляем приватные заголовки (не экспортируются)
+set(MODULE_PRIVATE_HEADERS
+    private/filehandler.h
+    private/mymodel.h
+)
+
+
+#   Добавляем файлы исходного кода
+set(MODULE_SOURCE_FILES
+    src/filehandler.cpp
+    src/visualizationservice.cpp
+    src/mymodel.cpp
+)
+
+
+set(MODULE_QML_FILES
+    qml/Visualization.qml
+    qml/ImageView.qml
+    qml/SideBar.qml
+    qml/SideBarButton.qml
 )
 
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 qt_add_library(${VISUALIZATION_TARGET} STATIC
+    ${MODULE_PUBLIC_FACADES}
+    ${MODULE_PRIVATE_HEADERS}
     ${MODULE_SOURCE_FILES}
-)
-
-
-#   Создает список файлов исходного кода и заголовков интегрированных в QML
-list(APPEND MODULE_SOURCE_FILES_FOR_QML
-    mymodel.h mymodel.cpp
-)
-
-
-#   Создает список qml-файлов
-list(APPEND MODULE_QML_FILES
-    Visualization.qml
-    ImageView.qml
-    SideBar.qml
-    SideBarButton.qml
 )
 
 
@@ -46,15 +54,22 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     RESOURCE_PREFIX /qt/qml/
     QML_FILES
         ${MODULE_QML_FILES}
+
     SOURCES
-        ${MODULE_SOURCE_FILES_FOR_QML}
+        ${MODULE_PUBLIC_FACADES}
+        ${MODULE_PRIVATE_HEADERS}
+        ${MODULE_SOURCE_FILES}
 )
 
 
 # Указывает, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
 # PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
-target_include_directories(${VISUALIZATION_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(${VISUALIZATION_TARGET}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/facade/
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/private/
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/
 )
 
 
@@ -72,7 +87,7 @@ target_link_libraries(${VISUALIZATION_TARGET} PUBLIC
 )
 
 
-# Установка QML-файлов (если нужны отдельно на диске)
+#   Установка QML-файлов (если нужны отдельно на диске)
 #install(FILES Visualization.qml ImageView.qml ButtonSideBar.qml
 #    DESTINATION ${CMAKE_INSTALL_DATADIR}/qml/VisualizationModule
 #)

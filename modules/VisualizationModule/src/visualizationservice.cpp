@@ -7,8 +7,6 @@
 
 
 #include "visualizationservice.h"
-
-#include "filehandlerbridge.h"
 #include "filehandler.h"
 
 

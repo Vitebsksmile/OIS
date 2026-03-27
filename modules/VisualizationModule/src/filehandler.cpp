@@ -12,15 +12,6 @@
 FileHandler::FileHandler(QObject *parent) : QObject(parent) {}
 
 
-//  Геттер: возвращает текущий путь в формате QUrl для отображения в интерфейсе
-QUrl FileHandler::currentImagePath() const
-{
-
-    return m_currentImagePath;
-
-}
-
-
 //  Метод для выбора изображения (вызывается из QML при выборе файла)
 void FileHandler::selectImage(QUrl url)
 {
@@ -103,4 +94,13 @@ void FileHandler::startPreprocessing()
 QString FileHandler::getCleanPath(QUrl url) {
     //  Самый надежный способ конвертации URL в путь ОС в Qt
     return url.toLocalFile();
+}
+
+
+//  Геттер: возвращает текущий путь в формате QUrl для отображения в интерфейсе
+QUrl FileHandler::currentImagePath() const
+{
+
+    return m_currentImagePath;
+
 }

@@ -1,8 +1,8 @@
-#include "imageprocessor.h"
+#include "imagepreprocessing.h"
 
-ImageProcessor::ImageProcessor() : QQuickImageProvider(Image) {}
+ImagePreProcessing::ImagePreProcessing() : QQuickImageProvider(Image) {}
 
-QImage ImageProcessor::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
+QImage ImagePreProcessing::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
     //  id - это путь к файлу, который мы передали из QML
     std::string filePath = id.toStdString();
