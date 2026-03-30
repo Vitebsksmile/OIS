@@ -52,7 +52,7 @@ ImageProcessingService::ImageProcessingService(QObject *parent)
 
 
 //  Запуск обработки
-void ImageProcessingService::processImage(const QUrl &filePath)
+void ImageProcessingService::onPreprocessingRequested(const QUrl &filePath)
 {
 
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой

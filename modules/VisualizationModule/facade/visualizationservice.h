@@ -14,8 +14,8 @@
 #include "IVisualizationService.h"
 
 
+class FileHandlerManager;  //  Forward declaration
 class FileHandler;  //  Forward declaration
-
 
 class VisualizationService : public IVisualizationService
 {
@@ -25,15 +25,20 @@ class VisualizationService : public IVisualizationService
 
 public:
 
-    explicit VisualizationService(FileHandler *fileHandler, QObject *parent = nullptr);
+    //explicit VisualizationService(FileHandler *fileHandler, QObject *parent = nullptr);
+    explicit VisualizationService(QObject *parent = nullptr);
 
 
-    //  Метод для установки/смены FileHandler
+    //  Регистрация FileHandler в фасаде
+    void registerFileHandler(FileHandler *fileHandler) override;
+
+
+//  Реализация интерфейса IVisualizationService
+public slots:
+
+    //  Слот для установки/смены FileHandler
     void setFileHandler(FileHandler *fileHandler);
 
-
-    //  Реализация интерфейса IVisualizationService
-public slots:
 
     //  в случае успеха обработки
     void onImageProcessed(const QUrl &url, bool success) override;
@@ -43,14 +48,19 @@ public slots:
     void onProcessingError(const QUrl &url, const QString &error) override;
 
 
-    //  Мы не пишем их реализации, Qt сделает это за нас
+//  Мы не пишем их реализации, Qt сделает это за нас
 signals:
 
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать Preprocessing
-    void requestPreprocessing(QUrl *url);
+    void requestPreprocessing(const QUrl &url);
 
 
+    //  Ищет FileHandler
+    void lokingForFileHandler(VisualizationService *self);
+
+
+//  Слоты для связи внутри модуля
 private slots:
 
     //  Слушает сигнал из FileHandler о старте предобработки
@@ -58,6 +68,11 @@ private slots:
 
 
 private:
+
+    //  Указатель на связанный объект FileHandlerManager
+    //  Инициализирован nullptr для безопасности
+    FileHandlerManager *m_fileHandlerManager = nullptr;
+
 
     //  Указатель на связанный объект FileHandler
     //  Инициализирован nullptr для безопасности

@@ -8,6 +8,7 @@
 #ifndef FILEHANDLER_H
 #define FILEHANDLER_H
 
+
 #include <QObject>  //  Базовый класс для всех объектов Qt (нужен для сигналов и слотов)
 #include <QUrl>     //  Класс для работы с URL (удобен для QML, так как пути там — это URL)
 #include <QFile>    //  Класс для работы с файловой системой (чтение, запись, копирование)
@@ -73,7 +74,7 @@ signals:
     void currentImagePathChanged();
 
 
-    //  Создан для отправки в FileHandlerBridge
+    //  Создан для отправки в VisualizationService
     //  Вызываем его через emit, когда user нажимает кнопку 'SrartPreprocessing'
     void requestPreprocessing(const QUrl &url);
 

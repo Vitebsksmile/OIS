@@ -1,36 +1,27 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QtQml>
-//#include <QQuickStyle>  //  for STATIC
+#include <QCoreApplication>
+#include <QDebug>
 
+#include "application.h"
 
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
 
-//    QQuickStyle::setStyle("Windows");   //  for STATIC
-
-    QQmlApplicationEngine engine;
-
+    // Устанавливаем атрибуты приложения
     //  Устанавливаем официальное имя приложения для системы
-    app.setApplicationName(APP_NAME_STR);
+    QCoreApplication::setApplicationName(APP_NAME_STR);
+    QCoreApplication::setOrganizationName("IS-23");
 
-    const QUrl url("qrc:/qt/qml/VisualizationModule/qml/Visualization.qml");
+    // Создаем и инициализируем приложение
+    Application app;
 
-    engine.load(url);  //   загружаем интерфейс
 
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-                         if (!obj && url == objUrl)
-                             QCoreApplication::exit(-1);
-                     }, Qt::QueuedConnection);
-
-    if (engine.rootObjects().isEmpty())
+    if (!app.initialize()) {
+        qCritical() << "Failed to initialize application";
         return -1;
+    }
 
+    // Запускаем приложение
+    return app.run(argc, argv);
 
-
-
-    return app.exec();
 }

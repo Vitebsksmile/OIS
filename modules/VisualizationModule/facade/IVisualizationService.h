@@ -14,10 +14,15 @@
 #ifndef IVISUALIZATIONSERVICE_H
 #define IVISUALIZATIONSERVICE_H
 
+
 #include <QObject>
 #include <QString>
 #include <QUrl>     //  Класс для работы с URL (удобен для QML, так как пути там — это URL)
 
+//#include <filehandler.h>
+
+
+class FileHandler;  //  Forward declaration
 
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IVisualizationService : public QObject
@@ -31,11 +36,16 @@ public:
     //  explicit — запрещает неявное приведение типов
     explicit IVisualizationService(QObject *parent = nullptr) : QObject(parent) {}
 
+
     //  Виртуальный деструктор
     //  Критически важен для интерфейсов: он гарантирует,
     //  что при удалении объекта через указатель на интерфейс
     //  будет вызван деструктор именно дочернего (реального) класса
     virtual ~IVisualizationService() = default;
+
+
+    //  Регистрация FileHandler в фасаде
+    virtual void registerFileHandler(FileHandler *fileHandler) = 0;
 
 
 //  public slots: Методы, которые можно вызывать из других потоков или через connect
@@ -44,11 +54,18 @@ public:
 public slots:
 
     //  в случае успеха обработки
-    virtual void onImageProcessed(const QUrl &filePath, bool success) = 0;//!
+    virtual void onImageProcessed(const QUrl &filePath, bool success) = 0;
 
 
     //  в случае ошибки обработки
-    virtual void onProcessingError(const QUrl &filePath, const QString &error) = 0;//!
+    virtual void onProcessingError(const QUrl &filePath, const QString &error) = 0;
+
+
+signals:
+
+    //  Создан для отправки в ImageProcessingModule
+    //  Вызываем его через emit, когда в интерфейс приходит команда начать Preprocessing
+    virtual void requestPreprocessing(const QUrl &url) = 0;
 
 };
 

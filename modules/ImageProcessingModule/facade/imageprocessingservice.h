@@ -45,7 +45,7 @@ public slots:
     //  Слот для получения пути из VisualizationModule
     //  Реализация метода из интерфейса. «Мост» будет вызывать именно этот метод
     //  Слово override подтверждает переопределение
-    void processImage(const QUrl &filePath) override;
+    void onPreprocessingRequested(const QUrl &filePath) override;
 
 
 private:

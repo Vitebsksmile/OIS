@@ -7,24 +7,46 @@
 
 
 #include "visualizationservice.h"
+#include "filehandlermanager.h"
 #include "filehandler.h"
 
 
-VisualizationService::VisualizationService(FileHandler *fileHandler, QObject *parent)
-    : IVisualizationService(parent), m_fileHandler(fileHandler)
+VisualizationService::VisualizationService(QObject *parent)
+    : IVisualizationService(parent)
 //  IVisualizationService(parent): Вызов конструктора базового класса (интерфейса)
-//  m_fileHandler(fileHandler): Инициализация внутреннего указателя переданным объектом
+{
 
+    m_fileHandlerManager = new FileHandlerManager(this, this);
+
+
+    if (m_fileHandlerManager)
+    {
+
+        qDebug() << "VisualizationServise: создан FileHandlerManager";
+
+    }
+
+}
+
+
+//  Регистрация FileHandler в фасаде
+void VisualizationService::registerFileHandler(FileHandler *fileHandler)
 {
 
     //  Проверка на nullptr
     //  Если объект передан, мы сразу «подписываемся» на его события
-    if (m_fileHandler)
+    if (fileHandler)
     {
-        //  Подключаемся к сигналу FileHandler о выборе файла
+
+        qDebug() << "VisualizationServise: " << "Фасад получил новый fileHandler через интерфейс";
+
+
+        m_fileHandler = fileHandler;
+
+
         //  Связываем сигнал requestPreprocessingImage со слотом onRequestPreprocessingImage
-        connect(m_fileHandler, &FileHandler::requestPreprocessing,
-                this, &VisualizationService::onPreprocessingRequested);
+        /*connect(m_fileHandler, &FileHandler::requestPreprocessing,
+                this, &VisualizationService::onPreprocessingRequested);*/
 
     }
 
@@ -90,7 +112,7 @@ void VisualizationService::onProcessingError(const QUrl &filePath, const QString
 }
 
 
-//  Слот onRequestPreprocessingImage (реакция на на отправку файла из FileHandler)
+//  Слот onRequestPreprocessingImage (реакция на отправку файла из FileHandler)
 //  Слушает сигнал из FileHandler о старте предобработки
 void VisualizationService::onPreprocessingRequested(const QUrl &url)
 {

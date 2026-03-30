@@ -4,8 +4,6 @@ import QtQuick
 //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 import QtQuick.Controls
 
-import VisualizationModule 1.0
-
 Rectangle {
 
     id: root
@@ -17,6 +15,7 @@ Rectangle {
     property alias backgroundColor: root.color //      Задать цвет снаружи
     property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику
+
 
     //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'
     FileHandler {

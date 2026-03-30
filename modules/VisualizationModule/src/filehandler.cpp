@@ -9,7 +9,10 @@
 
 
 //  Конструктор: инициализирует объект и передает родителя для управления памятью в Qt
-FileHandler::FileHandler(QObject *parent) : QObject(parent) {}
+FileHandler::FileHandler(QObject *parent)
+    : QObject(parent)
+{
+}
 
 
 //  Метод для выбора изображения (вызывается из QML при выборе файла)

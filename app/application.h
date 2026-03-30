@@ -11,6 +11,8 @@
 
 #include <QObject>          //  Базовый класс для работы с сигналами и слотами
 #include <QSharedPointer>   //  Подключение «умных» указателей Qt. Они автоматически удалят объекты, когда те станут не нужны, предотвращая утечки памяти
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
 
 //  Forward Declaration
@@ -32,24 +34,38 @@ public:
     explicit Application(QObject *parent = nullptr);
     ~Application();
 
+
     //  Метод для инициализации приложения (создание объектов, настройка связей).
     //  Это лучше делать в отдельном методе, а не в конструкторе.
-    void initialize();
+    bool initialize();
+
+
+    //  Запуск приложения
+    int run(int argc, char *argv[]);
 
 
 private:
 
+    //  Настраиваем связи между модулями
     //  Вспомогательный метод, где будут собраны все connect(...) между модулями.
     void setupConnections();
 
-    //  Внутренний обработчик: когда файл выбран, Application решит, кому его передать дальше.
-    void onFileSelectedFromHandler(const QUrl &url);
 
-    //  Умный указатель на интерфейс VisualizationModule
+    int m_argc;
+
+
+    //  Умный указатель на интерфейс IVisualizationModule
     QSharedPointer<IVisualizationService> m_visualizationService;
 
-    //  Умный указатель на интерфейс ImageProcessingModule.
+
+    //  Умный указатель на интерфейс IImageProcessingModule.
     QSharedPointer<IImageProcessingService> m_imageProcessingService;
+
+
+    QScopedPointer<QGuiApplication> m_app;
+
+
+    QScopedPointer<QQmlApplicationEngine> m_engine;
 
 };
 
