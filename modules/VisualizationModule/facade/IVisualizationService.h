@@ -19,8 +19,6 @@
 #include <QString>
 #include <QUrl>     //  Класс для работы с URL (удобен для QML, так как пути там — это URL)
 
-//#include <filehandler.h>
-
 
 class FileHandler;  //  Forward declaration
 
@@ -42,10 +40,6 @@ public:
     //  что при удалении объекта через указатель на интерфейс
     //  будет вызван деструктор именно дочернего (реального) класса
     virtual ~IVisualizationService() = default;
-
-
-    //  Регистрация FileHandler в фасаде
-    virtual void registerFileHandler(FileHandler *fileHandler) = 0;
 
 
 //  public slots: Методы, которые можно вызывать из других потоков или через connect

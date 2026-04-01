@@ -6,77 +6,15 @@
 */
 
 
+#include <QDebug>
+
 #include "visualizationservice.h"
-#include "filehandlermanager.h"
-#include "filehandler.h"
 
 
 VisualizationService::VisualizationService(QObject *parent)
     : IVisualizationService(parent)
 //  IVisualizationService(parent): Вызов конструктора базового класса (интерфейса)
 {
-
-    m_fileHandlerManager = new FileHandlerManager(this, this);
-
-
-    if (m_fileHandlerManager)
-    {
-
-        qDebug() << "VisualizationServise: создан FileHandlerManager";
-
-    }
-
-}
-
-
-//  Регистрация FileHandler в фасаде
-void VisualizationService::registerFileHandler(FileHandler *fileHandler)
-{
-
-    //  Проверка на nullptr
-    //  Если объект передан, мы сразу «подписываемся» на его события
-    if (fileHandler)
-    {
-
-        qDebug() << "VisualizationServise: " << "Фасад получил новый fileHandler через интерфейс";
-
-
-        m_fileHandler = fileHandler;
-
-
-        //  Связываем сигнал requestPreprocessingImage со слотом onRequestPreprocessingImage
-        /*connect(m_fileHandler, &FileHandler::requestPreprocessing,
-                this, &VisualizationService::onPreprocessingRequested);*/
-
-    }
-
-}
-
-
-//  Динамическая смена обработчика (setFileHandler)
-void VisualizationService::setFileHandler(FileHandler *fileHandler)
-{
-
-    //  Если старый обработчик уже был, сначала разрываем связь,
-    //  чтобы не получать лишних уведомлений и не вызвать ошибку при удалении объекта
-    if (m_fileHandler)
-    {
-        //  Разрываем подключение к сигналу FileHandler
-        disconnect(m_fileHandler, &FileHandler::requestPreprocessing,
-                   this, &VisualizationService::onPreprocessingRequested);
-
-    }
-
-    //  Запоминаем новый объект
-    m_fileHandler = fileHandler;
-
-    if (m_fileHandler)
-    {
-        //  Устанавливаем связь с новым объектом
-        connect(m_fileHandler, &FileHandler::requestPreprocessing,
-                this, &VisualizationService::onPreprocessingRequested);
-
-    }
 
 }
 
@@ -126,16 +64,5 @@ void VisualizationService::onPreprocessingRequested(const QUrl &url)
         qDebug() << "Bridge: ERROR! Getted empty path";
 
     }
-
-
-    // Здесь можно добавить любую дополнительную логику перед отправкой
-    // Например, проверку формата файла, валидацию и т.д.
-
-    // Сигнал для ImageProcessingModule (если нужно)
-    //  Передаем путь в ImageProcessingModule через интерфейс
-    //emit filePathSelected(path);
-
-    // Но по вашей архитектуре, путь должен браться напрямую из FileHandler
-    // Поэтому этот метод может быть пустым, если обработка инициируется иначе
 
 }

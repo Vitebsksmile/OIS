@@ -37,11 +37,7 @@ set(MODULE_QML_FILES
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
-qt_add_library(${VISUALIZATION_TARGET} STATIC
-    #${MODULE_PUBLIC_FACADES}
-    #${MODULE_PRIVATE_HEADERS}
-    #${MODULE_SOURCE_FILES}
-)
+qt_add_library(${VISUALIZATION_TARGET} STATIC)
 
 
 #   Использование QT_RESOURCE_ALIAS в CMake до вызова qt_add_qml_module,
@@ -79,10 +75,10 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
 # PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
 target_include_directories(${VISUALIZATION_TARGET}
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/facade/
+        ${CMAKE_CURRENT_SOURCE_DIR}/facade
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/private/
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/
+        ${CMAKE_CURRENT_SOURCE_DIR}/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 

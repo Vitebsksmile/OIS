@@ -7,7 +7,6 @@
 #include "imageprocessingservice.h"
 
 
-
 Application::Application(QObject *parent)
     : QObject(parent)
 {
@@ -28,15 +27,19 @@ Application::~Application()
 bool Application::initialize()
 {
 
-    qDebug() << "Initializing Application...";
+    qDebug() << "Application: Initializing Application...";
 
 
-    //  1. Создаем модуль визуализации
+    //  1. Создаем фасад модуля визуализации
     m_visualizationService = QSharedPointer<IVisualizationService>(new VisualizationService(this));
 
 
-    if (!m_visualizationService)
+    if (m_visualizationService)
     {
+
+        qDebug() << "Application: VisualizationService инициализирован";
+
+    } else {
 
         qCritical() << "Failed to create VisualizationService";
 
@@ -45,12 +48,16 @@ bool Application::initialize()
     }
 
 
-    //  2. Создаем модуль обработки изображений
+    //  2. Создаем фасад модуля обработки изображений
     m_imageProcessingService = QSharedPointer<IImageProcessingService>(new ImageProcessingService(this));
 
 
-    if (!m_imageProcessingService)
+    if (m_imageProcessingService)
     {
+
+        qDebug() << "Application: ImageProcessingService инициализирован";
+
+    } else {
 
         qCritical() << "Failed to create ImageProcessingService";
 
@@ -59,7 +66,7 @@ bool Application::initialize()
     }
 
 
-    qDebug() << "Application initialized successfully";
+    qDebug() << "Application: Application initialized successfully.";
 
     return true;
 

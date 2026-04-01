@@ -4,6 +4,8 @@ import QtQuick
 //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 import QtQuick.Controls
 
+//import VisualizationModule 1.0
+
 Rectangle {
 
     id: root

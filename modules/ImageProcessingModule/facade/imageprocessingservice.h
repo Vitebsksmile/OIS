@@ -15,14 +15,7 @@
 #define IMAGEPROCESSINGSERVICE_H
 
 
-#include <opencv2/opencv.hpp>
-
-//  Класс для управления результатом асинхронных вычислений (которые еще не завершены)
-#include <QFuture>
-
-//  Высокоуровневый модуль Qt для запуска задач в отдельных потоках (пуле потоков) одной командой
-#include <QtConcurrent/QtConcurrent>
-
+#include <QObject>
 
 #include "IImageProcessingService.h"
 
@@ -48,21 +41,18 @@ public slots:
     void onPreprocessingRequested(const QUrl &filePath) override;
 
 
+signals:
+
+    //  Сигнал, который должен быть отправлен (emitted) после завершения работы
+    //  Сообщает путь к файлу и результат (true — успех, false — провал)
+    void imageProcessed(const QUrl &filePath, bool success) override;
+
+    //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
+    //  например, «файл не найден» или «недостаточно памяти»
+    void processingError(const QUrl &filePath, const QString &error) override;
+
+
 private:
-
-    //  Вспомогательный метод,
-    //  который подготовит и запустит задачу в фоновом потоке через QtConcurrent::run
-    void processImageAsync(const QUrl &filePath);
-
-    //  Сердце модуля. Здесь будет чистый код OpenCV (фильтры, детекция и т.д.)
-    //  Этот метод работает с матрицей cv::Mat и возвращает обработанную матрицу
-    cv::Mat performProcessing(const cv::Mat &input);
-
-
-    //  Специальный «наблюдатель»
-    //  Он следит за фоновым потоком и посылает сигнал finished(),
-    //  когда OpenCV закончит работу, чтобы мы могли забрать результат
-    QFutureWatcher<cv::Mat> *m_watcher = nullptr;
 
     //  Хранит путь к файлу, который обрабатывается в данный момент,
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed
