@@ -1,55 +1,38 @@
+#include <QDebug>   //  Позволяет выводить сообщения в консоль отладки
+
 #include "filehandlermanager.h"
 //#include <filehandler.h>
 
 
 FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationService, QObject *parent)
-    : QObject(parent), m_visualizationService(visualizationService)
+    : QObject(parent),
+    m_visualizationService(visualizationService)
 {
+
+    qDebug() << "FileHandlerManager: объект fileHandlerManager рождён. parent: " << parent;
+    if (!m_visualizationService)
+    {
+        qWarning() << "FileHandlerManager создан без ссылки на фасад";
+    }
 
 }
 
 
-/*FileHandler* FileHandlerManager::createFileHandler()
-{
-
-    FileHandler *fileHandler = new FileHandler();
-
-
-    if (m_visualizationService && fileHandler)
-    {
-
-        //  Менеджер сам "сватает" новый хэндлер фасаду через интерфейс
-        m_visualizationService->registerFileHandler(fileHandler);
-
-    }
-
-    m_fileHandler = fileHandler;
-
-
-    return fileHandler;
-
-}*/
-
-
-/*void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
+void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
 {
 
     if (fileHandler)
     {
 
-        qDebug() << "FileHandlerManager: получил FileHandler: " << fileHandler;
+        qDebug() << "FileHandlerManager: получил object: " << fileHandler;
 
-    }
+        m_fileHandler = fileHandler;
 
-}*/
+        //  Связь: fileHandler -> visualizationService
+        connect(m_fileHandler, &FileHandler::requestPreprocessingToVisualizationService,
+                m_visualizationService, &IVisualizationService::PreprocessingRequestedFromTheFileHandler);
 
 
-void FileHandlerManager::printMessage(const QString &msg)
-{
-
-    if (!msg.isEmpty())
-    {
-        qDebug() << msg;
     }
 
 }

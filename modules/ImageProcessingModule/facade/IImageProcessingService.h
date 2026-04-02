@@ -40,9 +40,8 @@ public slots:
     //  обязательно нужно создать класс-наследник и реализовать этот метод там
 
     //  Слот для получения пути из VisualizationModule
-    //  Метод для обработки изображения по пути
     //  Принимает путь к файлу для обработки
-    virtual void onPreprocessingRequested(const QUrl &filePath) = 0;
+    virtual void onPreprocessingRequested(const QString &filePath) = 0;
 
 
 //  Секция событий, на которые могут подписываться другие части программы
@@ -51,11 +50,11 @@ signals:
 
     //  Сигнал, который должен быть отправлен (emitted) после завершения работы
     //  Сообщает путь к файлу и результат (true — успех, false — провал)
-    virtual void imageProcessed(const QUrl &filePath, bool success);
+    void imageProcessed(const QUrl &filePath, bool success);
 
     //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
     //  например, «файл не найден» или «недостаточно памяти»
-    virtual void processingError(const QUrl &filePath, const QString &error);
+    void processingError(const QUrl &filePath, const QString &error);
 
 };
 

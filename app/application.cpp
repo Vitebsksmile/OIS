@@ -66,6 +66,10 @@ bool Application::initialize()
     }
 
 
+    //if ()
+    setupConnections();
+
+
     qDebug() << "Application: Application initialized successfully.";
 
     return true;
@@ -77,17 +81,23 @@ void Application::setupConnections()
 {
 
     //  Связь: VisualizationModule -> ImageProcessingModule
-    connect(m_visualizationService.data(), &IVisualizationService::requestPreprocessing,
-            m_imageProcessingService.data(), &IImageProcessingService::onPreprocessingRequested);
+    bool ok = connect(m_visualizationService.get(), &IVisualizationService::requestPreprocessing,
+            m_imageProcessingService.get(), &IImageProcessingService::onPreprocessingRequested);
+
+    if (!ok) qDebug() << "Сбой наладки связи VisualizationModule -> ImageProcessingModule";
 
 
     //  Связи: ImageProcessingModule -> VisualizationModule
-    connect(m_imageProcessingService.data(), &IImageProcessingService::imageProcessed,
-            m_visualizationService.data(), &IVisualizationService::onImageProcessed);
+    connect(m_imageProcessingService.get(), &IImageProcessingService::imageProcessed,
+            m_visualizationService.get(), &IVisualizationService::onImageProcessed);
+
+    if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
 
 
-    connect(m_imageProcessingService.data(), &IImageProcessingService::processingError,
-            m_visualizationService.data(), &IVisualizationService::onProcessingError);
+    connect(m_imageProcessingService.get(), &IImageProcessingService::processingError,
+            m_visualizationService.get(), &IVisualizationService::onProcessingError);
+
+    if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
 
 }
 

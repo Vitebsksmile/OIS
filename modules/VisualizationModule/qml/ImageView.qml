@@ -4,8 +4,6 @@ import QtQuick
 //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 import QtQuick.Controls
 
-//import VisualizationModule 1.0
-
 Rectangle {
 
     id: root
@@ -18,10 +16,17 @@ Rectangle {
     property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику
 
-
     //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'
     FileHandler {
         id: fileHandler
+
+
+        Component.onCompleted: {
+            //      Передаем объект в C++
+            FileHandlerManager.registerFileHandler(fileHandler)
+            //console.log("Проверка синглтона: ", FileHandlerManager)
+            //console.log("Тип метода: ", typeof FileHandlerManager.registerFileHandler)
+        }
     }
 
     implicitWidth: 200 //  Рекомендуемая ширина (важно для Layout)

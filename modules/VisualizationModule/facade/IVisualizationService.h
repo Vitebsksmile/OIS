@@ -55,11 +55,16 @@ public slots:
     virtual void onProcessingError(const QUrl &filePath, const QString &error) = 0;
 
 
+    //  Слушает сигнал из FileHandler о старте предобработки
+    virtual void PreprocessingRequestedFromTheFileHandler(const QString &filePath) = 0;
+
+
 signals:
 
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать Preprocessing
-    virtual void requestPreprocessing(const QUrl &url) = 0;
+    void requestPreprocessing(const QString &filePath);
+
 
 };
 

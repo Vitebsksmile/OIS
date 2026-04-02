@@ -15,6 +15,8 @@
 #include "IVisualizationService.h"
 
 
+class FileHandlerManager;
+
 class VisualizationService : public IVisualizationService
 {
 
@@ -37,23 +39,19 @@ public slots:
     void onProcessingError(const QUrl &url, const QString &error) override;
 
 
+    //  Слушает сигнал из FileHandler о старте предобработки
+    void PreprocessingRequestedFromTheFileHandler(const QString &filePath) override;
+
+
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
 
-    //  Создан для отправки в ImageProcessingModule
-    //  Вызываем его через emit, когда в интерфейс приходит команда начать Preprocessing
-    void requestPreprocessing(const QUrl &url);
+    //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 
-//  Слоты для связи внутри модуля
-private slots:
+private:
 
-    //  Слушает сигнал из FileHandler о старте предобработки
-    void onPreprocessingRequested(const QUrl &url);
-
-
-//private:
-
+    FileHandlerManager *m_fileHandlerManager;
 
 };
 

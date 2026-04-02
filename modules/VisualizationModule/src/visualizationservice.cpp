@@ -7,14 +7,25 @@
 
 
 #include <QDebug>
+#include <QThread>
+#include <QtQml/qqml.h>
+//#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
 #include "visualizationservice.h"
+#include "filehandlermanager.h"
 
 
 VisualizationService::VisualizationService(QObject *parent)
-    : IVisualizationService(parent)
+    : IVisualizationService(parent),
+    m_fileHandlerManager(new FileHandlerManager(this, this))
 //  IVisualizationService(parent): Вызов конструктора базового класса (интерфейса)
 {
+
+    qmlRegisterSingletonInstance(
+        "VisualizationModule",  //  URI модуля
+        1, 0,                   //  Версия
+        "FileHandlerManager",   //  Имя типа в Qml
+        m_fileHandlerManager);  //  .data()Указатель на объект
 
 }
 
@@ -22,7 +33,7 @@ VisualizationService::VisualizationService(QObject *parent)
 //  Слот onImageProcessed (успех обработки)
 void VisualizationService::onImageProcessed(const QUrl &filePath, bool success)
 {
-    qDebug() << "Bridge: Image processing result for: " << filePath << " " << success;
+    qDebug() << "VisualizationService: Image processing result for: " << filePath << " " << success;
 
     //  Если флаг успеха true, то мы уведомляем пользователя
     if (success)
@@ -41,7 +52,7 @@ void VisualizationService::onImageProcessed(const QUrl &filePath, bool success)
 void VisualizationService::onProcessingError(const QUrl &filePath, const QString &error)
 {
 
-    qDebug() << "Bridge: Processing error: " << filePath << " " << error;
+    qDebug() << "VisualizationService: Processing error: " << filePath << " " << error;
 
     //  Если что-то пошло не так (например, файл битый),
     //  то мы пробрасываем текст ошибки прямо в интерфейс
@@ -50,18 +61,18 @@ void VisualizationService::onProcessingError(const QUrl &filePath, const QString
 }
 
 
-//  Слот onRequestPreprocessingImage (реакция на отправку файла из FileHandler)
 //  Слушает сигнал из FileHandler о старте предобработки
-void VisualizationService::onPreprocessingRequested(const QUrl &url)
+void VisualizationService::PreprocessingRequestedFromTheFileHandler(const QString &filePath)
 {
-    if (!url.isEmpty())
+    if (!filePath.isEmpty())
     {
 
-        qDebug() << "Bridge: The user started preprocessing. Path to image: " << url;
+        qDebug() << "VisualizationService: The user started preprocessing. Path to image: " << filePath;
+        emit requestPreprocessing(filePath);
 
     } else {
 
-        qDebug() << "Bridge: ERROR! Getted empty path";
+        qDebug() << "VisualizationService: ERROR! Getted empty path";
 
     }
 

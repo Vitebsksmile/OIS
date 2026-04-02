@@ -36,20 +36,13 @@ public:
 public slots:
 
     //  Слот для получения пути из VisualizationModule
-    //  Реализация метода из интерфейса. «Мост» будет вызывать именно этот метод
     //  Слово override подтверждает переопределение
-    void onPreprocessingRequested(const QUrl &filePath) override;
+    void onPreprocessingRequested(const QString &filePath) override;
 
 
 signals:
 
-    //  Сигнал, который должен быть отправлен (emitted) после завершения работы
-    //  Сообщает путь к файлу и результат (true — успех, false — провал)
-    void imageProcessed(const QUrl &filePath, bool success) override;
-
-    //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
-    //  например, «файл не найден» или «недостаточно памяти»
-    void processingError(const QUrl &filePath, const QString &error) override;
+    //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 
 private:

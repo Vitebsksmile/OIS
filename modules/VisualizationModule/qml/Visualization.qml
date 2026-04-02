@@ -14,10 +14,6 @@ ApplicationWindow {
     //  Считываем имя приложения из настроек проекта (устанавливается в main.cpp)
     readonly property string appName: Qt.application.name
 
-    /*Component.onCompleted: {
-        VisualizationService.fileHandlerManager.printMessage("Привет из фронта");
-    }*/
-
 
     //  1. Описание логики действий (Actions) - это "мозг" кнопок и меню
     Action {

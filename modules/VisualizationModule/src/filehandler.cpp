@@ -77,15 +77,16 @@ void FileHandler::startPreprocessing()
     if (!currentImagePath().isEmpty())
     {
 
-        //  Активируем сигнал
-        emit requestPreprocessing(currentImagePath());
+        QString filePath = getCleanPath(currentImagePath());
 
-        //  Вывод в консоль передаваемого в OpenCV пути к файлу
-        qDebug() << "В интерфейс передано изображение по пути: " << currentImagePath();
+        //  Активируем сигнал
+        emit requestPreprocessingToVisualizationService(filePath);
+
+        //qDebug() << "FileHandler: В интерфейс передано изображение по пути: " << currentImagePath();
 
     } else {
 
-        qDebug() << "ERROR! В интерфейс не передана команда Старта. Файл не выбран. Путь: " << currentImagePath();
+        qDebug() << "FileHandler: ERROR! В интерфейс не передана команда Старта. Файл не выбран. Путь: " << currentImagePath();
 
     }
 
