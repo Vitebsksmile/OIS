@@ -12,14 +12,16 @@ set(MODULE_PUBLIC_FACADES
 
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
+    private/workingroom.h
     private/imagepreprocessing.h
 )
 
 
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
-    src/imagepreprocessing.cpp
     src/imageprocessingservice.cpp
+    src/workingroom.cpp
+    src/imagepreprocessing.cpp
     #filters.h filters.cpp
     #calibration.h calibration.cpp
 )
