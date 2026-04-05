@@ -40,7 +40,7 @@ public slots:
 
 
     //  Слушает сигнал из FileHandler о старте предобработки
-    void PreprocessingRequestedFromTheFileHandler(const QString &filePath) override;
+    void onImagePreProcessingRequested(const QString &filePath) override;
 
 
 //  Мы не пишем их реализации, Qt сделает это за нас

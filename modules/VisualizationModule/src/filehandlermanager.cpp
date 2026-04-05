@@ -12,12 +12,13 @@ FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationServi
     qDebug() << "FileHandlerManager: объект fileHandlerManager рождён. parent: " << parent;
     if (!m_visualizationService)
     {
-        qWarning() << "FileHandlerManager создан без ссылки на фасад";
+        qWarning() << "FileHandlerManager: fileHandlerManager создан без ссылки на фасад";
     }
 
 }
 
 
+//  Регистрирует рождение объекта FileHandler и связывает его с фасадом
 void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
 {
 
@@ -29,8 +30,8 @@ void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
         m_fileHandler = fileHandler;
 
         //  Связь: fileHandler -> visualizationService
-        connect(m_fileHandler, &FileHandler::requestPreprocessingToVisualizationService,
-                m_visualizationService, &IVisualizationService::PreprocessingRequestedFromTheFileHandler);
+        connect(m_fileHandler, &FileHandler::imagePreProcessingRequested,
+                m_visualizationService, &IVisualizationService::onImagePreProcessingRequested);
 
 
     }

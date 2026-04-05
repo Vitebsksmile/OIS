@@ -80,7 +80,7 @@ void FileHandler::startPreprocessing()
         QString filePath = getCleanPath(currentImagePath());
 
         //  Активируем сигнал
-        emit requestPreprocessingToVisualizationService(filePath);
+        emit imagePreProcessingRequested(filePath);
 
         //qDebug() << "FileHandler: В интерфейс передано изображение по пути: " << currentImagePath();
 

@@ -20,6 +20,8 @@
 #include "IImageProcessingService.h"
 
 
+class ProcessManager;
+
 //  Наследуемся от нашего интерфейса
 //  Теперь этот класс обязан реализовать метод processImage
 class ImageProcessingService : public IImageProcessingService
@@ -33,11 +35,12 @@ public:
     explicit ImageProcessingService(QObject *parent = nullptr);
 
 
+//  Реализация интерфейса IImageProcessingService
 public slots:
 
     //  Слот для получения пути из VisualizationModule
     //  Слово override подтверждает переопределение
-    void onPreprocessingRequested(const QString &filePath) override;
+    void onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath) override;
 
 
 signals:
@@ -47,9 +50,12 @@ signals:
 
 private:
 
+    ProcessManager *m_processManager;
+
+
     //  Хранит путь к файлу, который обрабатывается в данный момент,
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed
-    QUrl m_currentFilePath;
+    QUrl m_currentFilePath; //  !!!!!???????
 
 };
 

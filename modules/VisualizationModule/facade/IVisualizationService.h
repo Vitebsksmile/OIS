@@ -56,15 +56,15 @@ public slots:
 
 
     //  Слушает сигнал из FileHandler о старте предобработки
-    virtual void PreprocessingRequestedFromTheFileHandler(const QString &filePath) = 0;
+    virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
 
 
 signals:
 
     //  Создан для отправки в ImageProcessingModule
-    //  Вызываем его через emit, когда в интерфейс приходит команда начать Preprocessing
-    void requestPreprocessing(const QString &filePath);
-
+    //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
+    void imagePreProcessingRequestedToImageProcessingModule(const QString &filePath);
+//requestPreprocessing
 
 };
 

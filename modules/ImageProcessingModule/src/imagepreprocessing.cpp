@@ -1,20 +1,21 @@
 #include "imagepreprocessing.h"
 
-ImagePreProcessing::ImagePreProcessing(const QString &filePath)
+ImagePreProcessing::ImagePreProcessing()
 {
 
+    //  Перенести в какой-нибудь метод
     //  Преобразуем путь Qt в стандартную строку для OpenCV
-    std::string path = filePath.toStdString();
-    m_image = cv::imread(path);
+    //std::string path = filePath.toStdString();
+    //m_image = cv::imread(path);
 
     qDebug() << "ImagePreprocessing: объект рожден";
 
-    if (m_image.empty())
+    /*if (m_image.empty())
     {
 
         qWarning() << "Не удалось загрузить изображение по пути: " << filePath;
 
-    }
+    }*/
 
 }
 
@@ -95,8 +96,11 @@ ImagePreProcessing& ImagePreProcessing::normalize(float alpha, float beta)
     {
 
         //  Приведение значений пикселей к диапазону [0, 1] или другому
+        // Конвертируем в float (32-bit), если планируем нормализацию 0..1
         m_image.convertTo(m_image, CV_32F, 1.0 / 255.0);
-        m_image.normalize(m_image, m_image, alpha, beta, cv::NORM_MINMAX);
+
+        // ВЫЗЫВАЕМ КАК СВОБОДНУЮ ФУНКЦИЮ:
+        cv::normalize(m_image, m_image, alpha, beta, cv::NORM_MINMAX);
 
     }
 
@@ -134,3 +138,8 @@ bool ImagePreProcessing::isValid() const
     return !m_image.empty();
 
 }
+
+
+//  Слушает сигнал из ProcessManager
+void ImagePreProcessing::onImagePreProcessingRequested(const QString &filePath)
+{}

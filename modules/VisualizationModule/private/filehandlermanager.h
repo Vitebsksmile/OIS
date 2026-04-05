@@ -9,8 +9,6 @@
 #include <filehandler.h>
 
 
-//class FileHandler;  //  Forward declaration
-
 class FileHandlerManager : public QObject
 {
 

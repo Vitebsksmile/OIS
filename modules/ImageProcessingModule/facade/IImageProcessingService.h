@@ -41,20 +41,25 @@ public slots:
 
     //  Слот для получения пути из VisualizationModule
     //  Принимает путь к файлу для обработки
-    virtual void onPreprocessingRequested(const QString &filePath) = 0;
+    virtual void onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath) = 0;
 
 
 //  Секция событий, на которые могут подписываться другие части программы
 //  Сигналы для отправки результатов в VisualizationModule
 signals:
 
+    //  Сигнал для ProcessManager -> создай imagePreProcessing и свяжи меня с ним
+    void imagePreProcessingRequestedToProcessManager(const QString &filePath);  //  Добавить аргументы "тип" предобработки
+
+
     //  Сигнал, который должен быть отправлен (emitted) после завершения работы
     //  Сообщает путь к файлу и результат (true — успех, false — провал)
-    void imageProcessed(const QUrl &filePath, bool success);
+    void imagePreProcessed(const QUrl &filePath, bool success);
+
 
     //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
     //  например, «файл не найден» или «недостаточно памяти»
-    void processingError(const QUrl &filePath, const QString &error);
+    void preProcessingError(const QUrl &filePath, const QString &error);
 
 };
 

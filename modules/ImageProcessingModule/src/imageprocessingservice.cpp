@@ -15,11 +15,12 @@
 #include <QThread>
 
 #include "imageprocessingservice.h"
+#include "processmanager.h"
 
 
 ImageProcessingService::ImageProcessingService(QObject *parent)
-    : IImageProcessingService(parent)
-//  IImageProcessingService(parent): Вызов конструктора базового класса (интерфейса)
+    : IImageProcessingService(parent),
+    m_processManager(new ProcessManager (this, this))
 {
 
 }
@@ -27,19 +28,20 @@ ImageProcessingService::ImageProcessingService(QObject *parent)
 
 //  Слот для получения пути из VisualizationModule
 //  Запуск обработки
-void ImageProcessingService::onPreprocessingRequested(const QString &filePath)
+void ImageProcessingService::onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath)
 {
 
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
     if (filePath.isEmpty())
     {
         qDebug() << "ImageProcessingService: Путь к файлу пустой! Path to image: " << filePath;
-        emit processingError(filePath, "Empty file path");
+        emit preProcessingError(filePath, "Empty file path");
         return;
     }
 
     //  Запоминаем путь, чтобы потом передать его в сигнале завершения
     m_currentFilePath = filePath;
-    qDebug() << "ImageProcessingService: Путь к файлу получен! Path to image: " << filePath;
+    qDebug() << "ImageProcessingService: Путь к файлу получен! Path to image: " << filePath << "Передаю его в ProcessManager.";
+    emit imagePreProcessingRequestedToProcessManager(filePath);
 
 }

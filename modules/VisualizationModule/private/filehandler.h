@@ -76,7 +76,7 @@ signals:
 
     //  Создан для отправки в VisualizationService
     //  Вызываем его через emit, когда user нажимает кнопку 'SrartPreprocessing'
-    void requestPreprocessingToVisualizationService(const QString &filePath);
+    void imagePreProcessingRequested(const QString &filePath);
 
 
 private:

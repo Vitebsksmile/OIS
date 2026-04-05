@@ -62,13 +62,15 @@ void VisualizationService::onProcessingError(const QUrl &filePath, const QString
 
 
 //  Слушает сигнал из FileHandler о старте предобработки
-void VisualizationService::PreprocessingRequestedFromTheFileHandler(const QString &filePath)
+void VisualizationService::onImagePreProcessingRequested(const QString &filePath)
 {
     if (!filePath.isEmpty())
     {
 
         qDebug() << "VisualizationService: The user started preprocessing. Path to image: " << filePath;
-        emit requestPreprocessing(filePath);
+
+        //  Отправляем в ImageProcessingModule
+        emit imagePreProcessingRequestedToImageProcessingModule(filePath);
 
     } else {
 

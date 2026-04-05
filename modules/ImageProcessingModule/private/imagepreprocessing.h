@@ -2,17 +2,21 @@
 #define IMAGEPREPROCESSING_H
 
 
+#include <QObject>
 #include <QString>
 #include <QDebug>
 #include <opencv2/opencv.hpp>
 
-class ImagePreProcessing
+class ImagePreProcessing : public QObject
 {
+
+    Q_OBJECT
+
 
 public:
 
     //  Конструктор сразу загружает изображение
-    explicit ImagePreProcessing(const QString &filePath);
+    explicit ImagePreProcessing();
 
     //  Деструктор
     ~ImagePreProcessing();
@@ -31,6 +35,12 @@ public:
     //  Получение результата
     cv::Mat getResult() const;
     bool isValid() const;
+
+
+public slots:
+
+    //  Слушает сигнал из ProcessManager
+    void onImagePreProcessingRequested(const QString &filePath);
 
 
 private:

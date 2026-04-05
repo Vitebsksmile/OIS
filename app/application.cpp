@@ -81,20 +81,20 @@ void Application::setupConnections()
 {
 
     //  Связь: VisualizationModule -> ImageProcessingModule
-    bool ok = connect(m_visualizationService.get(), &IVisualizationService::requestPreprocessing,
-            m_imageProcessingService.get(), &IImageProcessingService::onPreprocessingRequested);
+    bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequestedToImageProcessingModule,
+            m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequestedFromVisualizationModule);
 
     if (!ok) qDebug() << "Сбой наладки связи VisualizationModule -> ImageProcessingModule";
 
 
     //  Связи: ImageProcessingModule -> VisualizationModule
-    connect(m_imageProcessingService.get(), &IImageProcessingService::imageProcessed,
+    connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessed,
             m_visualizationService.get(), &IVisualizationService::onImageProcessed);
 
     if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
 
 
-    connect(m_imageProcessingService.get(), &IImageProcessingService::processingError,
+    connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingError,
             m_visualizationService.get(), &IVisualizationService::onProcessingError);
 
     if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
