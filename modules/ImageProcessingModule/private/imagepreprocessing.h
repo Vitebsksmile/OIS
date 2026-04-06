@@ -2,25 +2,19 @@
 #define IMAGEPREPROCESSING_H
 
 
-#include <QObject>
 #include <QString>
+#include <memory>
 #include <opencv2/opencv.hpp>
 
-//class ProcessManager;
 
-class ImagePreProcessing : public QObject
+class ImagePreProcessing
 {
-
-    Q_OBJECT
-
 
 public:
 
-    //  Конструктор сразу загружает изображение
-    explicit ImagePreProcessing(QObject *parent = nullptr);
+    explicit ImagePreProcessing();
 
-    //  Деструктор
-    ~ImagePreProcessing() override;
+    ~ImagePreProcessing();
 
     //  Ручной сброс ресурсов
     void release();
@@ -30,10 +24,10 @@ public:
 
 
     /*  Geter
-     *  const QString &: Не копируем строку целиком при передаче в функцию. Передаем только адрес, но защищаете данные от изменений.
+     *  ???const QString &: Не копируем строку целиком при передаче в функцию. Передаем только адрес, но защищаете данные от изменений.
      *  const в конце геттера: Это помечает метод как «не меняющий состояние объекта». Это позволяет вызывать геттер у константных объектов класса.
     */
-    const QString &filePath() const { return QString::fromStdString(m_filePath); }
+    const QString filePath() const { return QString::fromStdString(m_filePath); }
 
 
     //  Методы обработки (возвращают ссылку на себя для цепочки вызовов)

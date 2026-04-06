@@ -3,8 +3,7 @@
 #include "imagepreprocessing.h"
 
 
-ImagePreProcessing::ImagePreProcessing(QObject *parent)
-    : QObject(parent)   //  Передаем родителя
+ImagePreProcessing::ImagePreProcessing()
 {
 
     qDebug() << "ImagePreprocessing: Started preProcessing...";
@@ -17,6 +16,21 @@ ImagePreProcessing::~ImagePreProcessing()
 
     release();
     qDebug() << "ImagePreprocessing: объект уничтожен";
+
+}
+
+
+void ImagePreProcessing::release()
+{
+
+    if (!m_image.empty())
+    {
+
+        m_image.release();  //  Явное освобождение матрицы OpenCV
+        qDebug() << "ImagePreprocessing: память матрицы освобождена";
+        m_filePath.clear();
+
+    }
 
 }
 
@@ -44,22 +58,10 @@ bool ImagePreProcessing::loadImage(const QString &filePath)
     }
 
 
+    qDebug() << "ImagePreProcessing: Путь к файлу получен! Path to image: " << filePath;
+
+
     return true;
-
-}
-
-
-void ImagePreProcessing::release()
-{
-
-    if (!m_image.empty())
-    {
-
-        m_image.release();  //  Явное освобождение матрицы OpenCV
-        qDebug() << "ImagePreprocessing: память матрицы освобождена";
-        m_filePath.clear();
-
-    }
 
 }
 

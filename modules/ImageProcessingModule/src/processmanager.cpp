@@ -2,7 +2,7 @@
 
 #include "processmanager.h"
 #include "IImageProcessingService.h"
-//#include "imagepreprocessing.h"
+#include "imagepreprocessing.h"
 
 
 ProcessManager::ProcessManager(IImageProcessingService *imageProcessingService, QObject *parent)
@@ -31,62 +31,15 @@ ProcessManager::ProcessManager(IImageProcessingService *imageProcessingService, 
 }
 
 
-void ProcessManager::setImagePreProcessing(ImagePreProcessing *preProcessing)
-{
-
-    //  Проверка: не пытаемся ли мы установить тот же самый объект
-    if (m_imagePreProcessing == preProcessing)
-    {
-        return;
-    }
-
-
-    //  Управление жизненным циклом: удаляем старый объект перед заменой
-    if (m_imagePreProcessing)
-    {
-
-        //  Безопасное удаление в стиле Qt
-        m_imagePreProcessing->deleteLater();
-
-    }
-
-
-    //  Устанавливаем новый объект даже если он nullptr,
-    //  что позволяет «очистить текущую задачу»
-    m_imagePreProcessing = preProcessing;
-
-
-    if (m_imagePreProcessing)
-    {
-        // Гарантируем, что менеджер будет родителем (для авто-удаления)
-        m_imagePreProcessing->setParent(this);
-        qDebug() << "ProcessManager: Принят новый объект под управление";
-    }
-
-}
-
-
 //  Создает объект ImagePreprocessing
 void ProcessManager::createPreProcessingObject()
 {
 
-    //  Сначала удаляем старый объект, если он был (защита от утечки)
-    if (m_imagePreProcessing)
-    {
-        deletePreProcessingObject();
-    }
+    //  Старый объект удалиться сам при вызове reset()
+    m_imagePreProcessing = std::make_unique<ImagePreProcessing>();
 
-
-    // Передаем 'this' (ProcessManager) как родителя — это "вторая линия защиты" памяти
-    ImagePreProcessing *preProcessing = new ImagePreProcessing(this);
-
-
-    //  Сохраняем указатель
-    setImagePreProcessing(preProcessing);
-
-
-    qDebug() << "ProcessManager: создал object (preProcessing) ImagePreProcessing по адресу: " << preProcessing;
-    qDebug() << "ProcessManager: создал object (imagePreProcessing()) ImagePreProcessing по адресу: " << imagePreProcessing();
+    qDebug() << "ProcessManager: создал объект ImagePreProcessing по адресу: "
+             << m_imagePreProcessing.get();
 
 }
 
@@ -94,23 +47,11 @@ void ProcessManager::createPreProcessingObject()
 void ProcessManager::deletePreProcessingObject()
 {
 
-    if (m_imagePreProcessing) {
-        // Используем deleteLater вместо delete для безопасности в Qt
-        m_imagePreProcessing->deleteLater();
+    // Просто сбрасываем указатель.
+    // Деструктор ~ImagePreProcessing() вызовется немедленно.
+    m_imagePreProcessing.reset();
 
-        // Обнуляем указатель СРАЗУ, чтобы никто не обратился к удаленному объекту
-        m_imagePreProcessing = nullptr;
-
-        qDebug() << "ProcessManager: Объект отправлен на удаление, указатель обнулен.";
-    }
-
-
-    //  Уничтожает объект
-    /*delete imagePreProcessing;
-
-    imagePreProcessing() = nullptr;
-
-    qDebug() << "WorkingRoom: Объект ImagePreprocessing уничтожен, память очищена.";*/
+    qDebug() << "ProcessManager: Объект ImagePreProcessing уничтожен вручную. Указатель m_imagePreProcessing = " << m_imagePreProcessing.get();
 
 }
 
@@ -123,12 +64,11 @@ void ProcessManager::onImagePreProcessingRequestedFromFacade(const QString &file
     createPreProcessingObject();
 
 
-    //  Возвращает true/false
-    //  Проверить через if()
-    //imagePreProcessing()->loadImage();
-
-
-    qDebug() << "ProcessManager: Путь к файлу получен! Path to image: " << filePath;
+    // Установка изображения в обработчик
+    if (imagePreProcessing()->loadImage(filePath))
+    {
+        qDebug() << "ProcessManager: Путь к файлу валидный и содержит изображение. Изображение установлено в обработчик! Path to image: " << filePath;
+    }
 
 
     //  Используем объект
@@ -146,10 +86,6 @@ void ProcessManager::usePreProcessingObject(ImagePreProcessing *imagePreProcessi
 
     //  To Facade for QML
     emit preProcessingStartNotification(true);
-
-
-    //  To ImagePreProcessing for Start
-    void ImagePreProcessingRequested(const QString &filePath);
 
 
     //  Используем метод обработки

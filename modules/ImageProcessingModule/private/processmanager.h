@@ -4,12 +4,11 @@
 
 #include <QObject>
 #include <QString>
-#include <QSharedPointer>
+#include <memory>
 
 #include "imagepreprocessing.h"
 
 
-//class ImagePreProcessing;
 class IImageProcessingService;
 
 class ProcessManager : public QObject
@@ -27,7 +26,7 @@ public:
 
 
     //  Geter
-    ImagePreProcessing* imagePreProcessing() const { return m_imagePreProcessing; }
+    ImagePreProcessing* imagePreProcessing() const { return m_imagePreProcessing.get(); }
 
 
 public slots:
@@ -39,18 +38,19 @@ public slots:
 signals:
 
     //  To Facade for QML about Start
-    void preProcessingStartNotification(bool);
+    void preProcessingStartNotification(bool success);
 
 
+    //  переделать!!!!!
     //  To ImagePreProcessing for Start
-    void ImagePreProcessingRequested(const QString &filePath);
+    //void ImagePreProcessingRequested(const QString &filePath);
 
 
 private:
 
     //  Создает объект ImagePreProcessing и управляет его жизненным циклом
     void createPreProcessingObject();
-//const QString &filePath
+
 
     //  Удаляет объект ImagePreProcessing
     void deletePreProcessingObject();
@@ -63,9 +63,10 @@ private:
     IImageProcessingService *m_imageProcessingService = nullptr;
 
 
-    //  Используем QPointer для обнуления, если объект удален.
-    //QPointer<ImagePreProcessing> m_imagePreProcessing = nullptr;
-    ImagePreProcessing *m_imagePreProcessing = nullptr;
+    // Умный указатель 'unique_ptr': сам удалит объект в деструкторе или при замене
+    // std::make_unique — самый безопасный способ создания объекта в куче.
+    // Если m_imagePreProcessing уже владел объектом, тот удалится АВТОМАТИЧЕСКИ.
+    std::unique_ptr<ImagePreProcessing> m_imagePreProcessing;
 
 };
 

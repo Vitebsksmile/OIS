@@ -5,6 +5,8 @@
 */
 
 
+#include <QDebug>   //  Позволяет выводить сообщения в консоль отладки
+
 #include "filehandler.h"
 
 

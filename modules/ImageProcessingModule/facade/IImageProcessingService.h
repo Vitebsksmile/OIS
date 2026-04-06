@@ -46,7 +46,7 @@ public slots:
 
     //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
     //  для уведомления User о начале предобработки (for QML about Start)
-    virtual void onPreProcessingStartNotification(bool) = 0;
+    virtual void onPreProcessingStartNotification(bool success) = 0;
 
 
 //  Секция событий, на которые могут подписываться другие части программы
