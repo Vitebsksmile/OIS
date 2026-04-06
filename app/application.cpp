@@ -66,7 +66,6 @@ bool Application::initialize()
     }
 
 
-    //if ()
     setupConnections();
 
 

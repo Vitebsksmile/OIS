@@ -10,69 +10,107 @@ ProcessManager::ProcessManager(IImageProcessingService *imageProcessingService, 
     m_imageProcessingService(imageProcessingService)
 {
 
-    qDebug() << "ProcessManager: объект processManager рождён. parent: " << parent;
-
-
-    connect(m_imageProcessingService, &IImageProcessingService::imagePreProcessingRequestedToProcessManager,
-            this, &ProcessManager::onImagePreProcessingRequestedFromFacade);
-
-
     if (!m_imageProcessingService)
     {
         qWarning() << "ProcessManager: processManager создан без ссылки на фасад";
     }
 
+
+    qDebug() << "ProcessManager: объект processManager рождён. parent: " << parent;
+
+
+    //  Слушает фасад для старта предобработки
+    connect(m_imageProcessingService, &IImageProcessingService::imagePreProcessingRequestedToProcessManager,
+            this, &ProcessManager::onImagePreProcessingRequestedFromFacade);
+
+
+    //  To Facade for QML about Start
+    connect(this, &ProcessManager::preProcessingStartNotification,
+            m_imageProcessingService, &IImageProcessingService::onPreProcessingStartNotification);
+
 }
 
 
-void ProcessManager::setImagePreProcessing(ImagePreProcessing *imagePreProcessing)
+void ProcessManager::setImagePreProcessing(ImagePreProcessing *preProcessing)
 {
 
-    if (imagePreProcessing)
+    //  Проверка: не пытаемся ли мы установить тот же самый объект
+    if (m_imagePreProcessing == preProcessing)
+    {
+        return;
+    }
+
+
+    //  Управление жизненным циклом: удаляем старый объект перед заменой
+    if (m_imagePreProcessing)
     {
 
-        m_imagePreProcessing = imagePreProcessing;
+        //  Безопасное удаление в стиле Qt
+        m_imagePreProcessing->deleteLater();
 
-    }   //  Добавить обработку, если imagePreProcessing = nullptr
+    }
+
+
+    //  Устанавливаем новый объект даже если он nullptr,
+    //  что позволяет «очистить текущую задачу»
+    m_imagePreProcessing = preProcessing;
+
+
+    if (m_imagePreProcessing)
+    {
+        // Гарантируем, что менеджер будет родителем (для авто-удаления)
+        m_imagePreProcessing->setParent(this);
+        qDebug() << "ProcessManager: Принят новый объект под управление";
+    }
 
 }
 
 
-ImagePreProcessing* ProcessManager::getImagePreProcessing()
+//  Создает объект ImagePreprocessing
+void ProcessManager::createPreProcessingObject()
 {
 
-    return m_imagePreProcessing;
+    //  Сначала удаляем старый объект, если он был (защита от утечки)
+    if (m_imagePreProcessing)
+    {
+        deletePreProcessingObject();
+    }
+
+
+    // Передаем 'this' (ProcessManager) как родителя — это "вторая линия защиты" памяти
+    ImagePreProcessing *preProcessing = new ImagePreProcessing(this);
+
+
+    //  Сохраняем указатель
+    setImagePreProcessing(preProcessing);
+
+
+    qDebug() << "ProcessManager: создал object (preProcessing) ImagePreProcessing по адресу: " << preProcessing;
+    qDebug() << "ProcessManager: создал object (imagePreProcessing()) ImagePreProcessing по адресу: " << imagePreProcessing();
 
 }
 
 
-//  Создает объект ImagePreprocessing и связывает его с фасадом
-void ProcessManager::creatPreProcessingObject(const QString &filePath)
+void ProcessManager::deletePreProcessingObject()
 {
 
-    //  Создает объект в куче
-    ImagePreProcessing *imagePreProcessing = new ImagePreProcessing();
+    if (m_imagePreProcessing) {
+        // Используем deleteLater вместо delete для безопасности в Qt
+        m_imagePreProcessing->deleteLater();
 
+        // Обнуляем указатель СРАЗУ, чтобы никто не обратился к удаленному объекту
+        m_imagePreProcessing = nullptr;
 
-    setImagePreProcessing(imagePreProcessing);
-
-    qDebug() << "ProcessManager: создал object: " << imagePreProcessing;
-
-
-    //  Связь: (поменять на ProcessManager)->imagePreProcessing -> imageProcessingService
-    /*connect(m_imageProcessingService, &IImageProcessingService::imagePreProcessingRequested,
-            m_imagePreProcessing, &ImagePreProcessing::onImagePreProcessingRequested);*/
-
-
-    usePreProcessingObject(imagePreProcessing);
+        qDebug() << "ProcessManager: Объект отправлен на удаление, указатель обнулен.";
+    }
 
 
     //  Уничтожает объект
-    delete imagePreProcessing;
+    /*delete imagePreProcessing;
 
-    imagePreProcessing = nullptr;
+    imagePreProcessing() = nullptr;
 
-    qDebug() << "WorkingRoom: Объект ImagePreprocessing уничтожен, память очищена.";
+    qDebug() << "WorkingRoom: Объект ImagePreprocessing уничтожен, память очищена.";*/
 
 }
 
@@ -81,7 +119,24 @@ void ProcessManager::creatPreProcessingObject(const QString &filePath)
 void ProcessManager::onImagePreProcessingRequestedFromFacade(const QString &filePath)
 {
 
+    //  Создание объекта ImagePreProcessing
+    createPreProcessingObject();
+
+
+    //  Возвращает true/false
+    //  Проверить через if()
+    //imagePreProcessing()->loadImage();
+
+
     qDebug() << "ProcessManager: Путь к файлу получен! Path to image: " << filePath;
+
+
+    //  Используем объект
+    usePreProcessingObject(imagePreProcessing());
+
+
+    //  Удаляем объект
+    deletePreProcessingObject();
 
 }
 
@@ -89,7 +144,12 @@ void ProcessManager::onImagePreProcessingRequestedFromFacade(const QString &file
 void ProcessManager::usePreProcessingObject(ImagePreProcessing *imagePreProcessing)
 {
 
-    qDebug() << "WorkingRoom: Начинаю обработку...";
+    //  To Facade for QML
+    emit preProcessingStartNotification(true);
+
+
+    //  To ImagePreProcessing for Start
+    void ImagePreProcessingRequested(const QString &filePath);
 
 
     //  Используем метод обработки

@@ -1,21 +1,13 @@
+#include <QDebug>
+
 #include "imagepreprocessing.h"
 
-ImagePreProcessing::ImagePreProcessing()
+
+ImagePreProcessing::ImagePreProcessing(QObject *parent)
+    : QObject(parent)   //  Передаем родителя
 {
 
-    //  Перенести в какой-нибудь метод
-    //  Преобразуем путь Qt в стандартную строку для OpenCV
-    //std::string path = filePath.toStdString();
-    //m_image = cv::imread(path);
-
-    qDebug() << "ImagePreprocessing: объект рожден";
-
-    /*if (m_image.empty())
-    {
-
-        qWarning() << "Не удалось загрузить изображение по пути: " << filePath;
-
-    }*/
+    qDebug() << "ImagePreprocessing: Started preProcessing...";
 
 }
 
@@ -29,6 +21,34 @@ ImagePreProcessing::~ImagePreProcessing()
 }
 
 
+bool ImagePreProcessing::loadImage(const QString &filePath)
+{
+
+    //  Проверяем на пустую строку и преобразуем путь Qt в стандартную строку для OpenCV
+    if (filePath.isEmpty()) return false;
+
+
+    m_filePath = filePath.toStdString();
+
+
+    m_image = cv::imread(m_filePath);
+
+
+    if (m_image.empty())
+    {
+
+        qWarning() << "Не удалось загрузить изображение по пути: " << filePath;
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
 void ImagePreProcessing::release()
 {
 
@@ -37,6 +57,7 @@ void ImagePreProcessing::release()
 
         m_image.release();  //  Явное освобождение матрицы OpenCV
         qDebug() << "ImagePreprocessing: память матрицы освобождена";
+        m_filePath.clear();
 
     }
 
@@ -84,6 +105,14 @@ ImagePreProcessing& ImagePreProcessing::toRGB()
 
     }
 
+    if (!m_image.empty() && m_image.channels() == 1)
+    {
+
+        //  OpenCV читает BGR, нейронки часто ждут RGB
+        cv::cvtColor(m_image, m_image, cv::COLOR_GRAY2RGB);
+
+    }
+
     return *this;
 
 }
@@ -112,7 +141,7 @@ ImagePreProcessing& ImagePreProcessing::normalize(float alpha, float beta)
 ImagePreProcessing& ImagePreProcessing::gaussianBlur(int kernelSize)
 {
 
-    if (!m_image.empty())
+    if (!m_image.empty() && !(kernelSize % 2))
     {
 
         cv::GaussianBlur(m_image, m_image, cv::Size(kernelSize, kernelSize), 0);
@@ -122,24 +151,3 @@ ImagePreProcessing& ImagePreProcessing::gaussianBlur(int kernelSize)
     return *this;
 
 }
-
-
-cv::Mat ImagePreProcessing::getResult() const
-{
-
-    return m_image;
-
-}
-
-
-bool ImagePreProcessing::isValid() const
-{
-
-    return !m_image.empty();
-
-}
-
-
-//  Слушает сигнал из ProcessManager
-void ImagePreProcessing::onImagePreProcessingRequested(const QString &filePath)
-{}

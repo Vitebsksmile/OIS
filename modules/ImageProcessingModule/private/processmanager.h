@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QSharedPointer>
 
 #include "imagepreprocessing.h"
 
@@ -22,14 +23,11 @@ public:
     explicit ProcessManager(IImageProcessingService *imageProcessingService, QObject *parent = nullptr);
 
 
-    void setImagePreProcessing(ImagePreProcessing *imagePreProcessing);
+    void setImagePreProcessing(ImagePreProcessing *preProcessing);
 
 
-    ImagePreProcessing* getImagePreProcessing();
-
-
-    //  Создает объект ImagePreprocessing и связывает его с фасадом
-    void creatPreProcessingObject(const QString &filePath);
+    //  Geter
+    ImagePreProcessing* imagePreProcessing() const { return m_imagePreProcessing; }
 
 
 public slots:
@@ -38,13 +36,35 @@ public slots:
     void onImagePreProcessingRequestedFromFacade(const QString &filePath);
 
 
+signals:
+
+    //  To Facade for QML about Start
+    void preProcessingStartNotification(bool);
+
+
+    //  To ImagePreProcessing for Start
+    void ImagePreProcessingRequested(const QString &filePath);
+
+
 private:
+
+    //  Создает объект ImagePreProcessing и управляет его жизненным циклом
+    void createPreProcessingObject();
+//const QString &filePath
+
+    //  Удаляет объект ImagePreProcessing
+    void deletePreProcessingObject();
+
 
     //  Метод использования методов обработки (по возможности сделать принимающим разное к-во аргументов)
     void usePreProcessingObject(ImagePreProcessing *ImagePreProcessing);
 
 
     IImageProcessingService *m_imageProcessingService = nullptr;
+
+
+    //  Используем QPointer для обнуления, если объект удален.
+    //QPointer<ImagePreProcessing> m_imagePreProcessing = nullptr;
     ImagePreProcessing *m_imagePreProcessing = nullptr;
 
 };

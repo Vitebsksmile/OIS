@@ -43,6 +43,11 @@ public slots:
     void onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath) override;
 
 
+    //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+    //  для уведомления User о начале предобработки (for QML about Start)
+    void onPreProcessingStartNotification(bool) override;
+
+
 signals:
 
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!

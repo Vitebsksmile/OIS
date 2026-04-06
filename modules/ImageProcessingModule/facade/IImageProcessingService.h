@@ -44,12 +44,17 @@ public slots:
     virtual void onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath) = 0;
 
 
+    //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+    //  для уведомления User о начале предобработки (for QML about Start)
+    virtual void onPreProcessingStartNotification(bool) = 0;
+
+
 //  Секция событий, на которые могут подписываться другие части программы
 //  Сигналы для отправки результатов в VisualizationModule
 signals:
 
     //  Сигнал для ProcessManager -> создай imagePreProcessing и свяжи меня с ним
-    void imagePreProcessingRequestedToProcessManager(const QString &filePath);  //  Добавить аргументы "тип" предобработки
+    void imagePreProcessingRequestedToProcessManager(const QString &filePath);  //  Добавить параметры "тип" предобработки
 
 
     //  Сигнал, который должен быть отправлен (emitted) после завершения работы

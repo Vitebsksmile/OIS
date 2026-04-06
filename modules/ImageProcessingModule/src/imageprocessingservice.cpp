@@ -45,3 +45,8 @@ void ImageProcessingService::onImagePreProcessingRequestedFromVisualizationModul
     emit imagePreProcessingRequestedToProcessManager(filePath);
 
 }
+
+
+//  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+//  для уведомления User о начале предобработки (for QML about Start)
+void onPreProcessingStartNotification(bool) {}
