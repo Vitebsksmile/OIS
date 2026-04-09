@@ -15,6 +15,7 @@
 #include <QThread>
 
 #include "imageprocessingservice.h"
+#include "imagepreprocessing.h"
 #include "processmanager.h"
 
 
@@ -28,7 +29,7 @@ ImageProcessingService::ImageProcessingService(QObject *parent)
 
 //  Слот для получения пути из VisualizationModule
 //  Запуск обработки
-void ImageProcessingService::onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath)
+void ImageProcessingService::onImagePreProcessingRequested(const QString &filePath)
 {
 
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
@@ -42,7 +43,7 @@ void ImageProcessingService::onImagePreProcessingRequestedFromVisualizationModul
     //  Запоминаем путь, чтобы потом передать его в сигнале завершения
     m_currentFilePath = filePath;
     qDebug() << "ImageProcessingService: Путь к файлу получен! Path to image: " << filePath << "Передаю его в ProcessManager.";
-    emit imagePreProcessingRequestedToProcessManager(filePath);
+    emit imagePreProcessingRequested(filePath);
 
 }
 
@@ -50,3 +51,14 @@ void ImageProcessingService::onImagePreProcessingRequestedFromVisualizationModul
 //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
 //  для уведомления User о начале предобработки (for QML about Start)
 void ImageProcessingService::onPreProcessingStartNotification(bool success) {}
+
+
+//  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+//  для уведомления о завершении предобработки (for QML about Finished)
+void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePath)
+{
+
+    imagePreProcessed("file:///" + resultFilePath, true);
+    qDebug() << "ImageProcessingService: Сигнал о завершении предобработки отправлен. resultFilePath: " << resultFilePath;
+
+}

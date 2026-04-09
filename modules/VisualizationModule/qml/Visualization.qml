@@ -145,12 +145,12 @@ ApplicationWindow {
 
                     id: sourceImageViewer
 
-                    //myFileHandler: fileHandler
-
                     //  Настройки размеров для viewSplitContainer
                     SplitView.preferredWidth: viewSplitContainer.width / 2  //  половина ширины
                     //  Минимальный порог сжатия
                     SplitView.minimumWidth: 100
+
+                    handler.directionOut: true
 
                 }
 
@@ -166,6 +166,8 @@ ApplicationWindow {
 
                     backgroundColor: "black"
                     labelText: "!!!!"
+
+                    handler.directionOut: false
 
                 }
 

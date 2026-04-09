@@ -22,17 +22,28 @@ FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationServi
 void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
 {
 
-    if (fileHandler)
+    if (fileHandler && !m_fileHandlers.contains(fileHandler))
     {
 
         qDebug() << "FileHandlerManager: получил object: " << fileHandler;
+        qDebug() << "FileHandlerManager: fileHandler.directionOut: " << fileHandler->directionOut();
 
-        m_fileHandler = fileHandler;
+        m_fileHandlers.append(fileHandler);
 
-        //  Связь: fileHandler -> visualizationService
-        connect(m_fileHandler, &FileHandler::imagePreProcessingRequested,
-                m_visualizationService, &IVisualizationService::onImagePreProcessingRequested);
+        if (fileHandler->directionOut())
+        {
 
+            //  Связь: fileHandler -> visualizationService
+            connect(fileHandler, &FileHandler::imagePreProcessingRequested,
+                    m_visualizationService, &IVisualizationService::onImagePreProcessingRequested);
+
+        } else {
+
+            //  Связь: visualizationService -> fileHandler
+            connect(m_visualizationService, &IVisualizationService::imagePreProcessingFinished,
+                    fileHandler, &FileHandler::onImagePreProcessingFinished);
+
+        }
 
     }
 

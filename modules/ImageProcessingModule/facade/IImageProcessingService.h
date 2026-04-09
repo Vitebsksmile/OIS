@@ -41,7 +41,7 @@ public slots:
 
     //  Слот для получения пути из VisualizationModule
     //  Принимает путь к файлу для обработки
-    virtual void onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath) = 0;
+    virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
 
 
     //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
@@ -49,22 +49,32 @@ public slots:
     virtual void onPreProcessingStartNotification(bool success) = 0;
 
 
+    //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+    //  для уведомления о завершении предобработки (for QML about Finished)
+    virtual void onPreProcessingFinished(const QString &resultFilePath) = 0;
+
+
 //  Секция событий, на которые могут подписываться другие части программы
 //  Сигналы для отправки результатов в VisualizationModule
 signals:
 
-    //  Сигнал для ProcessManager -> создай imagePreProcessing и свяжи меня с ним
-    void imagePreProcessingRequestedToProcessManager(const QString &filePath);  //  Добавить параметры "тип" предобработки
+    //  Сигнал для ProcessManager -> создай imagePreProcessing
+    void imagePreProcessingRequested(const QString &filePath);  //  Добавить параметры "тип" предобработки
+
+
+    //  To Facade for QML about Start
+    void preProcessingStartNotification(bool success);
 
 
     //  Сигнал, который должен быть отправлен (emitted) после завершения работы
     //  Сообщает путь к файлу и результат (true — успех, false — провал)
-    void imagePreProcessed(const QUrl &filePath, bool success);
+    //  (for QML about Finished)
+    void imagePreProcessed(const QString &filePath, bool success);
 
 
     //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
     //  например, «файл не найден» или «недостаточно памяти»
-    void preProcessingError(const QUrl &filePath, const QString &error);
+    void preProcessingError(const QString &filePath, const QString &error);
 
 };
 

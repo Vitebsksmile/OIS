@@ -37,11 +37,21 @@ class FileHandler : public QObject
     //  интерфейсу (Qml): «Данные изменились, обнови картинку!»
 
 
+    Q_PROPERTY(bool directionOut READ directionOut WRITE setDirectionOut NOTIFY directionOutChanged)
+
+
 public:
 
     //  Конструктор. explicit запрещает неявное преобразование типов.
     //  parent = nullptr позволяет объекту существовать без родителя.
     explicit FileHandler(QObject *parent = nullptr);
+
+
+    bool directionOut() const { return m_directionOut; }
+
+
+    //  setter
+    Q_INVOKABLE void setDirectionOut(bool out);
 
 
     //  Метод для выбора файла. Вызываем из qml
@@ -65,8 +75,16 @@ public:
     QUrl currentImagePath() const;
 
 
+public slots:
+
+    void onImagePreProcessingFinished(const QString &filePath);
+
+
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
+
+    void directionOutChanged();
+
 
     //  Сигнал: создан для отправки в Qml
     //  Вызываем его через emit, когда m_currentImagePath меняется
@@ -79,6 +97,9 @@ signals:
 
 
 private:
+
+    bool m_directionOut = false;
+
 
     //  Внутренняя переменная, где реально хранится путь к файлу
     QUrl m_currentImagePath;

@@ -4,6 +4,8 @@
 
 #include <QObject>  //  Базовый класс для всех объектов Qt (нужен для сигналов и слотов)
 #include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
+#include <QList>
+#include <QPointer>
 
 #include <IVisualizationService.h>
 #include <filehandler.h>
@@ -27,7 +29,7 @@ private:
 
     IVisualizationService *m_visualizationService = nullptr;
 
-    FileHandler *m_fileHandler = nullptr;
+    QList<QPointer<FileHandler>> m_fileHandlers;
 };
 
 #endif // FILEHANDLERMANAGER_H

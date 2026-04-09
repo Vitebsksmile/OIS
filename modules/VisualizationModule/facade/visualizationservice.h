@@ -31,16 +31,20 @@ public:
 //  Реализация интерфейса IVisualizationService
 public slots:
 
+    //  Слушает сигнал из FileHandler о старте предобработки
+    void onImagePreProcessingRequested(const QString &filePath) override;
+
+
+    //  From IMageProcessingModule for QML about Start
+    void onPreProcessingStartNotification(bool success) override;
+
+
     //  в случае успеха обработки
-    void onImageProcessed(const QUrl &url, bool success) override;
+    void onImageProcessed(const QString &filePath, bool success) override;
 
 
     //  в случае ошибки обработки
-    void onProcessingError(const QUrl &url, const QString &error) override;
-
-
-    //  Слушает сигнал из FileHandler о старте предобработки
-    void onImagePreProcessingRequested(const QString &filePath) override;
+    void onProcessingError(const QString &filePath, const QString &error) override;
 
 
 //  Мы не пишем их реализации, Qt сделает это за нас

@@ -19,13 +19,12 @@ Rectangle {
     //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'
     FileHandler {
         id: fileHandler
+        directionOut: true
 
 
         Component.onCompleted: {
             //      Передаем объект в C++
-            FileHandlerManager.registerFileHandler(fileHandler)
-            //console.log("Проверка синглтона: ", FileHandlerManager)
-            //console.log("Тип метода: ", typeof FileHandlerManager.registerFileHandler)
+            FileHandlerManager.registerFileHandler(fileHandler);
         }
     }
 

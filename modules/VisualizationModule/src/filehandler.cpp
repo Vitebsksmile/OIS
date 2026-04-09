@@ -17,6 +17,22 @@ FileHandler::FileHandler(QObject *parent)
 }
 
 
+//  Установка направления (чтение/отправка)
+void FileHandler::setDirectionOut(bool out)
+{
+
+    if (m_directionOut != out)
+    {
+
+        m_directionOut = out;
+
+        emit directionOutChanged();
+
+    }
+
+}
+
+
 //  Метод для выбора изображения (вызывается из QML при выборе файла)
 void FileHandler::selectImage(QUrl url)
 {
@@ -108,5 +124,16 @@ QUrl FileHandler::currentImagePath() const
 {
 
     return m_currentImagePath;
+
+}
+
+
+void FileHandler::onImagePreProcessingFinished(const QString &filePath)
+{
+
+    qDebug() << "FileHandler: Путь к предобработанному файлу получен. filePath: " << filePath;
+
+    //???  уведомляем qml, что пора перерисовать Image
+    selectImage(filePath);
 
 }

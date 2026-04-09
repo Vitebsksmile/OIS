@@ -47,24 +47,32 @@ public:
 //  из ImageProcessingModule
 public slots:
 
-    //  в случае успеха обработки
-    virtual void onImageProcessed(const QUrl &filePath, bool success) = 0;
-
-
-    //  в случае ошибки обработки
-    virtual void onProcessingError(const QUrl &filePath, const QString &error) = 0;
-
 
     //  Слушает сигнал из FileHandler о старте предобработки
     virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
+
+
+    //  From IMageProcessingModule for QML about Start
+    virtual void onPreProcessingStartNotification(bool success) = 0;
+
+
+    //  в случае успеха обработки
+    virtual void onImageProcessed(const QString &filePath, bool success) = 0;
+
+
+    //  в случае ошибки обработки
+    virtual void onProcessingError(const QString &filePath, const QString &error) = 0;
 
 
 signals:
 
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
-    void imagePreProcessingRequestedToImageProcessingModule(const QString &filePath);
-//requestPreprocessing
+    void imagePreProcessingRequested(const QString &filePath);
+
+
+    //  To FileHandler about finished
+    void imagePreProcessingFinished(const QString &filePath);
 
 };
 

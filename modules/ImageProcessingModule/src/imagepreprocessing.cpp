@@ -1,4 +1,7 @@
 #include <QDebug>
+#include <QStandardPaths>
+#include <QDir>
+#include <QDateTime>
 
 #include "imagepreprocessing.h"
 
@@ -62,6 +65,64 @@ bool ImagePreProcessing::loadImage(const QString &filePath)
 
 
     return true;
+
+}
+
+
+bool ImagePreProcessing::save()
+{
+
+    if (m_image.empty()) return "";
+
+
+    // 1. Получаем путь к папке данных приложения (например, C:/Users/Name/AppData/Roaming/YourApp)
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    // 2. Создаем директорию, если её еще нет
+    QDir dir(appDataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    //  3. Формируем полный путь к файлу
+    // Создаем имя на основе времени
+    QString finalName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".jpg";
+
+    QString fullPath = dir.absoluteFilePath(finalName);
+
+
+    //  4. Подготовка матрицы OpenCV к записи (конвертация float -> 8bit)
+    cv::Mat toSave;
+
+    if (m_image.depth() == CV_32F)
+    {
+
+        //  Внимание: normalize делает изображение CV_32F (0...1),
+        //  imwrite ожидает 0...255 для сохранения в JPG/PNG.
+        //  Если была нормализация, то возвращаем в 0...255 для записи в файл
+        m_image.convertTo(toSave, CV_8U, 255.0);
+
+    } else {
+
+        toSave = m_image;
+
+    }
+
+
+    //  5. Запись на диск
+    if (cv::imwrite(fullPath.toStdString(), toSave))
+    {
+
+        m_finalFilePath = fullPath;
+        qDebug() << "Изображение сохранено в файлы приложения: " << fullPath;
+        return true;
+
+    } else {
+
+        qCritical() << "Ошибка записи в: " << fullPath;
+        return false;
+
+    }
 
 }
 
@@ -143,7 +204,7 @@ ImagePreProcessing& ImagePreProcessing::normalize(float alpha, float beta)
 ImagePreProcessing& ImagePreProcessing::gaussianBlur(int kernelSize)
 {
 
-    if (!m_image.empty() && !(kernelSize % 2))
+    if (!m_image.empty() && kernelSize % 2)
     {
 
         cv::GaussianBlur(m_image, m_image, cv::Size(kernelSize, kernelSize), 0);

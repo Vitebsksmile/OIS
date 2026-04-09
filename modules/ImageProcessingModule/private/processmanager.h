@@ -32,7 +32,7 @@ public:
 public slots:
 
     //  Слушает фасад для старта предобработки
-    void onImagePreProcessingRequestedFromFacade(const QString &filePath);
+    void onImagePreProcessingRequested(const QString &filePath);
 
 
 signals:
@@ -41,9 +41,8 @@ signals:
     void preProcessingStartNotification(bool success);
 
 
-    //  переделать!!!!!
-    //  To ImagePreProcessing for Start
-    //void ImagePreProcessingRequested(const QString &filePath);
+    //  To Facade for Finished
+    void preProcessingFinished(const QString &resultFilePath);
 
 
 private:

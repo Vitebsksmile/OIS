@@ -80,8 +80,8 @@ void Application::setupConnections()
 {
 
     //  Связь: VisualizationModule -> ImageProcessingModule
-    bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequestedToImageProcessingModule,
-            m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequestedFromVisualizationModule);
+    bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequested,
+            m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequested);
 
     if (!ok) qDebug() << "Сбой наладки связи VisualizationModule -> ImageProcessingModule";
 

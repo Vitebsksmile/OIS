@@ -20,13 +20,18 @@ ProcessManager::ProcessManager(IImageProcessingService *imageProcessingService, 
 
 
     //  Слушает фасад для старта предобработки
-    connect(m_imageProcessingService, &IImageProcessingService::imagePreProcessingRequestedToProcessManager,
-            this, &ProcessManager::onImagePreProcessingRequestedFromFacade);
+    connect(m_imageProcessingService, &IImageProcessingService::imagePreProcessingRequested,
+            this, &ProcessManager::onImagePreProcessingRequested);
 
 
     //  To Facade for QML about Start
     connect(this, &ProcessManager::preProcessingStartNotification,
             m_imageProcessingService, &IImageProcessingService::onPreProcessingStartNotification);
+
+
+    //  To Facade fot QML about Finished
+    connect(this, &ProcessManager::preProcessingFinished,
+            m_imageProcessingService, &IImageProcessingService::onPreProcessingFinished);
 
 }
 
@@ -57,7 +62,7 @@ void ProcessManager::deletePreProcessingObject()
 
 
 //  Слушает фасад для старта предобработки
-void ProcessManager::onImagePreProcessingRequestedFromFacade(const QString &filePath)
+void ProcessManager::onImagePreProcessingRequested(const QString &filePath)
 {
 
     //  Создание объекта ImagePreProcessing
@@ -81,7 +86,7 @@ void ProcessManager::onImagePreProcessingRequestedFromFacade(const QString &file
 }
 
 
-void ProcessManager::usePreProcessingObject(ImagePreProcessing *imagePreProcessing)
+void ProcessManager::usePreProcessingObject(ImagePreProcessing *preProcessing)
 {
 
     //  To Facade for QML
@@ -89,12 +94,17 @@ void ProcessManager::usePreProcessingObject(ImagePreProcessing *imagePreProcessi
 
 
     //  Используем метод обработки
-    imagePreProcessing->toGray();
+    preProcessing->toGray();
+    preProcessing->gaussianBlur(333);
 
 
-    //  Сохраняем результат обработки
-    cv::Mat finalMat = imagePreProcessing->getResult();
+    qDebug() << "WorkingRoom: Обработка завершена. Каналов: " << (preProcessing->getResult()).channels();
 
-    qDebug() << "WorkingRoom: Обработка завершена. Каналов: " << finalMat.channels();
+
+    //  Сохранение результатов на диск
+    if (preProcessing->save())
+    {
+        preProcessingFinished(preProcessing->getFinalFilePath());
+    }
 
 }

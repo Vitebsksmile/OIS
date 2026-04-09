@@ -40,13 +40,17 @@ public slots:
 
     //  Слот для получения пути из VisualizationModule
     //  Слово override подтверждает переопределение
-    void onImagePreProcessingRequestedFromVisualizationModule(const QString &filePath) override;
+    void onImagePreProcessingRequested(const QString &filePath) override;
 
 
     //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
     //  для уведомления User о начале предобработки (for QML about Start)
     void onPreProcessingStartNotification(bool success) override;
 
+
+    //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+    //  для уведомления о завершении предобработки (for QML about Finished)
+    void onPreProcessingFinished(const QString &resultFilePath) override;
 
 signals:
 
