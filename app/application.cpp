@@ -7,9 +7,15 @@
 #include "imageprocessingservice.h"
 
 
-Application::Application(QObject *parent)
+/*Application::Application(QObject *parent)
     : QObject(parent)
 {
+}*/
+Application::Application(int &argc, char **argv, QObject *parent)
+    : QObject(parent)
+    , m_app(new QGuiApplication(argc, argv))
+{
+    qDebug() << "Application.cpp: Создали QGuiApplication";
 }
 
 
@@ -19,7 +25,7 @@ Application::~Application()
     //  Очистка в обратном порядке
     m_engine.reset();
 
-    m_app.reset();
+    //???m_app.reset();
 
 }
 
@@ -101,20 +107,42 @@ void Application::setupConnections()
 }
 
 
-int Application::run(int argc, char *argv[])
+//new   int Application::run(int argc, char *argv[])
+//new
+int Application::run()
 {
 
     qDebug() << "Starting Application...";
 
 
+    //new  2. Создаем Qml engine
+    m_engine.reset(new QQmlApplicationEngine());
+
+
+    //new  4. Загружаем главный Qml файл
+    //  Запускаем не из физического расположения файла, а из логического расположения (см. CMAKE VisualizationModule)
+    const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
+
+    //new
+    m_engine->load(url);  //   загружаем интерфейс
+
+    //new
+    if (m_engine->rootObjects().isEmpty())
+    {
+        qCritical() << "Failed to load QML file";
+        return -1;
+    }
+
+
     //  1. Сохраняем argc в член класса, чтобы ссылка была валидна все время жизни a_app
-    m_argc = argc;
+    //new   m_argc = argc;
 
 
     //  1. Создаем Qt приложение
-    m_app.reset(new QGuiApplication(argc, argv));
+    //new   m_app.reset(new QGuiApplication(argc, argv));
+    //qDebug() << "Application.cpp: Создали QGuiApplication";
 
-
+/*new
     //  2. Создаем Qml engine
     m_engine.reset(new QQmlApplicationEngine());
 
@@ -127,20 +155,19 @@ int Application::run(int argc, char *argv[])
     m_engine->load(url);  //   загружаем интерфейс
 
 
-    /*QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-                         if (!obj && url == objUrl)
-                             QCoreApplication::exit(-1);
-                     }, Qt::QueuedConnection);*/
-
-
     if (m_engine->rootObjects().isEmpty())
     {
         qCritical() << "Failed to load QML file";
         return -1;
     }
-
+*/
 
     return m_app->exec();
 
 }
+
+/*QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+                         if (!obj && url == objUrl)
+                             QCoreApplication::exit(-1);
+                     }, Qt::QueuedConnection);*/

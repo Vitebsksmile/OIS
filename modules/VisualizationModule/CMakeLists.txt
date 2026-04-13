@@ -29,9 +29,24 @@ set(MODULE_SOURCE_FILES
 
 set(MODULE_QML_FILES
     qml/Visualization.qml
+    qml/AppMenuBar.qml
+    qml/HomeView.qml
+    qml/Launcher.qml
+    qml/ImageProcessingMode.qml
     qml/ImageView.qml
     qml/SideBar.qml
     qml/SideBarButton.qml
+    qml/BlureWidget.qml
+    qml/CustomWidget.qml
+    qml/ModeIconButton.qml
+)
+
+
+set(MODULE_IMAGE_FILES
+    qrc/setCamcoder.svg
+    qrc/setCamera.svg
+    qrc/setCamera2.svg
+    qrc/setVideotape.svg
 )
 
 
@@ -63,6 +78,9 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     RESOURCE_PREFIX /qt/qml/
     QML_FILES
         ${MODULE_QML_FILES}
+
+    RESOURCES
+        ${MODULE_IMAGE_FILES}
 
     SOURCES
         ${MODULE_PUBLIC_FACADES}

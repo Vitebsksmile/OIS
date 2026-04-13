@@ -3,10 +3,13 @@
 
 #include <QAbstractListModel>
 #include <QStringList>
+#include <QtQmlIntegration/qqmlintegration.h>
 
 class MyModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_ELEMENT // Делаем доступным в QML как тип
+
 public:
     //  определим имена ролей QML
     enum roleNames

@@ -95,7 +95,7 @@ void ProcessManager::usePreProcessingObject(ImagePreProcessing *preProcessing)
 
     //  Используем метод обработки
     preProcessing->toGray();
-    preProcessing->gaussianBlur(333);
+    preProcessing->gaussianBlur(10);
 
 
     qDebug() << "WorkingRoom: Обработка завершена. Каналов: " << (preProcessing->getResult()).channels();

@@ -11,9 +11,10 @@ int main(int argc, char *argv[])
     //  Устанавливаем официальное имя приложения для системы
     QCoreApplication::setApplicationName(APP_NAME_STR);
     QCoreApplication::setOrganizationName("IS-23");
+    QCoreApplication::setApplicationVersion(APP_VERSION);
 
     // Создаем и инициализируем приложение
-    Application app;
+    Application app(argc, argv);
 
 
     if (!app.initialize()) {
@@ -23,6 +24,8 @@ int main(int argc, char *argv[])
 
 
     // Запускаем приложение
-    return app.run(argc, argv);
+    //new   return app.run(argc, argv);
+    //new
+    return app.run();
 
 }

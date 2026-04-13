@@ -31,7 +31,9 @@ class Application : public QObject
 
 public:
 
-    explicit Application(QObject *parent = nullptr);
+    //new   explicit Application(QObject *parent = nullptr);
+    //new
+    explicit Application(int &argc, char **argv, QObject *parent = nullptr);
     ~Application();
 
 
@@ -41,7 +43,9 @@ public:
 
 
     //  Запуск приложения
-    int run(int argc, char *argv[]);
+    //new   int run(int argc, char *argv[]);
+    //new
+    int run();
 
 
 private:
@@ -54,18 +58,18 @@ private:
     int m_argc;
 
 
+    QScopedPointer<QGuiApplication> m_app;
+
+
+    QScopedPointer<QQmlApplicationEngine> m_engine;
+
+
     //  Умный указатель на интерфейс IVisualizationModule
     QSharedPointer<IVisualizationService> m_visualizationService;
 
 
     //  Умный указатель на интерфейс IImageProcessingModule.
     QSharedPointer<IImageProcessingService> m_imageProcessingService;
-
-
-    QScopedPointer<QGuiApplication> m_app;
-
-
-    QScopedPointer<QQmlApplicationEngine> m_engine;
 
 };
 

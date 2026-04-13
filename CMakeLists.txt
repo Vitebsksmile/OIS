@@ -3,8 +3,12 @@
 cmake_minimum_required(VERSION 3.19)
 
 
+#   Создает переменную APP_NAME (используется для отображаемого названия приложения)
+set(APP_NAME "OIS by SHCHERBAKOV")
+
+
 #   Объявляет имя проекта (MyApp), его версию и используемый язык (C++)
-project(OIS VERSION 0.1 LANGUAGES CXX)
+project(OIS VERSION 0.0.1 LANGUAGES CXX)
 
 
 #   Устанавливает стандарт C++
@@ -17,6 +21,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #   ?????
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+
+#   Добавляем определения (флаги) компиляции для передачи препроцессорных
+#   макросов (#define) в C++ код прямо из CMake
+add_definitions(
+    -DAPP_NAME_STR="${APP_NAME}"
+    -DAPP_VERSION="${PROJECT_VERSION}"
+)
 
 
 #   Ищет базовый пакет Qt 6.5 Core (необходим для работы любых программ на Qt)
@@ -76,5 +88,6 @@ add_subdirectory(app)
 #   Создает "виртуальную" цель, чтобы файлы ниже отображались в дереве проекта в IDE
 add_custom_target(non-compiled-files SOURCES
     .gitignore      #   файл исключений Git
+    .gitattributes  #   Защита от изменений. заставит Git воспринимать перечисленные файлы как бинарный файл
     #README.md       #   описание проекта
 )

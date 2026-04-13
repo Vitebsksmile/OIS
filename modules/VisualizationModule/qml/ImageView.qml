@@ -9,9 +9,9 @@ Rectangle {
     id: root
 
     //  Экспортируем внутренние объекты наружу,
-    //  чтобы обращаться к ним как root.handler или root.popup
+    //  чтобы обращаться к ним как <id>.handler или <id>.popup
     property alias handler: fileHandler //      Текущий путь к изображению
-    property alias popup: statusPopup //      Всплывающее окно
+    property alias popup: statusPopup //      Всплывающее уведомление
     property alias backgroundColor: root.color //      Задать цвет снаружи
     property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику

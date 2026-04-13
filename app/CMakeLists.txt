@@ -3,10 +3,6 @@
 set(APP_TARGET OISApp)
 
 
-#   Создает переменную APP_NAME (используется для отображаемого названия приложения)
-set(APP_NAME "OIS by SHCHERBAKOV")
-
-
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
 qt_add_executable(${APP_TARGET}
     main.cpp
@@ -14,7 +10,7 @@ qt_add_executable(${APP_TARGET}
 )
 
 
-#   Добавляет определения (флаги) компиляции для передачи препроцессорных
+#   Добавляем определения (флаги) компиляции для передачи препроцессорных
 #   макросов (#define) в C++ код прямо из CMake
 target_compile_definitions(${APP_TARGET}
 
@@ -25,9 +21,6 @@ target_compile_definitions(${APP_TARGET}
         #   будет возможным использовать Hot Reload или QML Inspector.
         #   В финальной версии (Release) этого макроса не будет
         $<$<CONFIG:Debug>:QT_QML_DEBUG>
-
-        #   Передает переменную APP_NAME как строку в main.cpp
-        APP_NAME_STR="${APP_NAME}"
 )
 
 
