@@ -9,7 +9,7 @@ Rectangle {
     id: sideBarRoot
 
     //  Связи (мостики) к внешним ресурсам
-    property var targetHandler: null //  Текущий путь к изображению
+    property var targetHandler: null //  Текущий экземпляр FileHandler
     property var targetPopup: null //  Всплывающее окно
 
     color: Qt.rgba(44 / 255, 62 / 255, 80 / 255, 0.9) //  Midnight Blue
@@ -30,8 +30,10 @@ Rectangle {
 
             onClicked: {
 
-                globalDialog.mode = "open" //  Переключаем диалог в режим открытия
-                globalDialog.open() //  Показываем окно выбора
+                //globalDialog.mode = "open" //  Переключаем диалог в режим открытия
+                //globalDialog.open() //  Показываем окно выбора
+                imagePicker.mode = "open" //  Переключаем диалог в режим открытия
+                imagePicker.open() //  Показываем окно выбора
             }
         }
 
@@ -43,8 +45,8 @@ Rectangle {
 
             onClicked: {
 
-                globalDialog.mode = "save" //  Переключаем диалог в режим открытия
-                globalDialog.open() //  Показываем окно выбора
+                imagePicker.mode = "save" //  Переключаем диалог в режим сохранения
+                imagePicker.open() //  Показываем окно выбора
             }
         }
 
@@ -69,63 +71,14 @@ Rectangle {
     }
 
 
-    FileDialog {
+    ImagePickerDialog {
+        id: imagePicker
 
-        id: globalDialog
+        targetHandler: sideBarRoot.targetHandler
+        targetPopup: sideBarRoot.targetPopup
 
-        //  Кастомное св-во для переключения между "Открыть" и "Сохранить"
-        property string mode: "open"
-
-        //  Динамический заголовок в зависимости от режима
-        title: mode === "save" ? "Save image" : "Select image"
-
-        //  В Qt6 режим (Open/Save) задается через перечисление fileMode
-        fileMode: mode === "save" ? FileDialog.SaveFile : FileDialog.OpenFile
-
-        //  Начинаем обзор в системной папке "Изображения"
-        currentFolder: StandardPaths.writableLocation(
-                           StandardPaths.PicturesLocation)
-
-        //  Фильтр расширений файлов
-        nameFilters: ["Изображения (*.png *.jpg *.jpeg)"]
-
-        onAccepted: {
-
-            console.log("Выбран режим:", mode)
-            console.log("Путь к файлу:", selectedFile, "\n")
-
-            //  Логика открытия
-            if (mode === "open") {
-
-                //  вызываем метод у переданного Handler
-                if (sideBarRoot.targetHandler) {
-
-                    //  Передаем URL в C++, где сработает сигнал изменения пути
-                    sideBarRoot.targetHandler.selectImage(selectedFile)
-                }
-            }
-
-            //  Логика сохранения
-            if (mode === "save") {
-
-                //  Логика сохранения файла через C++
-                if (sideBarRoot.targetHandler && sideBarRoot.targetPopup) {
-
-                    //  Вызываем C++ метод копирования: из (текущий путь) в (путь из диалога)
-                    let success = sideBarRoot.targetHandler.saveImage(
-                            sideBarRoot.targetHandler.currentImagePath,
-                            selectedFile)
-
-                    //  Настраиваем Toast-уведомление в зависимости от результата
-                    sideBarRoot.targetPopup.message
-                            = success ? "Saved successfully!" : "Save error!"
-
-                    //  Показываем результат пользователю
-                    sideBarRoot.targetPopup.open()
-                }
-            }
-        }
     }
+
 
     function startPreprocessing() {
 

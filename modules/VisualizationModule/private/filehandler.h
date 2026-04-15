@@ -12,6 +12,7 @@
 #include <QObject>  //  Базовый класс для всех объектов Qt (нужен для сигналов и слотов)
 #include <QUrl>     //  Класс для работы с URL (удобен для QML, так как пути там — это URL)
 #include <QFile>    //  Класс для работы с файловой системой (чтение, запись, копирование)
+#include <QFileInfo>
 #include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
 
@@ -47,7 +48,15 @@ public:
     explicit FileHandler(QObject *parent = nullptr);
 
 
+    //  Геттер пути к файлу для свойства в Qml currentImagePath
+    QUrl currentImagePath() const;
+
+
     bool directionOut() const { return m_directionOut; }
+
+
+    //  Сетер пути к файлу. Вызываем из qml
+    void setCurrentImagePath(QUrl url);
 
 
     //  setter
@@ -71,12 +80,13 @@ public:
     Q_INVOKABLE QString getCleanPath(QUrl url);
 
 
-    //  Геттер для свойства в Qml currentImagePath
-    QUrl currentImagePath() const;
+    //  Метод возвращает размер файла в байтах
+    Q_INVOKABLE double getFileSize(const QUrl &url);
 
 
 public slots:
 
+    //  From IVisualizationService about finished
     void onImagePreProcessingFinished(const QString &filePath);
 
 

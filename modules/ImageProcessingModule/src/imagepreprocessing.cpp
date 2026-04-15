@@ -41,27 +41,37 @@ void ImagePreProcessing::release()
 bool ImagePreProcessing::loadImage(const QString &filePath)
 {
 
-    //  Проверяем на пустую строку и преобразуем путь Qt в стандартную строку для OpenCV
-    if (filePath.isEmpty()) return false;
+    //  Проверяем на пустую строку
+    if (!filePath.isEmpty())
+    {
+        m_filePath = filePath;
+    } else {
+        return false;
+    }
 
 
-    m_filePath = filePath.toStdString();
-
-
-    m_image = cv::imread(m_filePath);
+    //  Читаем файл средствами Qt в массив байт, а затем декодируем его из памяти.
+    //  Это работает всегда, вне зависимости от кодировки пути и операционной системы.
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QByteArray data = file.readAll();
+        std::vector<char> buffer(data.begin(), data.end());
+        m_image = cv::imdecode(buffer, cv::IMREAD_COLOR);
+    }
 
 
     if (m_image.empty())
     {
 
-        qWarning() << "Не удалось загрузить изображение по пути: " << filePath;
+        qWarning() << "ImagePreProcessing: Не удалось загрузить изображение по пути: " << filePath;
 
         return false;
 
     }
 
 
-    qDebug() << "ImagePreProcessing: Путь к файлу получен! Path to image: " << filePath;
+    qDebug() << "ImagePreProcessing: Путь к файлу получен! Path to image: " << m_filePath;
 
 
     return true;
@@ -72,7 +82,7 @@ bool ImagePreProcessing::loadImage(const QString &filePath)
 bool ImagePreProcessing::save()
 {
 
-    if (m_image.empty()) return "";
+    if (m_image.empty()) return false;
 
 
     // 1. Получаем путь к папке данных приложения (например, C:/Users/Name/AppData/Roaming/YourApp)
@@ -114,12 +124,12 @@ bool ImagePreProcessing::save()
     {
 
         m_finalFilePath = fullPath;
-        qDebug() << "Изображение сохранено в файлы приложения: " << fullPath;
+        qDebug() << "ImagePreProcessing: Изображение сохранено в файлы приложения: " << fullPath;
         return true;
 
     } else {
 
-        qCritical() << "Ошибка записи в: " << fullPath;
+        qCritical() << "ImagePreProcessing: Ошибка записи в: " << fullPath;
         return false;
 
     }

@@ -13,6 +13,7 @@ set(MODULE_PUBLIC_FACADES
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
     private/filehandlermanager.h
+    private/filehandlernew.h
     private/filehandler.h
     private/mymodel.h
 )
@@ -21,6 +22,7 @@ set(MODULE_PRIVATE_HEADERS
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
     src/filehandlermanager.cpp
+    src/filehandlernew.cpp
     src/filehandler.cpp
     src/visualizationservice.cpp
     src/mymodel.cpp
@@ -32,7 +34,7 @@ set(MODULE_QML_FILES
     qml/AppMenuBar.qml
     qml/HomeView.qml
     qml/Launcher.qml
-    qml/ImageProcessingMode.qml
+    qml/ImageProcessingView.qml
     qml/ImageView.qml
     qml/SideBar.qml
     qml/SideBarButton.qml
@@ -86,6 +88,13 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
         ${MODULE_PUBLIC_FACADES}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
+        QML_FILES qml/MaskOverlay.qml
+        QML_FILES qml/ViewContainer.qml
+        QML_FILES qml/InformationView.qml
+        QML_FILES qml/FutterView.qml
+        QML_FILES qml/ImageContainer.qml
+        QML_FILES qml/ImagePickerDialog.qml
+        QML_FILES qml/CameraView.qml
 )
 
 
@@ -111,6 +120,7 @@ target_link_libraries(${VISUALIZATION_TARGET} PUBLIC
     #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
     Qt6::QuickDialogs2
     Qt6::Gui
+    Qt6::Multimedia
 )
 
 

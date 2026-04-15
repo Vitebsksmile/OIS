@@ -7,10 +7,6 @@
 #include "imageprocessingservice.h"
 
 
-/*Application::Application(QObject *parent)
-    : QObject(parent)
-{
-}*/
 Application::Application(int &argc, char **argv, QObject *parent)
     : QObject(parent)
     , m_app(new QGuiApplication(argc, argv))
@@ -24,8 +20,6 @@ Application::~Application()
 
     //  Очистка в обратном порядке
     m_engine.reset();
-
-    //???m_app.reset();
 
 }
 
@@ -93,74 +87,45 @@ void Application::setupConnections()
 
 
     //  Связи: ImageProcessingModule -> VisualizationModule
-    connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessed,
-            m_visualizationService.get(), &IVisualizationService::onImageProcessed);
+    connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingStartNotification,
+            m_visualizationService.get(), &IVisualizationService::onPreProcessingStartNotification);
 
     if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
 
 
-    connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingError,
-            m_visualizationService.get(), &IVisualizationService::onProcessingError);
+    connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessingFinished,
+            m_visualizationService.get(), &IVisualizationService::onImagePreProcessingFinished);
+
+    if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
+
+
+    connect(m_imageProcessingService.get(), &IImageProcessingService::prePreProcessingError,
+            m_visualizationService.get(), &IVisualizationService::onPreProcessingError);
 
     if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
 
 }
 
 
-//new   int Application::run(int argc, char *argv[])
-//new
 int Application::run()
 {
 
     qDebug() << "Starting Application...";
 
 
-    //new  2. Создаем Qml engine
     m_engine.reset(new QQmlApplicationEngine());
 
 
-    //new  4. Загружаем главный Qml файл
-    //  Запускаем не из физического расположения файла, а из логического расположения (см. CMAKE VisualizationModule)
     const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
 
-    //new
     m_engine->load(url);  //   загружаем интерфейс
 
-    //new
     if (m_engine->rootObjects().isEmpty())
     {
         qCritical() << "Failed to load QML file";
         return -1;
     }
 
-
-    //  1. Сохраняем argc в член класса, чтобы ссылка была валидна все время жизни a_app
-    //new   m_argc = argc;
-
-
-    //  1. Создаем Qt приложение
-    //new   m_app.reset(new QGuiApplication(argc, argv));
-    //qDebug() << "Application.cpp: Создали QGuiApplication";
-
-/*new
-    //  2. Создаем Qml engine
-    m_engine.reset(new QQmlApplicationEngine());
-
-
-    //  4. Загружаем главный Qml файл
-    //  Запускаем не из физического расположения файла, а из логического расположения (см. CMAKE VisualizationModule)
-    const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
-
-
-    m_engine->load(url);  //   загружаем интерфейс
-
-
-    if (m_engine->rootObjects().isEmpty())
-    {
-        qCritical() << "Failed to load QML file";
-        return -1;
-    }
-*/
 
     return m_app->exec();
 

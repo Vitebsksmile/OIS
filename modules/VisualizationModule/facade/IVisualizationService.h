@@ -17,10 +17,9 @@
 
 #include <QObject>
 #include <QString>
-#include <QUrl>     //  Класс для работы с URL (удобен для QML, так как пути там — это URL)
 
 
-class FileHandler;  //  Forward declaration
+//class FileHandler;  //  Forward declaration
 
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IVisualizationService : public QObject
@@ -42,6 +41,10 @@ public:
     virtual ~IVisualizationService() = default;
 
 
+    //  Метод установки данных для отправки в другой модуль
+    bool setData(const QString &filePath);
+
+
 //  public slots: Методы, которые можно вызывать из других потоков или через connect
 //  Слоты для приема пути к обработанному изображению и его результатов (сообщений)
 //  из ImageProcessingModule
@@ -52,16 +55,16 @@ public slots:
     virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
 
 
-    //  From IMageProcessingModule for QML about Start
+    //  From IImageProcessingModule for QML about Start
     virtual void onPreProcessingStartNotification(bool success) = 0;
 
 
-    //  в случае успеха обработки
-    virtual void onImageProcessed(const QString &filePath, bool success) = 0;
+    //  в случае успеха предварительной обработки
+    virtual void onImagePreProcessingFinished(const QString &filePath, bool success) = 0;
 
 
     //  в случае ошибки обработки
-    virtual void onProcessingError(const QString &filePath, const QString &error) = 0;
+    virtual void onPreProcessingError(const QString &filePath, const QString &error) = 0;
 
 
 signals:
@@ -69,6 +72,10 @@ signals:
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
     void imagePreProcessingRequested(const QString &filePath);
+
+
+    //  To FileHandler about started PreProcessing
+    void preProcessingStartNotification(bool success);
 
 
     //  To FileHandler about finished

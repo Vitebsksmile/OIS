@@ -1,17 +1,17 @@
-//  Базовые элементы (Rectangle, Image, Text)
 import QtQuick
-
-//  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
+//  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls
 
+//  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 Rectangle {
 
     id: root
 
     //  Экспортируем внутренние объекты наружу,
     //  чтобы обращаться к ним как <id>.handler или <id>.popup
-    property alias handler: fileHandler //      Текущий путь к изображению
+    property alias handler: fileHandler //      Текущий экземпляр FileHandler
     property alias popup: statusPopup //      Всплывающее уведомление
+    //property alias handler: fileHandler //      Текущий путь к изображению
     property alias backgroundColor: root.color //      Задать цвет снаружи
     property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику
@@ -21,15 +21,14 @@ Rectangle {
         id: fileHandler
         directionOut: true
 
-
         Component.onCompleted: {
             //      Передаем объект в C++
-            FileHandlerManager.registerFileHandler(fileHandler);
+            FileHandlerManager.registerFileHandler(fileHandler)
         }
     }
 
-    implicitWidth: 200 //  Рекомендуемая ширина (важно для Layout)
-    implicitHeight: 200 //  Рекомендуемая высота
+    //implicitWidth: 200 //  Рекомендуемая ширина (важно для Layout)
+    //implicitHeight: 200 //  Рекомендуемая высота
     color: "lightblue" //      Цвет по умолчанию
     radius: 10
 
@@ -60,6 +59,7 @@ Rectangle {
         cache: false
     }
 
+
     //  Текст виден только если в Image ничего не загружено (Null)
     Text {
 
@@ -67,7 +67,7 @@ Rectangle {
 
         visible: mainImage.status === Image.Null
         anchors.centerIn: parent //      Центрируем надпись
-        text: qsTr("No image selected") //      Значение по умолчанию
+        text: qsTr("No image selected.\nНажмите, чтобы выбрать файл") //      Значение по умолчанию
         color: "gray"
     }
 
@@ -97,5 +97,21 @@ Rectangle {
             anchors.centerIn: parent //  Центрируем надпись
             text: statusPopup.message //  Отображаем текст из свойства выше
         }
+    }
+
+    ImagePickerDialog {
+            id: imagePicker
+            targetHandler: fileHandler
+            targetPopup: statusPopup
+    }
+
+    //  Делаем все поле нажимаемым
+    MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                imagePicker.mode = "open"
+                imagePicker.open()
+            }
     }
 }

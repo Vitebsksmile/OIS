@@ -69,12 +69,12 @@ signals:
     //  Сигнал, который должен быть отправлен (emitted) после завершения работы
     //  Сообщает путь к файлу и результат (true — успех, false — провал)
     //  (for QML about Finished)
-    void imagePreProcessed(const QString &filePath, bool success);
+    void imagePreProcessingFinished(const QString &filePath, bool success);
 
 
     //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
     //  например, «файл не найден» или «недостаточно памяти»
-    void preProcessingError(const QString &filePath, const QString &error);
+    void prePreProcessingError(const QString &filePath, const QString &error);
 
 };
 

@@ -18,7 +18,7 @@ FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationServi
 }
 
 
-//  Регистрирует рождение объекта FileHandler и связывает его с фасадом
+//  Регистрирует рождение объектов FileHandler и связывает их с фасадом
 void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
 {
 
@@ -29,6 +29,7 @@ void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
         qDebug() << "FileHandlerManager: fileHandler.directionOut: " << fileHandler->directionOut();
 
         m_fileHandlers.append(fileHandler);
+
 
         if (fileHandler->directionOut())
         {

@@ -32,14 +32,15 @@ target_compile_definitions(${APP_TARGET}
 target_link_libraries(${APP_TARGET} PRIVATE
 
     #   Стандартные библиотеки Qt
-    Qt6::Qml
-    Qt6::Quick
+    #Qt6::Qml
+    #Qt6::Quick
     #Qt6::QuickLayouts                   #   for STATIC
-    Qt6::QuickControls2
+    #Qt6::QuickControls2
     #Qt6::QuickControls2Basic            #   for STATIC
     #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
-    Qt6::Gui
-    Qt6::Sql
+    #Qt6::Gui
+    #Qt6::Multimedia
+    #Qt6::Sql
 
     #   Сторонние библиотеки и плагины
     #${OpenCV_LIBS}

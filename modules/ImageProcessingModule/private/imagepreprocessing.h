@@ -3,6 +3,7 @@
 
 
 #include <QString>
+#include <QFile>
 #include <memory>
 #include <opencv2/opencv.hpp>
 
@@ -21,7 +22,7 @@ public:
      *  ???const QString &: Не копируем строку целиком при передаче в функцию. Передаем только адрес, но защищаете данные от изменений.
      *  const в конце геттера: Это помечает метод как «не меняющий состояние объекта». Это позволяет вызывать геттер у константных объектов класса.
     */
-    const QString& filePath() const { return QString::fromStdString(m_filePath); }
+    const QString& filePath() const { return m_filePath; }
 
 
     const QString& getFinalFilePath() const { return m_finalFilePath; }
@@ -55,7 +56,7 @@ public:
 
 private:
 
-    std::string m_filePath; // ????Автоматически инициализируется пустой строкой ""
+    QString m_filePath;
 
     QString m_finalFilePath;
 

@@ -17,6 +17,23 @@ FileHandler::FileHandler(QObject *parent)
 }
 
 
+//  Геттер: возвращает текущий путь в формате QUrl для отображения в интерфейсе
+QUrl FileHandler::currentImagePath() const
+{
+
+    return m_currentImagePath;
+
+}
+
+
+void FileHandler::setCurrentImagePath(QUrl url)
+{
+
+    m_currentImagePath = url;
+
+}
+
+
 //  Установка направления (чтение/отправка)
 void FileHandler::setDirectionOut(bool out)
 {
@@ -74,7 +91,13 @@ bool FileHandler::saveImage(QUrl sourceUrl, QUrl targetUrl)
     {
 
         //  Вывод в консоль отладки при успехе
-        qDebug() << "Файл успешно сохранен в: " << targetPath;
+        qDebug() << "FileHandler: Файл успешно сохранен в: " << targetPath;
+
+        m_currentImagePath = targetUrl;
+
+        //  уведомляем qml, что пора перерисовать Image
+        emit currentImagePathChanged();
+
         return true;
 
     } else {
@@ -84,6 +107,7 @@ bool FileHandler::saveImage(QUrl sourceUrl, QUrl targetUrl)
         return false;
 
     }
+
 }
 
 
@@ -119,11 +143,15 @@ QString FileHandler::getCleanPath(QUrl url) {
 }
 
 
-//  Геттер: возвращает текущий путь в формате QUrl для отображения в интерфейсе
-QUrl FileHandler::currentImagePath() const
+//  Метод возвращает размер файла в байтах
+double FileHandler::getFileSize(const QUrl &url)
 {
 
-    return m_currentImagePath;
+    QString filePath = getCleanPath(url);
+
+    QFileInfo fi(filePath);
+
+    return fi.size() / (1024.0 * 1024.0);
 
 }
 

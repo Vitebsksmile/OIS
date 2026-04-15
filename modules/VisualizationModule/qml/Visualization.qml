@@ -14,4 +14,6 @@ ApplicationWindow {
 
     HomeView {}
 
+    FutterView {}
+
 }

@@ -31,8 +31,6 @@ class Application : public QObject
 
 public:
 
-    //new   explicit Application(QObject *parent = nullptr);
-    //new
     explicit Application(int &argc, char **argv, QObject *parent = nullptr);
     ~Application();
 
@@ -43,8 +41,6 @@ public:
 
 
     //  Запуск приложения
-    //new   int run(int argc, char *argv[]);
-    //new
     int run();
 
 

@@ -56,7 +56,11 @@ void VisualizationService::onPreProcessingStartNotification(bool success)
 
     if (success)
     {
+
+        emit preProcessingStartNotification(success);
+
         qDebug() << "VisualizationService: Предобработка началась...";
+
     } else {
         qDebug() << "VisualizationService: Предобработка не началась...";
     }
@@ -65,9 +69,9 @@ void VisualizationService::onPreProcessingStartNotification(bool success)
 
 
 //  Слот onImageProcessed (успех обработки)
-void VisualizationService::onImageProcessed(const QString &filePath, bool success)
+void VisualizationService::onImagePreProcessingFinished(const QString &filePath, bool success)
 {
-    qDebug() << "VisualizationService: Image processing result for: " << filePath << " " << success;
+    qDebug() << "VisualizationService: Image preprocessing result for: " << filePath << " " << success;
 
     emit imagePreProcessingFinished(filePath);
 
@@ -84,8 +88,8 @@ void VisualizationService::onImageProcessed(const QString &filePath, bool succes
 }
 
 
-//  Слот onProcessingError (ошибка)
-void VisualizationService::onProcessingError(const QString &filePath, const QString &error)
+//  Слот onPreProcessingError (ошибка)
+void VisualizationService::onPreProcessingError(const QString &filePath, const QString &error)
 {
 
     qDebug() << "VisualizationService: Processing error: " << filePath << " " << error;

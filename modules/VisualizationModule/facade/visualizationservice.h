@@ -40,11 +40,11 @@ public slots:
 
 
     //  в случае успеха обработки
-    void onImageProcessed(const QString &filePath, bool success) override;
+    void onImagePreProcessingFinished(const QString &filePath, bool success) override;
 
 
     //  в случае ошибки обработки
-    void onProcessingError(const QString &filePath, const QString &error) override;
+    void onPreProcessingError(const QString &filePath, const QString &error) override;
 
 
 //  Мы не пишем их реализации, Qt сделает это за нас

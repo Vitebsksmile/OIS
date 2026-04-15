@@ -98,7 +98,7 @@ void ProcessManager::usePreProcessingObject(ImagePreProcessing *preProcessing)
     preProcessing->gaussianBlur(10);
 
 
-    qDebug() << "WorkingRoom: Обработка завершена. Каналов: " << (preProcessing->getResult()).channels();
+    qDebug() << "ProcessManager: Обработка завершена. Каналов: " << (preProcessing->getResult()).channels();
 
 
     //  Сохранение результатов на диск

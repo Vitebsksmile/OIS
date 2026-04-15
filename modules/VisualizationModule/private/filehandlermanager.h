@@ -3,7 +3,7 @@
 
 
 #include <QObject>  //  Базовый класс для всех объектов Qt (нужен для сигналов и слотов)
-#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
+//#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 #include <QList>
 #include <QPointer>
 
@@ -15,6 +15,10 @@ class FileHandlerManager : public QObject
 {
 
     Q_OBJECT
+
+    //QML_ELEMENT
+
+    //QML_UNCREATABLE("Interface") // Запрещает создавать объект этого типа напрямую из QML
 
 
 public:
