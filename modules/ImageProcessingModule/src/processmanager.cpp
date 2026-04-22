@@ -12,11 +12,11 @@ ProcessManager::ProcessManager(IImageProcessingService *imageProcessingService, 
 
     if (!m_imageProcessingService)
     {
-        qWarning() << "ProcessManager: processManager создан без ссылки на фасад";
+        qWarning() << "ProcessManager: processManager created without reference to facade";
     }
 
 
-    qDebug() << "ProcessManager: объект processManager рождён. parent: " << parent;
+    qDebug() << "ProcessManager: ProcessManager object created; parent: " << parent;
 
 
     //  Слушает фасад для старта предобработки
@@ -43,7 +43,7 @@ void ProcessManager::createPreProcessingObject()
     //  Старый объект удалиться сам при вызове reset()
     m_imagePreProcessing = std::make_unique<ImagePreProcessing>();
 
-    qDebug() << "ProcessManager: создал объект ImagePreProcessing по адресу: "
+    qDebug() << "ProcessManager: Created an ImagePreProcessing object at: "
              << m_imagePreProcessing.get();
 
 }
@@ -56,7 +56,7 @@ void ProcessManager::deletePreProcessingObject()
     // Деструктор ~ImagePreProcessing() вызовется немедленно.
     m_imagePreProcessing.reset();
 
-    qDebug() << "ProcessManager: Объект ImagePreProcessing уничтожен вручную. Указатель m_imagePreProcessing = " << m_imagePreProcessing.get();
+    qDebug() << "ProcessManager: The ImagePreProcessing object was manually destroyed. The m_imagePreProcessing pointer: " << m_imagePreProcessing.get();
 
 }
 
@@ -72,7 +72,7 @@ void ProcessManager::onImagePreProcessingRequested(const QString &filePath)
     // Установка изображения в обработчик
     if (imagePreProcessing()->loadImage(filePath))
     {
-        qDebug() << "ProcessManager: Путь к файлу валидный и содержит изображение. Изображение установлено в обработчик! Path to image: " << filePath;
+        qDebug() << "ProcessManager: The file path is valid and contains an image. The image has been installed in the ImagePreProcessing handler! Path to image: " << filePath;
     }
 
 
@@ -98,7 +98,7 @@ void ProcessManager::usePreProcessingObject(ImagePreProcessing *preProcessing)
     preProcessing->gaussianBlur(10);
 
 
-    qDebug() << "ProcessManager: Обработка завершена. Каналов: " << (preProcessing->getResult()).channels();
+    qDebug() << "ProcessManager: Pre-processing complete. Channels: " << (preProcessing->getResult()).channels();
 
 
     //  Сохранение результатов на диск

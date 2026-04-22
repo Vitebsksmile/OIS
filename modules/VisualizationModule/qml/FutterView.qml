@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import QtMultimedia
+//import QtMultimedia
 
 
 SplitView {
@@ -12,7 +12,7 @@ SplitView {
     CameraView {
 
         //color: Qt.rgba(255/255, 71/255, 77/255, 0.9) //  Light Red
-        radius: 10
+        //radius: 10
 
         //  Настройки размеров для otherContainer
         SplitView.preferredWidth: 200   //  Желаемая ширина при старте
@@ -21,10 +21,10 @@ SplitView {
 
     }
 
-    Rectangle {
+    VideoPlayerView {
 
-        color: Qt.rgba(255/255, 71/255, 77/255, 0.9) //  Light Red
-        radius: 10
+        //color: Qt.rgba(255/255, 71/255, 77/255, 0.9) //  Light Red
+        //radius: 10
 
         //  Настройки размеров для otherContainer
         SplitView.preferredWidth: 200   //  Желаемая ширина при старте

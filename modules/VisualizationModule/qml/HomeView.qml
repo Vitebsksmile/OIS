@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
 
@@ -7,17 +8,14 @@ Item {
 
     //  Основной контейнер с разделителем (тянется мышкой)
     SplitView {
-
         id: mainSplitView
 
         orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
         anchors.fill: parent    //  Заполняем контейнером всю площадь родителя
         anchors.margins: 5
 
-
         //  Левая панель - боковое меню
         SideBar {
-
             id: sideBar
 
             //  Настройки размеров для mainSplitView
@@ -25,17 +23,18 @@ Item {
             SplitView.minimumWidth: 100     //  Минимальный порог сжатия
             SplitView.maximumWidth: 300     //  Максимальный порог растяжения
 
+            //  Настройки размеров для sideBar
+            Layout.fillWidth: true
+            Layout.preferredHeight: implicitHeight
+
             //  Прокидываем в SideBar.qml ссылки (alias) из ImageView.qml,
             //  используя экземпляр его родительского объекта с id: centralContent
             targetHandler: imageProcessingView.handler
             targetPopup: imageProcessingView.popup
-
         }
-
 
         //  Правая часть окна (центральный контент)
         SplitView {
-
             id: centralContainer
 
             orientation: Qt.Vertical    //  Панели стоят колонной (сверху вниз)
@@ -49,10 +48,9 @@ Item {
                 id: imageProcessingView
 
                 //  Настройки размеров для centralContainer
-                SplitView.fillHeight: true   //  Занимает всё оставшееся место справа
+                SplitView.fillHeight: true   //  Занимает всё оставшееся место
 
             }
-
 
             //  Futter
             FutterView {
@@ -63,8 +61,6 @@ Item {
                 SplitView.minimumHeight: 100     //  Минимальный порог сжатия
                 SplitView.maximumHeight: 500     //  Максимальный порог растяжения
             }
-
         }
-
     }
 }

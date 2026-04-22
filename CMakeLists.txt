@@ -1,6 +1,17 @@
 #   Устанавливает минимально необходимую версию CMake
 # (3.25 нужна для многих фич Qt 6)
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.27.7)
+
+
+#set(PROJECT_NAME "OISApp")
+
+
+#   Создает переменную ORG_NAME (используется для отображаемого названия приложения)
+set(DOMAIN_ORG_NAME "vstu.by")
+
+
+#   Создает переменную ORG_NAME (используется для отображаемого названия приложения)
+set(ORG_NAME "VSTU IS-23")
 
 
 #   Создает переменную APP_NAME (используется для отображаемого названия приложения)
@@ -8,7 +19,7 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 
 
 #   Объявляет имя проекта (MyApp), его версию и используемый язык (C++)
-project(OIS VERSION 0.0.1 LANGUAGES CXX)
+project(OISApp VERSION 0.0.1 LANGUAGES CXX)
 
 
 #   Устанавливает стандарт C++
@@ -23,9 +34,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
+#target_compile_definitions(${PROJECT_NAME} PRIVATE
+#    APP_DOMAIN_ORG_NAME_STR="${DOMAIN_ORG_NAME}"
+#    APP_ORG_NAME_STR="${ORG_NAME}"
+#    AAPP_NAME_STR="${APP_NAME}"
+#    APP_VERSION="${PROJECT_VERSION}"
+#)
+
+
 #   Добавляем определения (флаги) компиляции для передачи препроцессорных
 #   макросов (#define) в C++ код прямо из CMake
 add_definitions(
+    -DAPP_DOMAIN_ORG_NAME_STR="${DOMAIN_ORG_NAME}"
+    -DAPP_ORG_NAME_STR="${ORG_NAME}"
     -DAPP_NAME_STR="${APP_NAME}"
     -DAPP_VERSION="${PROJECT_VERSION}"
 )

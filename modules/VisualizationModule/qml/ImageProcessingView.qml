@@ -29,7 +29,7 @@ SplitView {
 
 
     //  Правое окно: Результат обработки (нормализация и т.д.)
-    ImageContainer {
+    /*ImageContainer {
 
         id: processedView
 
@@ -42,6 +42,6 @@ SplitView {
         labelText: "!!!!"
 
         handler.directionOut: false
-    }
+    }*/
 
 }

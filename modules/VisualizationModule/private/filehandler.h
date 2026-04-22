@@ -63,6 +63,15 @@ public:
     Q_INVOKABLE void setDirectionOut(bool out);
 
 
+    //  метод для подготовки пути
+    //  Вспомогательная функция для получения "чистого" пути
+    Q_INVOKABLE QString getCleanPath(QUrl url);
+
+
+    //  Метод возвращает размер файла в байтах
+    Q_INVOKABLE double getFileSize(const QUrl &url);
+
+
     //  Метод для выбора файла. Вызываем из qml
     Q_INVOKABLE void selectImage(QUrl url);
 
@@ -73,15 +82,6 @@ public:
 
     //  Метод для старта предобработки. Вызываем из qml
     Q_INVOKABLE void startPreprocessing();
-
-
-    //  метод для подготовки пути
-    //  Вспомогательная функция для получения "чистого" пути
-    Q_INVOKABLE QString getCleanPath(QUrl url);
-
-
-    //  Метод возвращает размер файла в байтах
-    Q_INVOKABLE double getFileSize(const QUrl &url);
 
 
 public slots:

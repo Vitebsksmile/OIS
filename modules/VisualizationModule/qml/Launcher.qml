@@ -62,7 +62,7 @@ Item {
                 anchors.margins: 30
                 spacing: 40
 
-                ModeIconButton {
+                ModeButton {
 
                     id: setCamera
 
@@ -81,7 +81,7 @@ Item {
                                    }
                 }
 
-                ModeIconButton {
+                ModeButton {
 
                     id: setCamcoder
 

@@ -6,7 +6,7 @@ SplitView {
 
     id: root
 
-    //  Экспортируем внутренние объекты наружу,
+    //  Export properties,
     //  чтобы обращаться к ним как <id>.handler или <id>.popup
     property alias handler: imageView.handler //  Текущий экземпляр FileHandler
     property alias popup: imageView.popup //  Всплывающее уведомление
@@ -16,18 +16,11 @@ SplitView {
     orientation: Qt.Vertical    //  Панели стоят колонной (сверху вниз)
 
 
-    InformationView {
-        id: informationView
-
-        //  Настройки размеров для root
-        SplitView.preferredHeight: informationView.implicitHeight   //  Желаемая высота при старте
-        SplitView.minimumHeight: 10     //  Минимальный порог сжатия
-        SplitView.maximumHeight: 150     //  Максимальный порог растяжения
-
-        //  Прокидываем в InformationView.qml ссылки (alias) из ImageView.qml,
-        //  используя экземпляр его родительского объекта с id: sourceViewer
-        targetHandler: imageView.handler
-
+    ModeTabBar {
+        //  Настройки размеров для centralContainer
+        SplitView.preferredHeight: 100   //  Желаемая высота при старте
+        SplitView.minimumHeight: 100     //  Минимальный порог сжатия
+        SplitView.maximumHeight: 500     //  Максимальный порог растяжения
     }
 
 
@@ -42,6 +35,20 @@ SplitView {
         SplitView.minimumWidth: 100
 
         handler.directionOut: true
+
+    }
+
+    InformationView {
+        id: informationView
+
+        //  Настройки размеров для root
+        SplitView.preferredHeight: informationView.implicitHeight   //  Желаемая высота при старте
+        SplitView.minimumHeight: 10     //  Минимальный порог сжатия
+        SplitView.maximumHeight: 150     //  Максимальный порог растяжения
+
+        //  Прокидываем в InformationView.qml ссылки (alias) из ImageView.qml,
+        //  используя экземпляр его родительского объекта с id: sourceViewer
+        targetHandler: imageView.handler
 
     }
 

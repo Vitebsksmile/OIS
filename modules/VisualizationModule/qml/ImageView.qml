@@ -1,6 +1,6 @@
-import QtQuick
-//  Базовые элементы (Rectangle, Image, Text)
+import QtQuick //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls
+import QtQuick.Layouts
 
 //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 Rectangle {
@@ -61,14 +61,27 @@ Rectangle {
 
 
     //  Текст виден только если в Image ничего не загружено (Null)
-    Text {
-
-        id: statusText
+    ColumnLayout {
 
         visible: mainImage.status === Image.Null
         anchors.centerIn: parent //      Центрируем надпись
-        text: qsTr("No image selected.\nНажмите, чтобы выбрать файл") //      Значение по умолчанию
-        color: "gray"
+
+        Text {
+
+            id: statusText
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("No image selected.")
+            color: "gray"
+        }
+
+        Text {
+
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Нажмите, чтобы выбрать файл")
+            color: "gray"
+        }
+
+
     }
 
     //  Всплывающее окно для коротких сообщений (аналог Toast в Android)

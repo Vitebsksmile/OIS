@@ -18,7 +18,7 @@ ImagePreProcessing::~ImagePreProcessing()
 {
 
     release();
-    qDebug() << "ImagePreprocessing: объект уничтожен";
+    qDebug() << "ImagePreprocessing: Object destroyed";
 
 }
 
@@ -30,7 +30,7 @@ void ImagePreProcessing::release()
     {
 
         m_image.release();  //  Явное освобождение матрицы OpenCV
-        qDebug() << "ImagePreprocessing: память матрицы освобождена";
+        qDebug() << "ImagePreprocessing: Matrix memory freed";
         m_filePath.clear();
 
     }
@@ -64,14 +64,14 @@ bool ImagePreProcessing::loadImage(const QString &filePath)
     if (m_image.empty())
     {
 
-        qWarning() << "ImagePreProcessing: Не удалось загрузить изображение по пути: " << filePath;
+        qWarning() << "ImagePreProcessing: Failed to load image at path: " << filePath;
 
         return false;
 
     }
 
 
-    qDebug() << "ImagePreProcessing: Путь к файлу получен! Path to image: " << m_filePath;
+    qDebug() << "ImagePreProcessing: The path to the file has been obtained! Path to image: " << m_filePath;
 
 
     return true;
@@ -124,12 +124,12 @@ bool ImagePreProcessing::save()
     {
 
         m_finalFilePath = fullPath;
-        qDebug() << "ImagePreProcessing: Изображение сохранено в файлы приложения: " << fullPath;
+        qDebug() << "ImagePreProcessing: The image is saved in the application files: " << fullPath;
         return true;
 
     } else {
 
-        qCritical() << "ImagePreProcessing: Ошибка записи в: " << fullPath;
+        qCritical() << "ImagePreProcessing: Error writing to: " << fullPath;
         return false;
 
     }

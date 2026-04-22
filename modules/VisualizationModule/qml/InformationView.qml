@@ -11,7 +11,7 @@ Rectangle {
 
     width: 200
     implicitHeight: layout.implicitHeight + (layout.anchors.margins * 2)
-    color: "green"
+    color: "lightgreen"
     radius: 10
 
 
@@ -30,7 +30,7 @@ Rectangle {
             wrapMode: Text.WrapAnywhere
             Layout.preferredHeight: contentHeight
 
-            text: "Путь: " + root.targetHandler.getCleanPath(root.targetHandler.currentImagePath)
+            text: "Sourse path: " + root.targetHandler.getCleanPath(root.targetHandler.currentImagePath)
 
         }
 

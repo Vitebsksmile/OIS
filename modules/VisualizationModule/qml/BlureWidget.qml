@@ -30,7 +30,7 @@ ApplicationWindow {
                 anchors.margins: 30
                 spacing: 40
 
-                ModeIconButton {
+                IconButton {
 
                     id: setCamera
 
@@ -50,7 +50,7 @@ ApplicationWindow {
                                    }
                 }
 
-                ModeIconButton {
+                IconButton {
 
                     id: setCamcoder
 

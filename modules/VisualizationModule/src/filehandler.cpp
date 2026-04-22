@@ -50,6 +50,27 @@ void FileHandler::setDirectionOut(bool out)
 }
 
 
+//  Вспомогательная функция для получения "чистого" пути
+//  Нужна для OpenCV, так как cv::imread не понимает префикс "file://"
+QString FileHandler::getCleanPath(QUrl url) {
+    //  Самый надежный способ конвертации URL в путь ОС в Qt
+    return url.toLocalFile();
+}
+
+
+//  Метод возвращает размер файла в байтах
+double FileHandler::getFileSize(const QUrl &url)
+{
+
+    QString filePath = getCleanPath(url);
+
+    QFileInfo fi(filePath);
+
+    return fi.size() / (1024.0 * 1024.0);
+
+}
+
+
 //  Метод для выбора изображения (вызывается из QML при выборе файла)
 void FileHandler::selectImage(QUrl url)
 {
@@ -91,7 +112,7 @@ bool FileHandler::saveImage(QUrl sourceUrl, QUrl targetUrl)
     {
 
         //  Вывод в консоль отладки при успехе
-        qDebug() << "FileHandler: Файл успешно сохранен в: " << targetPath;
+        qDebug() << "FileHandler: The file was successfully saved to: " << targetPath;
 
         m_currentImagePath = targetUrl;
 
@@ -103,7 +124,7 @@ bool FileHandler::saveImage(QUrl sourceUrl, QUrl targetUrl)
     } else {
 
         //  Вывод в консоль при ошибке (например, нет прав доступа или диск переполнен)
-        qDebug() << "Ошибка при сохранении файла!";
+        qDebug() << "Error saving file!";
         return false;
 
     }
@@ -124,34 +145,13 @@ void FileHandler::startPreprocessing()
         //  Активируем сигнал
         emit imagePreProcessingRequested(filePath);
 
-        //qDebug() << "FileHandler: В интерфейс передано изображение по пути: " << currentImagePath();
+        qDebug() << "FileHandler: The image was transferred to the interface via the path: " << currentImagePath();
 
     } else {
 
-        qDebug() << "FileHandler: ERROR! В интерфейс не передана команда Старта. Файл не выбран. Путь: " << currentImagePath();
+        qDebug() << "FileHandler: ERROR! The Start command was not sent to the interface. No file was selected. Path: " << currentImagePath();
 
     }
-
-}
-
-
-//  Вспомогательная функция для получения "чистого" пути
-//  Нужна для OpenCV, так как cv::imread не понимает префикс "file://"
-QString FileHandler::getCleanPath(QUrl url) {
-    //  Самый надежный способ конвертации URL в путь ОС в Qt
-    return url.toLocalFile();
-}
-
-
-//  Метод возвращает размер файла в байтах
-double FileHandler::getFileSize(const QUrl &url)
-{
-
-    QString filePath = getCleanPath(url);
-
-    QFileInfo fi(filePath);
-
-    return fi.size() / (1024.0 * 1024.0);
 
 }
 
@@ -159,7 +159,7 @@ double FileHandler::getFileSize(const QUrl &url)
 void FileHandler::onImagePreProcessingFinished(const QString &filePath)
 {
 
-    qDebug() << "FileHandler: Путь к предобработанному файлу получен. filePath: " << filePath;
+    qDebug() << "FileHandler: The path to the preprocessed file has been obtained. filePath: " << filePath;
 
     //???  уведомляем qml, что пора перерисовать Image
     selectImage(filePath);

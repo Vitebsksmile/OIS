@@ -5,14 +5,15 @@ Rectangle {
 
     id: root
 
-    color: "lightgreen" //      Цвет по умолчанию
+    //anchors.fill: parent
+    //color: "lightgreen" //      Цвет по умолчанию
     radius: 10
 
 
     //  Объект для доступа к списку устройств
-    MediaDevices {
+    /*MediaDevices {
         id: devices
-    }
+    }*/
 
 
     //  Компонент камеры
@@ -20,7 +21,7 @@ Rectangle {
         id: camera
 
         //  Указываем конкретную камеру
-        cameraDevice: {
+        /*cameraDevice: {
             for (var i = 0; i < devices.videoInputs.length; i++) {
                 if (devices.videoInputs[i].description.includes("DroidCam")) {
                     return devices.videoInputs[i]
@@ -28,7 +29,15 @@ Rectangle {
             }
             //  Если DroidCam не найден - берем камеру по умолчанию
             return devices.defaultVideoInput
-        }
+        }*/
+    }
+
+
+    //  Сессия захвата, связывающая камеру и вывод
+    CaptureSession {
+        camera: camera
+        videoOutput: videoOutput
+
     }
 
 
@@ -42,18 +51,11 @@ Rectangle {
     }
 
 
-    //  Сессия захвата, связывающая камеру и вывод
-    CaptureSession {
-        camera: camera
-        videoOutput: videoOutput
-    }
-
-
     Component.onCompleted: {
         //  Выводим в консоль все найденные камеры для отладки
-        for (var i = 0; i < devices.videoInputs.length; i++) {
+        /*for (var i = 0; i < devices.videoInputs.length; i++) {
             console.log("CameraView: Найдена камера: ", devices.videoInputs[i].description)
-        }
+        }*/
 
         camera.start()  //  Запуск камеры при загрузке
     }

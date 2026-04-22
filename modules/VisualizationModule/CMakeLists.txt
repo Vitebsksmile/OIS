@@ -30,17 +30,28 @@ set(MODULE_SOURCE_FILES
 
 
 set(MODULE_QML_FILES
-    qml/Visualization.qml
     qml/AppMenuBar.qml
     qml/HomeView.qml
     qml/Launcher.qml
     qml/ImageProcessingView.qml
     qml/ImageView.qml
     qml/SideBar.qml
-    qml/SideBarButton.qml
     qml/BlureWidget.qml
     qml/CustomWidget.qml
-    qml/ModeIconButton.qml
+    qml/SideBarButton.qml
+    qml/IconButton.qml
+    qml/MaskOverlay.qml
+    qml/ViewContainer.qml
+    qml/InformationView.qml
+    qml/FutterView.qml
+    qml/ImageContainer.qml
+    qml/ImagePickerDialog.qml
+    qml/CameraView.qml
+    qml/VideoPlayerView.qml
+    qml/ModeTabBar.qml
+    qml/CamcoderIpInput.qml
+    qml/MainContentView.qml
+    qml/ButtonBar.qml
 )
 
 
@@ -79,22 +90,17 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     #   Базовый путь в системе ресурсов (будет доступно как qrc:/qt/qml/...)
     RESOURCE_PREFIX /qt/qml/
     QML_FILES
+        Visualization.qml
         ${MODULE_QML_FILES}
 
     RESOURCES
+        #qtquickcontrols2.conf
         ${MODULE_IMAGE_FILES}
 
     SOURCES
         ${MODULE_PUBLIC_FACADES}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
-        QML_FILES qml/MaskOverlay.qml
-        QML_FILES qml/ViewContainer.qml
-        QML_FILES qml/InformationView.qml
-        QML_FILES qml/FutterView.qml
-        QML_FILES qml/ImageContainer.qml
-        QML_FILES qml/ImagePickerDialog.qml
-        QML_FILES qml/CameraView.qml
 )
 
 

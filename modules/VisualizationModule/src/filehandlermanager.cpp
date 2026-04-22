@@ -9,10 +9,10 @@ FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationServi
     m_visualizationService(visualizationService)
 {
 
-    qDebug() << "FileHandlerManager: объект fileHandlerManager рождён. parent: " << parent;
+    qDebug() << "FileHandlerManager: FileHandlerManager object created. Parent: " << parent;
     if (!m_visualizationService)
     {
-        qWarning() << "FileHandlerManager: fileHandlerManager создан без ссылки на фасад";
+        qWarning() << "FileHandlerManager: FileHandlerManager object created without reference to facade";
     }
 
 }
@@ -25,13 +25,21 @@ void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
     if (fileHandler && !m_fileHandlers.contains(fileHandler))
     {
 
-        qDebug() << "FileHandlerManager: получил object: " << fileHandler;
+        qDebug() << "FileHandlerManager: FileHandlerManager received the object: " << fileHandler;
         qDebug() << "FileHandlerManager: fileHandler.directionOut: " << fileHandler->directionOut();
 
         m_fileHandlers.append(fileHandler);
 
+        //  Связь: fileHandler -> visualizationService
+        connect(fileHandler, &FileHandler::imagePreProcessingRequested,
+                m_visualizationService, &IVisualizationService::onImagePreProcessingRequested);
 
-        if (fileHandler->directionOut())
+        //  Связь: visualizationService -> fileHandler
+        connect(m_visualizationService, &IVisualizationService::imagePreProcessingFinished,
+                fileHandler, &FileHandler::onImagePreProcessingFinished);
+
+
+        /*if (fileHandler->directionOut())
         {
 
             //  Связь: fileHandler -> visualizationService
@@ -44,7 +52,7 @@ void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
             connect(m_visualizationService, &IVisualizationService::imagePreProcessingFinished,
                     fileHandler, &FileHandler::onImagePreProcessingFinished);
 
-        }
+        }*/
 
     }
 

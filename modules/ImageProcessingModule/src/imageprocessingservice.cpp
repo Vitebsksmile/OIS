@@ -35,14 +35,14 @@ void ImageProcessingService::onImagePreProcessingRequested(const QString &filePa
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
     if (filePath.isEmpty())
     {
-        qDebug() << "ImageProcessingService: Путь к файлу пустой! Path to image: " << filePath;
+        qDebug() << "ImageProcessingService: The file path is empty! Path to image: " << filePath;
         emit prePreProcessingError(filePath, "Empty file path");
         return;
     }
 
     //  Запоминаем путь, чтобы потом передать его в сигнале завершения
     m_currentFilePath = filePath;
-    qDebug() << "ImageProcessingService: Путь к файлу получен! Path to image: " << filePath << "Передаю его в ProcessManager.";
+    qDebug() << "ImageProcessingService: The file path has been obtained! Path to image: " << filePath << ". I pass it to ProcessManager.";
     emit imagePreProcessingRequested(filePath);
 
 }
@@ -59,6 +59,6 @@ void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePa
 {
 
     imagePreProcessingFinished("file:///" + resultFilePath, true);
-    qDebug() << "ImageProcessingService: Сигнал о завершении предобработки отправлен. resultFilePath: " << resultFilePath;
+    qDebug() << "ImageProcessingService: Preprocessing completion signal sent; resultFilePath: " << resultFilePath;
 
 }

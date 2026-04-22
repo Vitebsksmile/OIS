@@ -11,7 +11,7 @@ Application::Application(int &argc, char **argv, QObject *parent)
     : QObject(parent)
     , m_app(new QGuiApplication(argc, argv))
 {
-    qDebug() << "Application.cpp: Создали QGuiApplication";
+    qDebug() << "Application.cpp: Created QGuiApplication";
 }
 
 
@@ -37,11 +37,11 @@ bool Application::initialize()
     if (m_visualizationService)
     {
 
-        qDebug() << "Application: VisualizationService инициализирован";
+        qDebug() << "Application: VisualizationService initialized";
 
     } else {
 
-        qCritical() << "Failed to create VisualizationService";
+        qCritical() << "Application: Failed to create VisualizationService";
 
         return false;
 
@@ -55,11 +55,11 @@ bool Application::initialize()
     if (m_imageProcessingService)
     {
 
-        qDebug() << "Application: ImageProcessingService инициализирован";
+        qDebug() << "Application: ImageProcessingService initialized";
 
     } else {
 
-        qCritical() << "Failed to create ImageProcessingService";
+        qCritical() << "Application: Failed to create ImageProcessingService";
 
         return false;
 
@@ -83,26 +83,26 @@ void Application::setupConnections()
     bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequested,
             m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequested);
 
-    if (!ok) qDebug() << "Сбой наладки связи VisualizationModule -> ImageProcessingModule";
+    if (!ok) qDebug() << "Failed to establish connection between VisualizationModule -> ImageProcessingModule";
 
 
     //  Связи: ImageProcessingModule -> VisualizationModule
     connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingStartNotification,
             m_visualizationService.get(), &IVisualizationService::onPreProcessingStartNotification);
 
-    if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
+    if (!ok) qDebug() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
 
     connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessingFinished,
             m_visualizationService.get(), &IVisualizationService::onImagePreProcessingFinished);
 
-    if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
+    if (!ok) qDebug() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
 
     connect(m_imageProcessingService.get(), &IImageProcessingService::prePreProcessingError,
             m_visualizationService.get(), &IVisualizationService::onPreProcessingError);
 
-    if (!ok) qDebug() << "Сбой наладки связи ImageProcessingModule -> VisualizationModule";
+    if (!ok) qDebug() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
 }
 
