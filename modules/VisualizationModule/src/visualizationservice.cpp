@@ -21,11 +21,11 @@ VisualizationService::VisualizationService(QObject *parent)
 //  IVisualizationService(parent): Вызов конструктора базового класса (интерфейса)
 {
 
-    qmlRegisterSingletonInstance(
+    /*qmlRegisterSingletonInstance(
         "VisualizationModule",  //  URI модуля
         1, 0,                   //  Версия
         "FileHandlerManager",   //  Имя типа в Qml
-        m_fileHandlerManager);  //  .data()Указатель на объект
+        m_fileHandlerManager);  //  .data()Указатель на объект*/
 
 }
 

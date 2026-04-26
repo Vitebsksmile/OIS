@@ -4,12 +4,20 @@
 //#include <filehandler.h>
 
 
+FileHandlerManager* FileHandlerManager::s_instance = nullptr;
+
+
 FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationService, QObject *parent)
     : QObject(parent),
     m_visualizationService(visualizationService)
 {
 
+    s_instance = this;
+
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
     qDebug() << "FileHandlerManager: FileHandlerManager object created. Parent: " << parent;
+
     if (!m_visualizationService)
     {
         qWarning() << "FileHandlerManager: FileHandlerManager object created without reference to facade";

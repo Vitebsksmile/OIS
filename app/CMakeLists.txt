@@ -1,10 +1,19 @@
 #   Создает переменную APP_TARGET со значением "OISApp"
 #   (имя цели в CMake для компиляции)
-set(APP_TARGET OISApp)
+#set(APP_TARGET OISApp PARENT_SCOPE) # Для главного (верхнего) CMake
+#set(APP_TARGET OISApp)
+
+#set_target_properties(app_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+
+
+# Собираем разделяемую версию
+set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build using shared libraries ON/OFF")
+
+message(BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS})
 
 
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
-qt_add_executable(${APP_TARGET}
+add_executable(${PROJECT_NAME}
     main.cpp
     application.h application.cpp
 )
@@ -12,7 +21,7 @@ qt_add_executable(${APP_TARGET}
 
 #   Добавляем определения (флаги) компиляции для передачи препроцессорных
 #   макросов (#define) в C++ код прямо из CMake
-target_compile_definitions(${APP_TARGET}
+target_compile_definitions(${PROJECT_NAME}
 
     PRIVATE
 
@@ -29,7 +38,7 @@ target_compile_definitions(${APP_TARGET}
 
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
-target_link_libraries(${APP_TARGET} PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
 
     #   Стандартные библиотеки Qt
     #Qt6::Qml
@@ -46,7 +55,7 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #${OpenCV_LIBS}
 
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
-    DatabaseModule
+    #DatabaseModule
     ImageProcessingModule
     #IntegrationModule
     VisualizationModule
@@ -67,21 +76,13 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #   --<<}
 
 )
+message(STATUS "Бинарники OISApp лежат здесь: ${OISApp_BINARY_DIR}")
 
 
-#   Подключаем модуль для стандартных путей (обязательно перед install)
-include(GNUInstallDirs)
+# Копируем разделяемую библиотеку из папки сборки библиотеки в папку сборки нашего проекта
+add_custom_command(
+       TARGET ${PROJECT_NAME} POST_BUILD
+       COMMAND ${CMAKE_COMMAND} -E copy
+              ${OISApp_BINARY_DIR}/libOISApp.dll
+              ${CMAKE_CURRENT_BINARY_DIR}/libOISApp.dll)
 
-#   Описывает правила установки (куда копировать файлы при команде 'install')
-install(TARGETS ${APP_TARGET}
-    #   Для Windows: сюда попадет ваш .exe файл
-    #   Обычно это папка "bin" внутри директории установки
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-
-    #   Сюда попадут .lib файлы (файлы импорта для DLL), если они есть
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-
-    #   Сюда попадают .dll файлы, если они собраны как отдельные модули (SHARED)
-    #   В Windows DLL считаются "рантаймом", поэтому они тоже летят в bin
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-)

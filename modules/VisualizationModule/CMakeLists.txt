@@ -65,30 +65,30 @@ set(MODULE_IMAGE_FILES
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
-qt_add_library(${VISUALIZATION_TARGET} STATIC)
+#qt_add_library(${VISUALIZATION_TARGET} STATIC)
 
 
 #   Использование QT_RESOURCE_ALIAS в CMake до вызова qt_add_qml_module,
 #   чтобы «схлопнуть» физические папки (qml/, view/ и т.д.) в единый логический корень модуля в системе ресурсов.
-foreach(file ${MODULE_QML_FILES})
-    get_filename_component(file_name ${file} NAME)
+#foreach(file ${MODULE_QML_FILES})
+#    get_filename_component(file_name ${file} NAME)
 
-    set_source_files_properties(${file} PROPERTIES
-        QT_RESOURCE_ALIAS "${file_name}"
-    )
-endforeach()
+#    set_source_files_properties(${file} PROPERTIES
+#        QT_RESOURCE_ALIAS "${file_name}"
+#    )
+#endforeach()
 
 
 #   Регистрирует QML-модуль для основной цели приложения
 #   Превращает созданную библиотеку в полноценный QML-модуль
 qt_add_qml_module(${VISUALIZATION_TARGET}
-
+    STATIC
     #   Логическое имя для QML (import VisualizationModule 1.0)
     URI VisualizationModule
     VERSION 1.0
 
     #   Базовый путь в системе ресурсов (будет доступно как qrc:/qt/qml/...)
-    RESOURCE_PREFIX /qt/qml/
+    #RESOURCE_PREFIX /qt/qml/
     QML_FILES
         Visualization.qml
         ${MODULE_QML_FILES}

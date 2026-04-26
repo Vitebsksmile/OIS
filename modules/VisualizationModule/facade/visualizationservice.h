@@ -10,7 +10,7 @@
 
 
 #include <QObject>
-#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
+//#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
 #include "IVisualizationService.h"
 

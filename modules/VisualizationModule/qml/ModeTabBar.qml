@@ -19,7 +19,7 @@ Rectangle {
         }
 
         IconButton {
-            iconSource: "qrc/setCamcoder.svg"
+            iconSource: "../qrc/setCamcoder.svg"
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             iconWidth: 100
             iconHeight: 70

@@ -3,9 +3,6 @@
 cmake_minimum_required(VERSION 3.27.7)
 
 
-#set(PROJECT_NAME "OISApp")
-
-
 #   Создает переменную ORG_NAME (используется для отображаемого названия приложения)
 set(DOMAIN_ORG_NAME "vstu.by")
 
@@ -52,8 +49,8 @@ add_definitions(
 )
 
 
-#   Ищет базовый пакет Qt 6.5 Core (необходим для работы любых программ на Qt)
-find_package(Qt6 6.5 REQUIRED COMPONENTS
+#   Ищет базовый пакет Qt 6.8 Core (необходим для работы любых программ на Qt)
+find_package(Qt6 6.8 REQUIRED COMPONENTS
     Core            #   необходим для работы любых программ на Qt
     Qml             #   нужен для работы логики языка QML
     Quick           #   нужен для визуальных элементов интерфейса
@@ -76,19 +73,11 @@ find_package(OpenCV REQUIRED)
 #   Применяет стандартные настройки Qt для проекта
 #   (автоматизирует пути сборки и размещения файлов)
 #   https://doc.qt.io/qt-6/qt-standard-project-setup.html
-qt_standard_project_setup() #    REQUIRES 6.8
-
-
-#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
-qt_policy(SET QTP0001 NEW)
-
-
-#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
-qt_policy(SET QTP0004 NEW)
+qt_standard_project_setup(REQUIRES 6.8) #    REQUIRES 6.8
 
 
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
-add_subdirectory(modules/DatabaseModule)
+#add_subdirectory(modules/DatabaseModule)
 add_subdirectory(modules/ImageProcessingModule)
 #add_subdirectory(modules/IntegrationModule)
 add_subdirectory(modules/VisualizationModule)
