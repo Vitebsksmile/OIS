@@ -90,8 +90,8 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${PROJECT_NAME}>" "${DEPLOY_DIR}/"
 
     # 1. Копируем плагин платформы (без него Qt-приложение не запустится)
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}/platforms"
-        COMMAND ${CMAKE_COMMAND} -E copy "D:/msys64/mingw64/share/qt6/plugins/platforms/qwindows.dll" "${DEPLOY_DIR}/platforms/"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}/platforms"
+    COMMAND ${CMAKE_COMMAND} -E copy "D:/msys64/mingw64/share/qt6/plugins/platforms/qwindows.dll" "${DEPLOY_DIR}/platforms/"
 
     # 2. Копируем необходимые папки QML модулей
     # Можно скопировать всё (будет весить много), либо только нужные:

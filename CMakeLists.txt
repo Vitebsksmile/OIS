@@ -19,12 +19,7 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 project(OISApp VERSION 0.0.1 LANGUAGES CXX)
 
 
-#   Устанавливает стандарт C++
-set(CMAKE_CXX_STANDARD 17)
 
-
-#   Запрещает компиляцию, если компилятор не поддерживает выбранный стандарт C++
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 #   ?????
@@ -74,6 +69,14 @@ find_package(OpenCV REQUIRED)
 #   (автоматизирует пути сборки и размещения файлов)
 #   https://doc.qt.io/qt-6/qt-standard-project-setup.html
 qt_standard_project_setup(REQUIRES 6.8) #    REQUIRES 6.8
+
+
+#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
+#qt_policy(SET QTP0001 NEW)
+
+
+#   Устанавливает политику QTP0004 виртуального расположения qml-файлов
+#qt_policy(SET QTP0004 NEW)
 
 
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
