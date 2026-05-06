@@ -13,7 +13,6 @@ set(MODULE_PUBLIC_FACADES
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
     private/filehandlermanager.h
-    private/filehandlernew.h
     private/filehandler.h
     private/mymodel.h
 )
@@ -22,7 +21,6 @@ set(MODULE_PRIVATE_HEADERS
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
     src/filehandlermanager.cpp
-    src/filehandlernew.cpp
     src/filehandler.cpp
     src/visualizationservice.cpp
     src/mymodel.cpp
