@@ -31,7 +31,7 @@ set(MODULE_SOURCE_FILES
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
-qt_add_library(${IMAGE_PROCESSING_TARGET} STATIC
+add_library(${IMAGE_PROCESSING_TARGET} STATIC
     ${MODULE_PUBLIC_FACADES}
     ${MODULE_PRIVATE_HEADERS}
     ${MODULE_SOURCE_FILES}

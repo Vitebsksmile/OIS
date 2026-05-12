@@ -1,10 +1,19 @@
 #   Создает переменную APP_TARGET со значением "OISApp"
 #   (имя цели в CMake для компиляции)
-set(APP_TARGET OISApp)
+#set(APP_TARGET OISApp PARENT_SCOPE) # Для главного (верхнего) CMake
+#set(APP_TARGET OISApp)
+
+#set_target_properties(app_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+
+
+# Собираем разделяемую версию
+set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build using shared libraries ON/OFF")
+
+message(BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS})
 
 
 #   Создает исполняемый файл проекта, используя main.cpp как точку входа
-qt_add_executable(${APP_TARGET}
+add_executable(${PROJECT_NAME}
     main.cpp
     application.h application.cpp
 )
@@ -12,7 +21,7 @@ qt_add_executable(${APP_TARGET}
 
 #   Добавляем определения (флаги) компиляции для передачи препроцессорных
 #   макросов (#define) в C++ код прямо из CMake
-target_compile_definitions(${APP_TARGET}
+target_compile_definitions(${PROJECT_NAME}
 
     PRIVATE
 
@@ -29,7 +38,7 @@ target_compile_definitions(${APP_TARGET}
 
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
-target_link_libraries(${APP_TARGET} PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
 
     #   Стандартные библиотеки Qt
     #Qt6::Qml
@@ -46,7 +55,7 @@ target_link_libraries(${APP_TARGET} PRIVATE
     #${OpenCV_LIBS}
 
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
-    DatabaseModule
+    #DatabaseModule
     ImageProcessingModule
     #IntegrationModule
     VisualizationModule
@@ -69,19 +78,36 @@ target_link_libraries(${APP_TARGET} PRIVATE
 )
 
 
-#   Подключаем модуль для стандартных путей (обязательно перед install)
-include(GNUInstallDirs)
+#include(${PROJECT_SOURCE_DIR}/app/fixup_script.cmake.in)
 
-#   Описывает правила установки (куда копировать файлы при команде 'install')
-install(TARGETS ${APP_TARGET}
-    #   Для Windows: сюда попадет ваш .exe файл
-    #   Обычно это папка "bin" внутри директории установки
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 
-    #   Сюда попадут .lib файлы (файлы импорта для DLL), если они есть
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+# 1. Определяем папку для сборки дистрибутива
+set(DEPLOY_DIR "${CMAKE_BINARY_DIR}/release_app")
 
-    #   Сюда попадают .dll файлы, если они собраны как отдельные модули (SHARED)
-    #   В Windows DLL считаются "рантаймом", поэтому они тоже летят в bin
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+# 2. Добавляем команду после сборки основного приложения
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${PROJECT_NAME}>" "${DEPLOY_DIR}/"
+
+    # 1. Копируем плагин платформы (без него Qt-приложение не запустится)
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}/platforms"
+    COMMAND ${CMAKE_COMMAND} -E copy "D:/msys64/mingw64/share/qt6/plugins/platforms/qwindows.dll" "${DEPLOY_DIR}/platforms/"
+
+    # 2. Копируем необходимые папки QML модулей
+    # Можно скопировать всё (будет весить много), либо только нужные:
+    #COMMAND ${CMAKE_COMMAND} -E make_directory "${DEPLOY_DIR}/qml"
+
+    # Копируем конкретно QtQuick и Controls (самые важные)
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory "${MSYS_QML_DIR}/QtQuick" "${DEPLOY_DIR}/qml/QtQuick"
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory "${MSYS_QML_DIR}/Qt" "${DEPLOY_DIR}/qml/Qt"
+
+    # Если используете Controls:
+    #COMMAND ${CMAKE_COMMAND} -E copy_directory "${MSYS_QML_DIR}/QtQuick/Controls" "${DEPLOY_DIR}/qml/QtQuick/Controls"
+
+    # 3. Запускаем fixup_script для сбора OpenCV и системных DLL (libstdc++, libgcc и т.д.)
+    COMMAND ${CMAKE_COMMAND}
+        "-DEXE_PATH=${DEPLOY_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
+        "-DSEARCH_DIRS=D:/msys64/mingw64/bin"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/fixup_script.cmake"
+    VERBATIM
 )

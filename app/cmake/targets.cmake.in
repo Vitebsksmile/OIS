@@ -1,0 +1,58 @@
+target_sources(${APP_TARGET}
+    PRIVATE
+        main.cpp
+        application.h application.cpp
+)
+
+
+target_link_libraries(${APP_TARGET} PRIVATE
+
+    #   Стандартные библиотеки Qt
+    #Qt6::Qml
+    #Qt6::Quick
+    #Qt6::QuickLayouts                   #   for STATIC
+    #Qt6::QuickControls2
+    #Qt6::QuickControls2Basic            #   for STATIC
+    #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
+    #Qt6::Gui
+    #Qt6::Multimedia
+    #Qt6::Sql
+
+    #   Сторонние библиотеки и плагины
+    #${OpenCV_LIBS}
+
+    #   Библиотеки проекта для доступа к .h файлам и C++ логике
+    #DatabaseModule
+    ImageProcessingModule
+    #IntegrationModule
+    VisualizationModule
+
+
+    #   --- для static build --- {-->>
+
+    #   Стандартные библиотеки Qt for STATIC
+    #Qt6::qquicklayoutsplugin
+    #Qt6::qtquickcontrols2plugin
+    #Qt6::qtquickcontrols2basicstyleplugin
+
+
+    #   Для гарантии регистрации QML-типов при static build
+    VisualizationModuleplugin
+    #ImageProcessingModuleLibplugin
+
+    #   --<<}
+
+)
+
+#   Добавляем определения (флаги) компиляции для передачи препроцессорных
+#   макросов (#define) в C++ код прямо из CMake
+target_compile_definitions(${APP_TARGET}
+
+    PRIVATE
+
+        #   Включает возможность QML-отладки только если проект собран в режиме Debug
+        #   В коде появится #define QT_QML_DEBUG,
+        #   будет возможным использовать Hot Reload или QML Inspector.
+        #   В финальной версии (Release) этого макроса не будет
+        $<$<CONFIG:Debug>:QT_QML_DEBUG>
+)

@@ -1,6 +1,9 @@
+//pragma Singleton
 import QtQuick //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls
 import QtQuick.Layouts
+import VisualizationModule
+
 
 //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 Rectangle {

@@ -1,0 +1,27 @@
+message("== Shared dependency setup")
+
+# Задаем папку, в которой нужно искать разделяемые библиотеки
+set(MY_DEPENDENCY_PATHS C:/msys64/mingw64/bin)
+# Преобразуем список в формат CMake
+set(DLLS_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+# Делаем установленные переменные доступными во время запуска из блока install(CODE
+install(CODE "set(MY_DEPENDENCY_PATHS \"${MY_DEPENDENCY_PATHS}\")")
+install(CODE "set(DLLS_DIR \"${CMAKE_CURRENT_BINARY_DIR}\")")
+
+# Запускаем на этапе установки программы
+install(CODE [[
+
+message("== Searching for shared DLL")
+
+# Находим все файлы с разделяемыми библиотеками, которые нужны для запуска программы
+file(GET_RUNTIME_DEPENDENCIES
+    EXECUTABLES $<TARGET_FILE:OISApp>
+    RESOLVED_DEPENDENCIES_VAR DLLS
+    PRE_EXCLUDE_REGEXES "^api-ms-" "^ext-ms-"
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+)
+
+message("== Search completed")
+
+]])

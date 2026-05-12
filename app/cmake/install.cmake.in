@@ -1,0 +1,13 @@
+#   Описывает правила установки (куда копировать файлы при команде 'install')
+install(TARGETS ${APP_TARGET}
+    #   Для Windows: сюда попадет ваш .exe файл
+    #   Обычно это папка "bin" внутри директории установки
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+
+    #   Сюда попадут .lib файлы (файлы импорта для DLL), если они есть
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+
+    #   Сюда попадают .dll файлы, если они собраны как отдельные модули (SHARED)
+    #   В Windows DLL считаются "рантаймом", поэтому они тоже летят в bin
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)

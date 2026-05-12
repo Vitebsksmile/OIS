@@ -110,7 +110,7 @@ void Application::setupConnections()
 int Application::run()
 {
 
-    qDebug() << "Starting Application...";
+    qDebug() << "Application: Starting Application...";
 
 
     m_engine.reset(new QQmlApplicationEngine());

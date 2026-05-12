@@ -62,7 +62,7 @@ Item {
                 anchors.margins: 30
                 spacing: 40
 
-                ModeButton {
+                IconButton {
 
                     id: setCamera
 
@@ -70,7 +70,7 @@ Item {
                     height: 260
 
                     // Переопределяем картинку через созданный алиас
-                    iconSource: "qrc/setCamera.svg"
+                    iconSource: "../qrc/setCamera.svg"
 
                     onRequestOpen: (globalX, globalY, globalW, globalH) => {
 
@@ -81,7 +81,7 @@ Item {
                                    }
                 }
 
-                ModeButton {
+                IconButton {
 
                     id: setCamcoder
 
@@ -89,7 +89,7 @@ Item {
                     height: 260
 
                     // Переопределяем картинку через созданный алиас
-                    iconSource: "qrc/setCamcoder.svg"
+                    iconSource: "../qrc/setCamcoder.svg"
 
                     onRequestOpen: (globalX, globalY, globalW, globalH) => {
 
