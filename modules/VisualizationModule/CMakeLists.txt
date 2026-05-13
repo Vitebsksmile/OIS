@@ -14,6 +14,7 @@ set(MODULE_PUBLIC_FACADES
 set(MODULE_PRIVATE_HEADERS
     private/filehandlermanager.h
     private/filehandler.h
+
     private/mymodel.h
 )
 
@@ -23,6 +24,7 @@ set(MODULE_SOURCE_FILES
     src/filehandlermanager.cpp
     src/filehandler.cpp
     src/visualizationservice.cpp
+
     src/mymodel.cpp
 )
 
@@ -54,27 +56,9 @@ set(MODULE_QML_FILES
 
 
 set(MODULE_IMAGE_FILES
-    qrc/setCamcoder.svg
-    qrc/setCamera.svg
-    qrc/setCamera2.svg
-    qrc/setVideotape.svg
+    qrc/setCamera6.svg
+    qrc/setVideocamera11.svg
 )
-
-
-#   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
-#   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
-#qt_add_library(${VISUALIZATION_TARGET} STATIC)
-
-
-#   Использование QT_RESOURCE_ALIAS в CMake до вызова qt_add_qml_module,
-#   чтобы «схлопнуть» физические папки (qml/, view/ и т.д.) в единый логический корень модуля в системе ресурсов.
-#foreach(file ${MODULE_QML_FILES})
-#    get_filename_component(file_name ${file} NAME)
-
-#    set_source_files_properties(${file} PROPERTIES
-#        QT_RESOURCE_ALIAS "${file_name}"
-#    )
-#endforeach()
 
 
 #   Регистрирует QML-модуль для основной цели приложения

@@ -11,6 +11,8 @@ Rectangle {
     property alias iconSource: img.source   //  для смены пути к картинке
     property alias iconWidth: buttonRoot.width
     property alias iconHeight: buttonRoot.height
+    property alias iconRadius: buttonRoot.radius
+    property alias imgMargins: img.anchors.margins
     //property alias buttonName: nameIcon.text
 
 
@@ -23,7 +25,8 @@ Rectangle {
     radius: 15
 
     // Меняем цвет в зависимости от наведения (hover)
-    color: mouseArea.containsMouse ? "#5dade2" : "#3498db"
+    //color: mouseArea.containsMouse ? "#5dade2" : "#3498db"    //  blue->blue
+    color: mouseArea.containsMouse ? "#ffffff" : "#c8e6fa"    //  blue->white
 
     // Плавный переход цвета
     Behavior on color {

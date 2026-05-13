@@ -12,17 +12,21 @@ Rectangle {
         spacing: 10
 
         IconButton {
-            //buttonName: "Take a photo"
+            iconSource: "../qrc/setCamera6.svg"
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             iconWidth: 100
-            iconHeight: 50
+            iconHeight: 100
+            iconRadius: 50
+            imgMargins: 5
         }
 
         IconButton {
-            iconSource: "../qrc/setCamcoder.svg"
+            iconSource: "../qrc/setVideocamera11.svg"
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             iconWidth: 100
-            iconHeight: 70
+            iconHeight: 100
+            iconRadius: 50
+            imgMargins: 14
         }
 
     }

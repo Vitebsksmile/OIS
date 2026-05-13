@@ -12,8 +12,8 @@ Rectangle {
         id: player
 
         //source: "file:///E:/20260416_192406.mp4"
-        source: "http://192.168.0.112:4747/video"
-        //source: "http://192.168.0.112"
+        //source: "http://192.168.0.112:4747/video"
+        source: "http://192.168.100.2:4747/video"
         //source: "http://10.220.18.94:4747/video"
 
         videoOutput: videoOutput
@@ -23,11 +23,11 @@ Rectangle {
                          }
 
         onMetaDataChanged: {
-            console.log("--- Информация о потоке ---")
+            console.log("--- Stream information ---")
             // В Qt 6 метаданные доступны через ключи в объекте metaData
-            console.log("Название:", metaData.value(MediaMetaData.Title))
-            console.log("Формат/Контейнер:", metaData.value(MediaMetaData.FileFormat))
-            console.log("Длительность:", (metaData.value(MediaMetaData.Duration) / 1000).toFixed(2), "сек")
+            console.log("Name:", metaData.value(MediaMetaData.Title))
+            console.log("Format/Container:", metaData.value(MediaMetaData.FileFormat))
+            console.log("Video duration:", (metaData.value(MediaMetaData.Duration) / 1000).toFixed(2), "second")
         }
 
         onVideoTracksChanged: {
@@ -39,12 +39,12 @@ Rectangle {
                 let size = track.videoFrameSize
 
                 if (size) {
-                    console.log("Разрешение кадра:", size.width, "x", size.height)
+                    console.log("Frame resolution:", size.width, "x", size.height)
                 } else {
-                    console.log("Разрешение еще не определено...")
+                    console.log("The resolution has not yet been determined...")
                 }
 
-                console.log("Частота кадров:", track.frameRate)
+                console.log("Frame rate:", track.frameRate)
             }
         }
     }
