@@ -1,11 +1,10 @@
 //pragma Singleton
-import QtQuick //  Базовые элементы (Rectangle, Image, Text)
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import VisualizationModule
 
 
-//  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
 Rectangle {
 
     id: root
@@ -14,7 +13,6 @@ Rectangle {
     //  чтобы обращаться к ним как <id>.handler или <id>.popup
     property alias handler: fileHandler //      Текущий экземпляр FileHandler
     property alias popup: statusPopup //      Всплывающее уведомление
-    //property alias handler: fileHandler //      Текущий путь к изображению
     property alias backgroundColor: root.color //      Задать цвет снаружи
     property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику
@@ -30,7 +28,7 @@ Rectangle {
         }
     }
 
-    color: "lightblue" //      Цвет по умолчанию
+    color: "lightblue"
     radius: 10
 
     Image {

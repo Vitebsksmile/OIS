@@ -7,7 +7,6 @@ Page {
 
     title: qsTr("Statistics")
 
-    //Layout.preferredHeight: 300
     implicitHeight: 150
 
     Rectangle {
@@ -27,98 +26,100 @@ Page {
                 color: "#222"
             }
 
-            // ===== Верхняя панель метрик =====
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 5
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-
-                    radius: 12
-                    color: "white"
-                    border.color: "#dcdcdc"
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-
-                        Label {
-                            text: qsTr("Precision")
-                            font.pixelSize: 15
-                            color: "#666"
-                        }
-
-                        Label {
-                            text: "0.972"
-                            font.pixelSize: 18
-                            font.bold: true
-                            color: "#1976d2"
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-
-                    radius: 10
-                    color: "white"
-                    border.color: "#dcdcdc"
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-
-                        Label {
-                            text: qsTr("Recall")
-                            font.pixelSize: 15
-                            color: "#666"
-                        }
-
-                        Label {
-                            text: "0.948"
-                            font.pixelSize: 18
-                            font.bold: true
-                            color: "#388e3c"
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-
-                    radius: 10
-                    color: "white"
-                    border.color: "#dcdcdc"
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 4
-
-                        Label {
-                            text: qsTr("F1-Score")
-                            font.pixelSize: 15
-                            color: "#666"
-                        }
-
-                        Label {
-                            text: "0.960"
-                            font.pixelSize: 18
-                            font.bold: true
-                            color: "#d32f2f"
-                        }
-                    }
-                }
-            }
-
             // ===== Центральная часть =====
             RowLayout {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 16
+                //Layout.fillHeight: true
+                Layout.preferredHeight: 100
+                spacing: 5
+
+                // ===== Верхняя панель метрик =====
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 2
+
+                    Rectangle {
+                        Layout.preferredWidth: 70
+                        Layout.fillHeight: true
+
+                        radius: 12
+                        color: "white"
+                        border.color: "#dcdcdc"
+
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 4
+
+                            Label {
+                                text: qsTr("Precision")
+                                font.pixelSize: 15
+                                color: "#666"
+                            }
+
+                            Label {
+                                text: "0.972"
+                                font.pixelSize: 18
+                                font.bold: true
+                                color: "#1976d2"
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.preferredWidth: 70
+                        Layout.fillHeight: true
+
+                        radius: 10
+                        color: "white"
+                        border.color: "#dcdcdc"
+
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 4
+
+                            Label {
+                                text: qsTr("Recall")
+                                font.pixelSize: 15
+                                color: "#666"
+                            }
+
+                            Label {
+                                text: "0.948"
+                                font.pixelSize: 18
+                                font.bold: true
+                                color: "#388e3c"
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.preferredWidth: 70
+                        Layout.fillHeight: true
+
+                        radius: 10
+                        color: "white"
+                        border.color: "#dcdcdc"
+
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 4
+
+                            Label {
+                                text: qsTr("F1-Score")
+                                font.pixelSize: 15
+                                color: "#666"
+                            }
+
+                            Label {
+                                text: "0.960"
+                                font.pixelSize: 18
+                                font.bold: true
+                                color: "#d32f2f"
+                            }
+                        }
+                    }
+                }
 
                 // ===== График =====
                 Rectangle {
@@ -131,9 +132,12 @@ Page {
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 12
+                        anchors.margins: 5
+
+                        //var
 
                         Label {
+                            padding: 2.5
                             text: qsTr("Detection Statistics")
                             font.pixelSize: 18
                             font.bold: true
@@ -148,6 +152,10 @@ Page {
                             property var values: [4, 7, 3, 10, 5, 8, 6]
                             property int maxValue: 12
 
+                            // Приказываем Canvas перерисовываться с нуля при изменении размеров
+                            onWidthChanged: requestPaint()
+                            onHeightChanged: requestPaint()
+
                             onPaint: {
                                 var ctx = getContext("2d")
                                 ctx.reset()
@@ -155,18 +163,30 @@ Page {
                                 var w = width
                                 var h = height
 
+                                if (w <= 0 || h <= 0) return; // Защита от нулевых размеров
+
+                                // --- НАСТРОЙКА РАЗМЕРА ГРАФИКА (Увеличьте числа, чтобы сделать график МЕНЬШЕ) ---
+                                var paddingTop = 5
+                                var paddingBottom = 10
+                                var paddingLeft = 5
+                                var paddingRight = 5
+
+                                // Автоматический расчет доступной ширины и высоты для рисования
+                                var availableHeight = h - paddingTop - paddingBottom
+                                var availableWidth = w - paddingLeft - paddingRight
+
                                 // фон
                                 ctx.fillStyle = "#ffffff"
                                 ctx.fillRect(0, 0, w, h)
 
-                                // оси
+                                // оси (теперь строятся по динамическим отступам)
                                 ctx.strokeStyle = "#999"
                                 ctx.lineWidth = 2
 
                                 ctx.beginPath()
-                                ctx.moveTo(50, 20)
-                                ctx.lineTo(50, h - 40)
-                                ctx.lineTo(w - 20, h - 40)
+                                ctx.moveTo(paddingLeft, paddingTop)
+                                ctx.lineTo(paddingLeft, h - paddingBottom)
+                                ctx.lineTo(w - paddingRight, h - paddingBottom)
                                 ctx.stroke()
 
                                 // сетка
@@ -174,16 +194,17 @@ Page {
                                 ctx.lineWidth = 1
 
                                 for (var i = 0; i < 5; i++) {
-                                    var gy = 20 + i * ((h - 60) / 4)
+                                    // Теперь сетка и график используют одинаковый availableHeight
+                                    var gy = paddingTop  + i * (availableHeight / 4)
 
                                     ctx.beginPath()
-                                    ctx.moveTo(50, gy)
-                                    ctx.lineTo(w - 20, gy)
+                                    ctx.moveTo(paddingLeft, gy)
+                                    ctx.lineTo(w - paddingRight, gy)
                                     ctx.stroke()
                                 }
 
                                 // линия графика
-                                var stepX = (w - 90) / (values.length - 1)
+                                var stepX = availableWidth  / (values.length - 1)
 
                                 ctx.strokeStyle = "#1976d2"
                                 ctx.lineWidth = 3
@@ -192,11 +213,10 @@ Page {
 
                                 for (var j = 0; j < values.length; j++) {
 
-                                    var x = 50 + j * stepX
+                                    var x = paddingLeft  + j * stepX
 
-                                    var y = (h - 40)
-                                            - (values[j] / maxValue)
-                                            * (h - 80)
+                                    // Координата Y теперь рассчитывается синхронно с сеткой
+                                    var y = (h - paddingBottom) - (values[j] / maxValue) * availableHeight
 
                                     if (j === 0)
                                         ctx.moveTo(x, y)
@@ -211,11 +231,9 @@ Page {
 
                                 for (var k = 0; k < values.length; k++) {
 
-                                    var px = 50 + k * stepX
+                                    var px = paddingLeft + k * stepX
 
-                                    var py = (h - 40)
-                                            - (values[k] / maxValue)
-                                            * (h - 80)
+                                    var py = (h - paddingBottom) - (values[k] / maxValue) * availableHeight
 
                                     ctx.beginPath()
                                     ctx.arc(px, py, 5, 0, 2 * Math.PI)
@@ -237,7 +255,7 @@ Page {
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 12
+                        anchors.margins: 5
                         spacing: 10
 
                         Label {

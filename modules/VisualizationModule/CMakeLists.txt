@@ -32,26 +32,17 @@ set(MODULE_SOURCE_FILES
 set(MODULE_QML_FILES
     qml/AppMenuBar.qml
     qml/HomeView.qml
-    qml/ImageProcessingView.qml
     qml/ImageView.qml
-    qml/SideBar.qml
+    qml/DetectionOverlay.qml
     qml/SideBarButton.qml
-    qml/IconButton.qml
-    qml/MaskOverlay.qml
-    qml/ViewContainer.qml
     qml/InformationView.qml
     qml/ImageContainerView.qml
     qml/ImagePickerDialog.qml
-    qml/VideoPlayerView.qml
-    qml/ModeTabBar.qml
-    qml/CamcoderIpInput.qml
     qml/ButtonBar.qml
-
     qml/DashboardPage.qml
     qml/InspectionPage.qml
-
-
-
+    qml/ControlPanel.qml
+    qml/StatisticsPage.qml
 )
 
 
@@ -83,10 +74,7 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
         ${MODULE_PUBLIC_FACADES}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
-        QML_FILES qml/ImageViewer.qml
-        QML_FILES qml/DetectionOverlay.qml
-        QML_FILES qml/ControlPanel.qml
-        QML_FILES qml/StatisticsPage.qml
+
 )
 
 

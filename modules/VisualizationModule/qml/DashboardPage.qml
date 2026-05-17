@@ -8,8 +8,7 @@ Page {
 
     title: qsTr("Dashboard")
 
-    //Layout.preferredHeight: 350
-    implicitHeight: 350
+    implicitHeight: 150
 
     Rectangle {
         anchors.fill: parent
@@ -20,7 +19,7 @@ Page {
             anchors.margins: 2
             spacing: 5
 
-            // ===== Центральная часть =====
+            // ===== Центральная часть. График =====
             Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true   //  min 290
@@ -59,6 +58,12 @@ Page {
                             var w = width
                             var h = height
 
+                            // Если холст еще не инициализирован (размеры равны 0), выходим
+                            if (w <= 0 || h <= 0) return;
+
+                            // Находим максимальное значение в массиве для правильного масштабирования по вертикали
+                            var maxVal = Math.max.apply(null, values)
+
                             // фон
                             ctx.fillStyle = "#ffffff"
                             ctx.fillRect(0, 0, w, h)
@@ -80,24 +85,28 @@ Page {
                             ctx.lineTo(w - 20, h - 40)
                             ctx.stroke()
 
+                            // ШАГ 2: Динамический расчет шагов
+                            var stepX = (w - 80) / (values.length - 1)
+                            // Доступная высота для самого графика (с учетом отступов сверху 20 и снизу 40)
+                            var availableHeight = h - 60
+
+                            // Функция для вычисления Y координат с учетом высоты экрана
+                            function getY(val) {
+                                // Масштабируем значение относительно максимума и доступной высоты
+                                return (h - 40) - (val / maxVal) * availableHeight
+                            }
+
                             // график
                             ctx.strokeStyle = "#1976d2"
                             ctx.lineWidth = 3
-
-                            // линия графика
-                            var stepX = (w - 80) / (values.length - 1)
-
                             ctx.beginPath()
 
                             for (var i = 0; i < values.length; i++) {
-
                                 var x = 40 + i * stepX
-                                var y = h - 40 - values[i] * 20
+                                var y = getY(values[i]) // Используем динамический Y
 
-                                if (i === 0)
-                                    ctx.moveTo(x, y)
-                                else
-                                    ctx.lineTo(x, y)
+                                if (i === 0) ctx.moveTo(x, y)
+                                else ctx.lineTo(x, y)
                             }
 
                             ctx.stroke()
@@ -108,7 +117,7 @@ Page {
                             for (var j = 0; j < values.length; j++) {
 
                                 var px = 40 + j * stepX
-                                var py = h - 40 - values[j] * 20
+                                var py = getY(values[j]) // Используем динамический Y
 
                                 ctx.beginPath()
                                 ctx.arc(px, py, 5, 0, 2 * Math.PI)
@@ -122,11 +131,11 @@ Page {
             // ===== Верхняя панель статистики =====
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 10
+                spacing: 2
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 30
+                    Layout.fillHeight: true
                     radius: 12
                     color: "white"
                     border.color: "#dcdcdc"
@@ -151,7 +160,7 @@ Page {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 30
+                    Layout.fillHeight: true
                     radius: 12
                     color: "white"
                     border.color: "#dcdcdc"
@@ -177,7 +186,7 @@ Page {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 30
+                    Layout.fillHeight: true
                     radius: 12
                     color: "white"
                     border.color: "#dcdcdc"

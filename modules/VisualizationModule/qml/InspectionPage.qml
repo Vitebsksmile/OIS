@@ -18,21 +18,47 @@ Page {
     RowLayout {
 
         anchors.fill: parent
-        anchors.margins: 10
+        anchors.margins: 5
 
         ImageView {
             id: sourceViewer
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            Layout.minimumWidth: 200
+            Layout.minimumHeight: 400
         }
 
-        ControlPanel {
-            implicitWidth: 200
+        ColumnLayout {
 
-            //  Прокидываем в ControlPanel.qml ссылки (alias) из ImageView.qml,
-            //  используя экземпляр его родительского объекта с id: sourceViewer
-            targetHandler: sourceViewer.handler
-            targetPopup: sourceViewer.popup
+            Layout.preferredHeight: implicitHeight
+            Layout.preferredWidth: implicitWidth
+
+            Layout.minimumWidth: 100
+            Layout.minimumHeight: 100
+
+            InformationView {
+                Layout.preferredHeight: implicitHeight
+
+                //  Прокидываем в InformationView.qml ссылки (alias) из ImageView.qml,
+                //  используя экземпляр его родительского объекта с id: sourceViewer
+                targetHandler: sourceViewer.handler
+            }
+
+            ControlPanel {
+                // Автоматический расчет ширины по содержимому + отступы по бокам
+                //Layout.preferredWidth: implicitWidth
+                Layout.preferredHeight: implicitHeight
+
+                //  Прокидываем в ControlPanel.qml ссылки (alias) из ImageView.qml,
+                //  используя экземпляр его родительского объекта с id: sourceViewer
+                targetHandler: sourceViewer.handler
+                targetPopup: sourceViewer.popup
+            }
+
+            Item {
+                Layout.fillHeight: true //  Заполняем всю оставшуюся высоту родителя
+            }
         }
 
     }

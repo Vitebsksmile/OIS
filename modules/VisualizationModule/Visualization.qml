@@ -13,7 +13,11 @@ ApplicationWindow {
 
     color: "#526d80"
 
-    width: 1200; height: 860
+    width: 1200
+    height: 860
+
+    minimumWidth: 800
+    minimumHeight: 800
 
     menuBar: AppMenuBar {}
 

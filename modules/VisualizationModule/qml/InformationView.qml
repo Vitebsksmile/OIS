@@ -30,7 +30,7 @@ Rectangle {
             wrapMode: Text.WrapAnywhere
             Layout.preferredHeight: contentHeight
 
-            text: "Sourse path: " + root.targetHandler.getCleanPath(root.targetHandler.currentImagePath)
+            text: qsTr("Sourse path: ") + root.targetHandler.getCleanPath(root.targetHandler.currentImagePath)
 
         }
 
@@ -39,7 +39,7 @@ Rectangle {
 
             Layout.fillWidth: true
 
-            text: "Размер: " + root.targetHandler.getFileSize(root.targetHandler.currentImagePath).toFixed(2) + " MB"
+            text: qsTr("Size: ") + root.targetHandler.getFileSize(root.targetHandler.currentImagePath).toFixed(2) + " MB"
         }
 
     }

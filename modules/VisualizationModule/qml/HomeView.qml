@@ -35,8 +35,10 @@ Rectangle {
             //  Настройки размеров для root
             SplitView.fillHeight: true
             //SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
-            SplitView.minimumHeight: 100     //  Минимальный порог сжатия
-            SplitView.maximumHeight: 500     //  Максимальный порог растяжения
+            SplitView.minimumHeight: 300     //  Минимальный порог сжатия
+            SplitView.maximumHeight: 700     //  Максимальный порог растяжения
+
+            //SplitView.minimumWidth: 600
 
         }
 
@@ -44,9 +46,10 @@ Rectangle {
             id: statisticsPage
 
             //  Настройки размеров для root
-            SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
-            SplitView.minimumHeight: 100     //  Минимальный порог сжатия
-            SplitView.maximumHeight: 350     //  Максимальный порог растяжения
+            //SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
+            SplitView.preferredHeight: 230
+            SplitView.minimumHeight: 230     //  Минимальный порог сжатия
+            SplitView.maximumHeight: 500     //  Максимальный порог растяжения
 
         }
     }

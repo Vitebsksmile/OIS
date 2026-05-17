@@ -11,13 +11,14 @@ Button {
 
     text: qsTr("Default")
 
-    hoverEnabled: true // Шаг 1: Разрешаем отслеживание мыши
+    hoverEnabled: true
 
+    // Автоматический расчет ширины по содержимому + отступы по бокам
+    implicitHeight: contentItem.implicitHeight + leftPadding + rightPadding
 
     contentItem: Row {
 
         spacing: 10 //  расстояние между иконкой и названием кнопки
-
 
         Text {
 

@@ -6,28 +6,36 @@ Rectangle {
 
     id: root
 
-    //implicitHeight: internalLayout.implicitHeight + internalLayout.anchors.margins * 2
-
     //  Связи (мостики) к внешним ресурсам
     property var targetHandler: null //  Текущий экземпляр FileHandler
     property var targetPopup: null //  Всплывающее окно
+
+    // Внутренние отступы самого Rectangle от его краев до ColumnLayout
+    property int leftPadding: 15
+    property int rightPadding: 15
+    property int topPadding: 15
+    property int bottomPadding: 15
+
+    implicitHeight: controlLayout.implicitHeight + (controlLayout.anchors.margins * 2)
+    implicitWidth: 200
 
     color: Qt.rgba(44 / 255, 62 / 255, 80 / 255, 0.9) //  Midnight Blue
     radius: 10
 
     ColumnLayout {
 
-        id: internalLayout
+        id: controlLayout
 
         //  Растягиваем по ширине
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-
+        anchors.fill: parent
 
 
         anchors.margins: 10 //  Внутренние отступы от краев родителя
         spacing: 5 //  Расстояние между кнопками
+
 
         SideBarButton {
 
