@@ -16,7 +16,7 @@ SplitView {
     orientation: Qt.Horizontal //  Панели стоят в ряд (слева направо)
 
 
-    ImageContainer {
+    ImageContainerView {
 
         id: sourceViewer
 

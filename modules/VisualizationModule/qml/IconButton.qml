@@ -25,7 +25,6 @@ Rectangle {
     radius: 15
 
     // Меняем цвет в зависимости от наведения (hover)
-    //color: mouseArea.containsMouse ? "#5dade2" : "#3498db"    //  blue->blue
     color: mouseArea.containsMouse ? "#ffffff" : "#c8e6fa"    //  blue->white
 
     // Плавный переход цвета

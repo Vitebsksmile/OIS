@@ -6,7 +6,7 @@ Rectangle {
 
     id: root
 
-    implicitHeight: internalLayout.implicitHeight + internalLayout.anchors.margins * 2
+    implicitWidth: internalLayout.implicitWidth + internalLayout.anchors.margins * 2
 
     //  Связи (мостики) к внешним ресурсам
     property var targetHandler: null //  Текущий экземпляр FileHandler
@@ -15,23 +15,19 @@ Rectangle {
     color: Qt.rgba(44 / 255, 62 / 255, 80 / 255, 0.9) //  Midnight Blue
     radius: 10
 
-    ColumnLayout {
+    RowLayout {
 
         id: internalLayout
 
-        //  Растягиваем по ширине
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-
-
+        anchors.fill: parent // Растягиваем на весь родительский элемент
 
         anchors.margins: 10 //  Внутренние отступы от краев родителя
         spacing: 5 //  Расстояние между кнопками
 
-        SideBarButton {
+        FunctionPanelButton {
 
-            Layout.fillWidth: true //  Растягиваем кнопку на всю ширину родителя
+            Layout.preferredHeight: implicitHeight //  Растягиваем кнопку на всю высоту родителя
+            Layout.preferredWidth: implicitWidth // Задаем идеальную высоту кнопки на основе содержимого
 
             text: qsTr("Open") //  Текст с поддержкой перевода
 
@@ -42,9 +38,10 @@ Rectangle {
             }
         }
 
-        SideBarButton {
+        FunctionPanelButton {
 
-            Layout.fillWidth: true //  Растягиваем кнопку на всю ширину родителя
+            Layout.preferredHeight: implicitHeight //  Растягиваем кнопку на всю высоту родителя
+            Layout.preferredWidth: implicitWidth // Задаем идеальную высоту кнопки на основе содержимого
 
             text: qsTr("Save as") //  Текст с поддержкой перевода
 
@@ -55,11 +52,12 @@ Rectangle {
             }
         }
 
-        SideBarButton {
+        FunctionPanelButton {
 
             id: start
 
-            Layout.fillWidth: true //  Растягиваем кнопку на всю ширину родителя
+            Layout.preferredHeight: implicitHeight //  Растягиваем кнопку на всю высоту родителя
+            Layout.preferredWidth: implicitWidth // Задаем идеальную высоту кнопки на основе содержимого
 
             text: qsTr("Start preprocessing") //  Текст с поддержкой перевода
 
@@ -69,12 +67,13 @@ Rectangle {
             onClicked: root.startPreprocessing()
         }
 
-        Item {
-            Layout.fillHeight: true //  Заполняем всю оставшуюся высоту родителя
-        }
+        /*Item {
+            Layout.fillWidth: true //  Заполняем всю оставшуюся высоту родителя
+        }*/
     }
 
     ImagePickerDialog {
+
         id: imagePicker
 
         targetHandler: root.targetHandler

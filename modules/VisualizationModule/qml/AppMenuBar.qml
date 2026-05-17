@@ -5,6 +5,23 @@ import QtQuick.Dialogs
 
 MenuBar {
 
+    id: root
+
+    // Палитра для чтения системных цветов ОС
+    SystemPalette {
+        id: sysPalette
+        colorGroup: SystemPalette.Active
+    }
+
+    background: Rectangle {
+        //color: "#526d80"
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#e9f5f0" }
+            GradientStop { position: 1.0; color: "#526d80" }
+        }
+        radius: -15
+    }
+
     //  Пробрасываем сигналы
     signal openTriggered()
 

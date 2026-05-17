@@ -33,10 +33,6 @@ target_compile_definitions(${PROJECT_NAME}
 )
 
 
-#   Ищет установленный пакет Qt 6.5 и выше с обязательными модулями Core Qml и т.д.
-#find_package(Qt6 6.5 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Gui)    #  for static
-
-
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
 target_link_libraries(${PROJECT_NAME} PRIVATE
 

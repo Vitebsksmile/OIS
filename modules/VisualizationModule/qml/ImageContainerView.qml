@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 
 SplitView {
@@ -16,14 +17,6 @@ SplitView {
     orientation: Qt.Vertical    //  Панели стоят колонной (сверху вниз)
 
 
-    ModeTabBar {
-        //  Настройки размеров для centralContainer
-        SplitView.preferredHeight: 100   //  Желаемая высота при старте
-        SplitView.minimumHeight: 100     //  Минимальный порог сжатия
-        SplitView.maximumHeight: 500     //  Максимальный порог растяжения
-    }
-
-
     ImageView {
 
         id: imageView
@@ -37,6 +30,7 @@ SplitView {
         handler.directionOut: true
 
     }
+
 
     InformationView {
         id: informationView

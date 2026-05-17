@@ -1,66 +1,53 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
-Item {
+
+Rectangle {
 
     anchors.fill: parent
+    border.width: 20
+    border.color: "#f0f0f0"
+    anchors.bottomMargin: 10
+    anchors.leftMargin: 5
+    anchors.rightMargin: 5
+    radius: 15
 
     //  Основной контейнер с разделителем (тянется мышкой)
     SplitView {
-        id: mainSplitView
+        id: root
 
-        orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
+        orientation: Qt.Vertical  //  Панели стоят в ряд (слева направо)
         anchors.fill: parent    //  Заполняем контейнером всю площадь родителя
         anchors.margins: 5
 
-        //  Левая панель - боковое меню
-        SideBar {
-            id: sideBar
+        DashboardPage {
+            id: dashboardPage
 
-            //  Настройки размеров для mainSplitView
-            SplitView.preferredWidth: 200   //  Желаемая ширина при старте
-            SplitView.minimumWidth: 100     //  Минимальный порог сжатия
-            SplitView.maximumWidth: 300     //  Максимальный порог растяжения
-
-            //  Настройки размеров для sideBar
-            Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
-
-            //  Прокидываем в SideBar.qml ссылки (alias) из ImageView.qml,
-            //  используя экземпляр его родительского объекта с id: centralContent
-            targetHandler: imageProcessingView.handler
-            targetPopup: imageProcessingView.popup
+            //  Настройки размеров для root
+            SplitView.preferredHeight: dashboardPage.implicitHeight   //  Желаемая высота при старте
+            SplitView.minimumHeight: 100     //  Минимальный порог сжатия
+            SplitView.maximumHeight: 500     //  Максимальный порог растяжения
         }
 
-        //  Правая часть окна (центральный контент)
-        SplitView {
-            id: centralContainer
+        InspectionPage {
+            id: inspectionPage
 
-            orientation: Qt.Vertical    //  Панели стоят колонной (сверху вниз)
+            //  Настройки размеров для root
+            SplitView.fillHeight: true
+            //SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
+            SplitView.minimumHeight: 100     //  Минимальный порог сжатия
+            SplitView.maximumHeight: 500     //  Максимальный порог растяжения
 
-            //  Настройки размеров для mainSplitView
-            SplitView.fillWidth: true   //  Занимает всё оставшееся место справа
+        }
 
+        StatisticsPage {
+            id: statisticsPage
 
-            //  Рабочая область
-            ImageProcessingView {
-                id: imageProcessingView
+            //  Настройки размеров для root
+            SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
+            SplitView.minimumHeight: 100     //  Минимальный порог сжатия
+            SplitView.maximumHeight: 350     //  Максимальный порог растяжения
 
-                //  Настройки размеров для centralContainer
-                SplitView.fillHeight: true   //  Занимает всё оставшееся место
-
-            }
-
-            //  Futter
-            FutterView {
-                id: futter
-
-                //  Настройки размеров для centralContainer
-                SplitView.preferredHeight: 200   //  Желаемая высота при старте
-                SplitView.minimumHeight: 100     //  Минимальный порог сжатия
-                SplitView.maximumHeight: 500     //  Максимальный порог растяжения
-            }
         }
     }
 }

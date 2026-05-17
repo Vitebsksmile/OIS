@@ -30,8 +30,6 @@ Rectangle {
         }
     }
 
-    //implicitWidth: 200 //  Рекомендуемая ширина (важно для Layout)
-    //implicitHeight: 200 //  Рекомендуемая высота
     color: "lightblue" //      Цвет по умолчанию
     radius: 10
 
@@ -80,7 +78,7 @@ Rectangle {
         Text {
 
             Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Нажмите, чтобы выбрать файл")
+            text: qsTr("Click to select a file")
             color: "gray"
         }
 
@@ -129,5 +127,9 @@ Rectangle {
                 imagePicker.mode = "open"
                 imagePicker.open()
             }
+    }
+
+    DetectionOverlay {
+        anchors.fill: mainImage
     }
 }

@@ -7,7 +7,7 @@ Item {
         id: launcherWindow
 
         visible: true
-        width: 400
+        width: 800
         height: 300
 
         //  Убираем заголовок и рамки

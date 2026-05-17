@@ -11,14 +11,7 @@ Button {
 
     text: qsTr("Default")
 
-
-    background: Rectangle {
-
-        color: (parent as Button).down ? "#bbbbbb" : "#ffffff"
-        border.color: "#333333"
-        radius: 10
-
-    }
+    hoverEnabled: true // Шаг 1: Разрешаем отслеживание мыши
 
 
     contentItem: Row {
@@ -35,6 +28,18 @@ Button {
             horizontalAlignment: Text.AlignHCenter
 
         }
+
+    }
+
+
+    background: Rectangle {
+
+        color: controlButtonRoot.down ? "#bbbbbb" :
+                                        controlButtonRoot.hovered ? "#e0e0e0" : "#ffffff"
+
+        border.color: "#333333"
+        radius: 10
+
     }
 
 }

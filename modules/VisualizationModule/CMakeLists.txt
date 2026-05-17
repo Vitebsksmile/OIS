@@ -32,26 +32,26 @@ set(MODULE_SOURCE_FILES
 set(MODULE_QML_FILES
     qml/AppMenuBar.qml
     qml/HomeView.qml
-    qml/Launcher.qml
     qml/ImageProcessingView.qml
     qml/ImageView.qml
     qml/SideBar.qml
-    qml/BlureWidget.qml
-    qml/CustomWidget.qml
     qml/SideBarButton.qml
     qml/IconButton.qml
     qml/MaskOverlay.qml
     qml/ViewContainer.qml
     qml/InformationView.qml
-    qml/FutterView.qml
-    qml/ImageContainer.qml
+    qml/ImageContainerView.qml
     qml/ImagePickerDialog.qml
-    qml/CameraView.qml
     qml/VideoPlayerView.qml
     qml/ModeTabBar.qml
     qml/CamcoderIpInput.qml
-    qml/MainContentView.qml
     qml/ButtonBar.qml
+
+    qml/DashboardPage.qml
+    qml/InspectionPage.qml
+
+
+
 )
 
 
@@ -83,6 +83,10 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
         ${MODULE_PUBLIC_FACADES}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
+        QML_FILES qml/ImageViewer.qml
+        QML_FILES qml/DetectionOverlay.qml
+        QML_FILES qml/ControlPanel.qml
+        QML_FILES qml/StatisticsPage.qml
 )
 
 
@@ -109,6 +113,7 @@ target_link_libraries(${VISUALIZATION_TARGET} PUBLIC
     Qt6::QuickDialogs2
     Qt6::Gui
     Qt6::Multimedia
+    Qt6::Charts
 )
 
 
