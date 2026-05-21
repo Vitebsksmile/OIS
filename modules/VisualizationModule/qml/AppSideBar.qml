@@ -8,7 +8,7 @@ Rectangle {
 
     id: root
 
-    implicitHeight: internalLayout.implicitHeight + internalLayout.anchors.margins * 2
+    //implicitHeight: internalLayout.implicitHeight + internalLayout.anchors.margins * 2
 
     //  Связи (мостики) к внешним ресурсам
     property var targetHandler: null //  Текущий экземпляр FileHandler
@@ -18,7 +18,7 @@ Rectangle {
     radius: 10
 
 
-    ColumnLayout {
+    /*ColumnLayout {
         id: internalLayout
 
         //  Растягиваем по ширине
@@ -65,5 +65,5 @@ Rectangle {
             root.targetHandler.startPreprocessing()
 
         }
-    }
+    }*/
 }

@@ -31,6 +31,19 @@ set(MODULE_SOURCE_FILES
 
 set(MODULE_QML_FILES
     qml/AppMenuBar.qml
+    qml/AppSideBar.qml
+
+    qml/pages/DashboardPage.qml
+    qml/pages/InspectionPage.qml
+    qml/pages/StatisticsPage.qml
+    qml/pages/SettingsPage.qml
+
+    qml/model/InspectionStatisticsModel.qml
+    qml/model/InspectionSummaryModel.qml
+    qml/model/MetricsModel.qml
+    qml/model/DetectionStatisticsModel.qml
+    qml/model/StatisticsResultTableModel.qml
+
     qml/HomeView.qml
     qml/ImageView.qml
     qml/DetectionOverlay.qml
@@ -39,10 +52,8 @@ set(MODULE_QML_FILES
     qml/ImageContainerView.qml
     qml/ImagePickerDialog.qml
     qml/ButtonBar.qml
-    qml/DashboardPage.qml
-    qml/InspectionPage.qml
     qml/ControlPanel.qml
-    qml/StatisticsPage.qml
+    qml/AppToolBar.qml
 )
 
 
@@ -74,7 +85,6 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
         ${MODULE_PUBLIC_FACADES}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
-
 )
 
 
@@ -94,10 +104,7 @@ target_link_libraries(${VISUALIZATION_TARGET} PUBLIC
     Qt6::Core
     Qt6::Qml
     Qt6::Quick
-    #Qt6::QuickLayouts                   #   for STATIC
     Qt6::QuickControls2
-    #Qt6::QuickControls2Basic            #   for STATIC
-    #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
     Qt6::QuickDialogs2
     Qt6::Gui
     Qt6::Multimedia

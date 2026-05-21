@@ -7,6 +7,9 @@ Button {
 
     id: controlButtonRoot
 
+    property alias backgroundColor: backgraundButton.color
+    property alias borderColor: backgraundButton.border.color
+
     property var targetHandler: null
 
     text: qsTr("Default")
@@ -34,6 +37,8 @@ Button {
 
 
     background: Rectangle {
+
+        id: backgraundButton
 
         color: controlButtonRoot.down ? "#bbbbbb" :
                                         controlButtonRoot.hovered ? "#e0e0e0" : "#ffffff"

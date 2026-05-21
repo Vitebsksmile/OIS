@@ -9,6 +9,8 @@ Rectangle {
     //  Связи (мостики) к внешним ресурсам
     property var targetHandler: null //  Текущий экземпляр FileHandler
     property var targetPopup: null //  Всплывающее окно
+    property var backgroundColor: null
+    property var borderColor: null
 
     // Внутренние отступы самого Rectangle от его краев до ColumnLayout
     property int leftPadding: 15
@@ -19,7 +21,7 @@ Rectangle {
     implicitHeight: controlLayout.implicitHeight + (controlLayout.anchors.margins * 2)
     implicitWidth: 200
 
-    color: Qt.rgba(44 / 255, 62 / 255, 80 / 255, 0.9) //  Midnight Blue
+    color: Qt.rgba(44 / 255, 62 / 255, 80 / 255, 0.3) //  Midnight Blue
     radius: 10
 
     ColumnLayout {
@@ -38,6 +40,9 @@ Rectangle {
 
 
         SideBarButton {
+
+            //backgroundColor: "#bed0e8"
+            borderColor: "#182838"
 
             Layout.fillWidth: true //  Растягиваем кнопку на всю ширину родителя
 

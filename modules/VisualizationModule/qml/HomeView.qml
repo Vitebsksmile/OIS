@@ -16,40 +16,26 @@ Rectangle {
     SplitView {
         id: root
 
-        orientation: Qt.Vertical  //  Панели стоят в ряд (слева направо)
+        orientation: Qt.Horizontal  //  Панели стоят в ряд (слева направо)
         anchors.fill: parent    //  Заполняем контейнером всю площадь родителя
         anchors.margins: 5
-
-        DashboardPage {
-            id: dashboardPage
-
-            //  Настройки размеров для root
-            SplitView.preferredHeight: dashboardPage.implicitHeight   //  Желаемая высота при старте
-            SplitView.minimumHeight: 100     //  Минимальный порог сжатия
-            SplitView.maximumHeight: 500     //  Максимальный порог растяжения
-        }
 
         InspectionPage {
             id: inspectionPage
 
             //  Настройки размеров для root
-            SplitView.fillHeight: true
-            //SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
-            SplitView.minimumHeight: 300     //  Минимальный порог сжатия
-            SplitView.maximumHeight: 700     //  Максимальный порог растяжения
-
-            //SplitView.minimumWidth: 600
-
+            SplitView.fillWidth: true       //  на всю оставшуюся ширину
+            SplitView.minimumWidth: 300     //  Минимальный порог сжатия
         }
 
+        //  Statistics. Глубокая аналитика
         StatisticsPage {
             id: statisticsPage
 
             //  Настройки размеров для root
-            //SplitView.preferredHeight: inspectionPage.implicitHeight   //  Желаемая высота при старте
-            SplitView.preferredHeight: 230
-            SplitView.minimumHeight: 230     //  Минимальный порог сжатия
-            SplitView.maximumHeight: 500     //  Максимальный порог растяжения
+            SplitView.preferredWidth: 450   //  Желаемая высота при старте
+            SplitView.minimumWidth: 420     //  Минимальный порог сжатия
+            SplitView.maximumWidth: 500     //  Максимальный порог растяжения
 
         }
     }

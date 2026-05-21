@@ -3,46 +3,47 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 
-SplitView {
+Rectangle {
 
     id: root
 
     //  Export properties,
     //  чтобы обращаться к ним как <id>.handler или <id>.popup
-    property alias handler: imageView.handler //  Текущий экземпляр FileHandler
-    property alias popup: imageView.popup //  Всплывающее уведомление
-    property alias backgroundColor: imageView.backgroundColor //      Задать цвет снаружи
-    property alias labelText: imageView.labelText //      Задать текст статуса загрузки изображения снаружи
+    property alias handler: sourceViewer.handler //  Текущий экземпляр FileHandler
+    property alias popup: sourceViewer.popup //  Всплывающее уведомление
+    property alias backgroundColor: sourceViewer.backgroundColor //      Задать цвет снаружи
+    property alias labelText: sourceViewer.labelText //      Задать текст статуса загрузки изображения снаружи
 
-    orientation: Qt.Vertical    //  Панели стоят колонной (сверху вниз)
+    color: "#f0f0f0"
 
+    ColumnLayout {
 
-    ImageView {
+        anchors.fill: parent
 
-        id: imageView
+        ImageView {
 
-        //  Настройки размеров для root
-        SplitView.fillHeight: true  //  Занимает всё оставшееся место сверху
+            id: sourceViewer
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-        //  Минимальный порог сжатия
-        SplitView.minimumWidth: 100
+            Layout.minimumWidth: 200
+            Layout.minimumHeight: 200
 
-        handler.directionOut: true
+            handler.directionOut: true
 
-    }
+        }
 
+        InformationView {
+            id: informationView
 
-    InformationView {
-        id: informationView
+            Layout.fillWidth: true
+            Layout.preferredHeight: implicitHeight
 
-        //  Настройки размеров для root
-        SplitView.preferredHeight: informationView.implicitHeight   //  Желаемая высота при старте
-        SplitView.minimumHeight: 10     //  Минимальный порог сжатия
-        SplitView.maximumHeight: 150     //  Максимальный порог растяжения
+            //  Прокидываем в InformationView.qml ссылки (alias) из ImageView.qml,
+            //  используя экземпляр его родительского объекта с id: sourceViewer
+            targetHandler: sourceViewer.handler
 
-        //  Прокидываем в InformationView.qml ссылки (alias) из ImageView.qml,
-        //  используя экземпляр его родительского объекта с id: sourceViewer
-        targetHandler: imageView.handler
+        }
 
     }
 

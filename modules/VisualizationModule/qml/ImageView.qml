@@ -13,8 +13,8 @@ Rectangle {
     //  чтобы обращаться к ним как <id>.handler или <id>.popup
     property alias handler: fileHandler //      Текущий экземпляр FileHandler
     property alias popup: statusPopup //      Всплывающее уведомление
-    property alias backgroundColor: root.color //      Задать цвет снаружи
-    property alias labelText: statusText.text //      Задать текст статуса загрузки изображения снаружи
+    //property alias backgroundColor: root.color //      Задать цвет снаружи
+    property alias statusText: statusText.text //      Задать текст статуса загрузки изображения снаружи
     //property alias imageSource: root.source   //      Прямой доступ к источнику
 
     //  Создаем экземпляр 'Файлового обработчика' C++ класса 'FileHandler'

@@ -9,7 +9,7 @@ Rectangle {
     //  Связи (мостики) к внешним ресурсам
     property var targetHandler: null //  Текущий экземпляр FileHandler
 
-    width: 200
+    implicitWidth: layout.implicitWidth + (layout.anchors.margins * 2)
     implicitHeight: layout.implicitHeight + (layout.anchors.margins * 2)
     color: "lightgreen"
     radius: 10
@@ -17,7 +17,6 @@ Rectangle {
 
     ColumnLayout {
         id: layout
-
         anchors.fill: parent
         anchors.margins: 10
         spacing: 5
@@ -25,11 +24,10 @@ Rectangle {
 
         Text {
             id: fileText
-
             Layout.fillWidth: true
-            wrapMode: Text.WrapAnywhere
             Layout.preferredHeight: contentHeight
 
+            wrapMode: Text.WrapAnywhere
             text: qsTr("Sourse path: ") + root.targetHandler.getCleanPath(root.targetHandler.currentImagePath)
 
         }
