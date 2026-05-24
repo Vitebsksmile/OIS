@@ -69,7 +69,19 @@ find_package(OpenCV REQUIRED)
 #   Применяет стандартные настройки Qt для проекта
 #   (автоматизирует пути сборки и размещения файлов)
 #   https://doc.qt.io/qt-6/qt-standard-project-setup.html
+
 qt_standard_project_setup(REQUIRES 6.8) #    REQUIRES 6.8
+
+qt_standard_project_setup() #    REQUIRES 6.8
+
+
+#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
+qt_policy(SET QTP0001 NEW)
+
+
+#   Устанавливает политику QTP0004 виртуального расположения qml-файлов
+qt_policy(SET QTP0004 NEW)
+
 
 
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
