@@ -36,20 +36,6 @@ target_compile_definitions(${PROJECT_NAME}
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
 target_link_libraries(${PROJECT_NAME} PRIVATE
 
-    #   Стандартные библиотеки Qt
-    #Qt6::Qml
-    #Qt6::Quick
-    #Qt6::QuickLayouts                   #   for STATIC
-    #Qt6::QuickControls2
-    #Qt6::QuickControls2Basic            #   for STATIC
-    #Qt6::QuickControls2WindowsStyleImpl #   for STATIC
-    #Qt6::Gui
-    #Qt6::Multimedia
-    #Qt6::Sql
-
-    #   Сторонние библиотеки и плагины
-    #${OpenCV_LIBS}
-
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
     #DatabaseModule
     ImageProcessingModule
@@ -57,15 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     VisualizationModule
 
 
-    #   --- для static build --- {-->>
-
-    #   Стандартные библиотеки Qt for STATIC
-    #Qt6::qquicklayoutsplugin
-    #Qt6::qtquickcontrols2plugin
-    #Qt6::qtquickcontrols2basicstyleplugin
-
-
-    #   Для гарантии регистрации QML-типов при static build
+#   Для гарантии регистрации QML-типов при static build
     VisualizationModuleplugin
     #ImageProcessingModuleLibplugin
 
