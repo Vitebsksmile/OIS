@@ -33,7 +33,7 @@ ApplicationWindow {
 
         ListView {
             anchors.fill: parent
-            model: ["Dashboard", "Inspection", "Dataset", "Statistics", "Settings"]
+            model: ["Dashboard", "Inspection", "Statistics"]    //, "Dataset", "Settings"
 
             delegate: ItemDelegate {
                 required property string modelData
