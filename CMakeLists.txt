@@ -19,19 +19,8 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 project(OISApp VERSION 0.0.1 LANGUAGES CXX)
 
 
-
-
-
-#   ?????
+#   Отключаем специфичные для компилятора расширения C++. Чистый C++
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-
-#target_compile_definitions(${PROJECT_NAME} PRIVATE
-#    APP_DOMAIN_ORG_NAME_STR="${DOMAIN_ORG_NAME}"
-#    APP_ORG_NAME_STR="${ORG_NAME}"
-#    AAPP_NAME_STR="${APP_NAME}"
-#    APP_VERSION="${PROJECT_VERSION}"
-#)
 
 
 #   Добавляем определения (флаги) компиляции для передачи препроцессорных
@@ -58,7 +47,6 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
     #   низкоуровневых графических API OpenGL ES.
     Multimedia
     Sql             #   модуль базы данных
-    Charts
 )
 
 
@@ -70,15 +58,6 @@ find_package(OpenCV REQUIRED)
 #   (автоматизирует пути сборки и размещения файлов)
 #   https://doc.qt.io/qt-6/qt-standard-project-setup.html
 qt_standard_project_setup(REQUIRES 6.8)
-
-
-#   Устанавливает политику QTP0001 виртуального расположения qml-файлов
-qt_policy(SET QTP0001 NEW)
-
-
-#   Устанавливает политику QTP0004 виртуального расположения qml-файлов
-qt_policy(SET QTP0004 NEW)
-
 
 
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)

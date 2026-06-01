@@ -108,7 +108,6 @@ target_link_libraries(${VISUALIZATION_TARGET} PUBLIC
     Qt6::QuickDialogs2
     Qt6::Gui
     Qt6::Multimedia
-    Qt6::Charts
 )
 
 

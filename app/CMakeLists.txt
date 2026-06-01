@@ -1,11 +1,3 @@
-#   Создает переменную APP_TARGET со значением "OISApp"
-#   (имя цели в CMake для компиляции)
-#set(APP_TARGET OISApp PARENT_SCOPE) # Для главного (верхнего) CMake
-#set(APP_TARGET OISApp)
-
-#set_target_properties(app_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-
-
 # Собираем разделяемую версию
 set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build using shared libraries ON/OFF")
 
@@ -45,10 +37,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 #   Для гарантии регистрации QML-типов при static build
     VisualizationModuleplugin
-    #ImageProcessingModuleLibplugin
-
-    #   --<<}
-
 )
 
 
