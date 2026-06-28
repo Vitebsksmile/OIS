@@ -15,7 +15,7 @@ set(ORG_NAME "VSTU IS-23")
 set(APP_NAME "OIS by SHCHERBAKOV")
 
 
-#   Объявляет имя проекта (MyApp), его версию и используемый язык (C++)
+#   Объявляет имя проекта (OISApp), его версию и используемый язык (C++)
 project(OISApp VERSION 0.0.1 LANGUAGES CXX)
 
 
@@ -65,19 +65,11 @@ qt_standard_project_setup(REQUIRES 6.8)
 add_subdirectory(modules/ImageProcessingModule)
 #add_subdirectory(modules/IntegrationModule)
 add_subdirectory(modules/VisualizationModule)
+add_subdirectory(modules/CameraManagerModule)
 
 
 #   Подключает папку с основным исполняемым файлом приложения (точкой входа)
 add_subdirectory(app)
-
-
-#   Tests
-#   Подключает встроенный модуль CMake для тестирования
-#include(CTest)
-#   Разрешает запуск тестов
-#enable_testing()
-#   Подключает папку с исходным кодом тестов
-#add_subdirectory(tests)
 
 
 #   Создает "виртуальную" цель, чтобы файлы ниже отображались в дереве проекта в IDE
