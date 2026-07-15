@@ -1,5 +1,6 @@
-#include "cameramanager.h"
 #include <QDebug>
+
+#include "baslerdriver.h"
 
 
 // --- РУЧНОЕ ОБЪЯВЛЕНИЕ СИГНАТУР ИЗ BASLER PYLON C-API ---
@@ -28,12 +29,12 @@ extern "C" {
 }
 
 
-// --- РЕАЛИЗАЦИЯ КЛАССА CAMERAMANAGER ---
+// --- РЕАЛИЗАЦИЯ КЛАССА ICameraDriver ---
 
-CameraManager::CameraManager(QObject *parent)
-    : QObject(parent), isStreaming(false), hDev(nullptr)
+BaslerDriver::BaslerDriver(QObject *parent)
+    : ICameraDriver(parent), hDev(nullptr)
 {
-    //  Инициализируем ресурсы Pylon Runtime
+    //  Инициализируем глобальные ресурсы Pylon Runtime один раз при создании драйвера
     GENAPIC_RESULT result = pylonInitialize();
 
     if (result != GENAPI_E_OK) {
@@ -43,31 +44,34 @@ CameraManager::CameraManager(QObject *parent)
     }
 }
 
-CameraManager::~CameraManager()
-{
-    //  Безопасно закрываем камеру перед уничтожением объекта
-    closeCamera();
 
-    //  Освобождаем ресурсы Pylon Runtime
+BaslerDriver::~BaslerDriver()
+{
+    //  Безопасно закрываем камеру и освобождаем дескриптор, если это не было сделано вручную
+    BaslerDriver::disconnect();
+
+    //  Освобождаем глобальные ресурсы Pylon Runtime
     pylonTerminate();
     qDebug() << "Ресурсы Pylon C-API освобождены.";
 }
 
-bool CameraManager::openFirstCamera()
+
+bool BaslerDriver::connect(const CameraConfig& config)
 {
     GENAPIC_RESULT result;
     size_t numDevices = 0;
 
-    //  1. Опрашиваем систему нга наличие подключенных камер Basler
+    //  1. Опрашиваем систему нга наличие подключенных камер
     result = pylonEnumerateDevices(&numDevices);
     if (result != GENAPI_E_OK || numDevices == 0) {
         qWarning() << "Камеры Basler не обнаружены или ошибка опроса. Код ошибки: " << result;
         return false;
     }
-
     qDebug() << "Найдено камер Basler в системе: " << numDevices;
 
-    //  2. Создаем внутренний дескриптор для самой первой камеры (индекс 0)
+    //  2. Создаем внутренний дескриптор устройства
+    //  В будущем здесь можно использовать pylonGetDeviceInfo и фильтровать по config.serialNumber.
+    //  Пока для простоты создаем по индексу 0, т.к. первая виртуальная камера в pylon SDK имеет индекс '0'
     result = pylonCreateDeviceByIndex(0, &hDev);
     if (result != GENAPI_E_OK) {
         qCritical() << "Не удалось создать дескриптор устройства. Код ошибки: " << result;
@@ -84,11 +88,15 @@ bool CameraManager::openFirstCamera()
         return false;
     }
 
+    //  4. ТАКЖЕ: Здесь, используя объект config, можно применить параметры в камеру
+    //  ()еапример, установить config.exposure или config.gain через GenApi C-APY)
+
     qDebug() << "Камера Basler успешно открыта и готова к работе!";
     return true;
 }
 
-void CameraManager::closeCamera()
+
+void BaslerDriver::closeCamera()
 {
     if (hDev != nullptr) {
         //  Проверяем, открыта ли камера в данный момент

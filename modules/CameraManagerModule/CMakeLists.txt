@@ -1,31 +1,45 @@
 set(CAMERA_MANAGER_TARGET CameraManagerModule)
 
-set(MODULE_PUBLIC_FACADES)
+set(MODULE_PUBLIC_FACADES
+  facade/ICameraManagerService.h
+)
 
 set(MODULE_PRIVATE_HEADERS
-  private/cameramanager.h
+  private/ICameraStrategy.h
+  private/cameramanagerservice.h
+)
+
+set(MODULE_DRIVERS_HEADERS
+  drivers/baslerdriver.h
 )
 
 set(MODULE_SOURCE_FILES
-  src/cameramanager.cpp
+  src/baslerdriver.cpp
+  src/cameramanagerservice.cpp
 )
 
-
+#   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
+#   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 add_library(${CAMERA_MANAGER_TARGET} STATIC
   ${MODULE_PUBLIC_FACADES}
   ${MODULE_PRIVATE_HEADERS}
+  ${MODULE_DRIVERS_HEADERS}
   ${MODULE_SOURCE_FILES}
+  drivers/ICameraDriver.h
+  private/cameraconfig.h private/cameraconfig.cpp
+  private/ICamera.h
 )
 
 # Подключаем заголовочные файлы pylon SDK
 target_include_directories(${CAMERA_MANAGER_TARGET} PRIVATE "D:/Program Files/Basler/pylon/Development/include")
-target_link_libraries(${CAMERA_MANAGER_TARGET} PRIVATE "${CMAKE_SOURCE_DIR}/lib/libPylonC.a")
+target_link_libraries(${CAMERA_MANAGER_TARGET} PRIVATE "${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib/libPylonC.a")
 
 target_include_directories(${CAMERA_MANAGER_TARGET}
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/facade
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/private
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
