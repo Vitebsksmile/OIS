@@ -50,21 +50,21 @@ public:
 //  из ImageProcessingModule
 public slots:
 
-
     //  Слушает сигнал из FileHandler о старте предобработки
     virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
-
 
     //  From IImageProcessingModule for QML about Start
     virtual void onPreProcessingStartNotification(bool success) = 0;
 
-
     //  в случае успеха предварительной обработки
     virtual void onImagePreProcessingFinished(const QString &filePath, bool success) = 0;
 
-
     //  в случае ошибки обработки
     virtual void onPreProcessingError(const QString &filePath, const QString &error) = 0;
+
+    //virtual void onFrameReady(Frame frame) = 0;
+
+    //virtual void onMLResult(MLResult result) = 0;
 
 
 signals:
