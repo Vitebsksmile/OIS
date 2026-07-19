@@ -31,7 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
     #DatabaseModule
     ImageProcessingModule
-    #IntegrationModule
+    IntegrationModule
     VisualizationModule
     CameraManagerModule
 

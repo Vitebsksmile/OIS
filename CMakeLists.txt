@@ -63,7 +63,7 @@ qt_standard_project_setup(REQUIRES 6.8)
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
 #add_subdirectory(modules/DatabaseModule)
 add_subdirectory(modules/ImageProcessingModule)
-#add_subdirectory(modules/IntegrationModule)
+add_subdirectory(modules/IntegrationModule)
 add_subdirectory(modules/VisualizationModule)
 add_subdirectory(modules/CameraManagerModule)
 

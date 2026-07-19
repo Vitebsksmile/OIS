@@ -96,7 +96,7 @@ bool BaslerDriver::connect(const CameraConfig& config)
 }
 
 
-void BaslerDriver::closeCamera()
+void BaslerDriver::disconnect()
 {
     if (hDev != nullptr) {
         //  Проверяем, открыта ли камера в данный момент
