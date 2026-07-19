@@ -13,9 +13,18 @@ public:
 
     virtual ~ICameraManagerService() = default;
 
+    virtual bool initialize() = 0;
+
+    virtual void shutdown() = 0;
+
+    //virtual void startCamera(CameraId id) = 0;
+    //virtual void stopCamera(CameraId id) = 0;
+
 public slots:
 
 signals:
+
+    //void frameReady(Frame frame);
 
 };
 

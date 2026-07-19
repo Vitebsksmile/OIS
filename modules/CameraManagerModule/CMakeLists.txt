@@ -2,20 +2,26 @@ set(CAMERA_MANAGER_TARGET CameraManagerModule)
 
 set(MODULE_PUBLIC_FACADES
   facade/ICameraManagerService.h
+  facade/cameramanagerservice.h
 )
 
 set(MODULE_PRIVATE_HEADERS
   private/ICameraStrategy.h
-  private/cameramanagerservice.h
 )
 
 set(MODULE_DRIVERS_HEADERS
   drivers/baslerdriver.h
+  drivers/ICameraDriver.h
+)
+
+set(MODULE_CONFIG_HEADERS
+  config/cameraconfig.h
 )
 
 set(MODULE_SOURCE_FILES
-  src/baslerdriver.cpp
   src/cameramanagerservice.cpp
+  src/baslerdriver.cpp
+  src/cameraconfig.cpp
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
@@ -24,9 +30,9 @@ add_library(${CAMERA_MANAGER_TARGET} STATIC
   ${MODULE_PUBLIC_FACADES}
   ${MODULE_PRIVATE_HEADERS}
   ${MODULE_DRIVERS_HEADERS}
+  ${MODULE_CONFIG_HEADERS}
   ${MODULE_SOURCE_FILES}
-  drivers/ICameraDriver.h
-  private/cameraconfig.h private/cameraconfig.cpp
+
   private/ICamera.h
 )
 

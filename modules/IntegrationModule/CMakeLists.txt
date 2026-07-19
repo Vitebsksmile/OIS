@@ -1,16 +1,26 @@
-add_library(IntegrationModule STATIC
-#    integrationmanager.cpp # add
-#    integrationmanager.h # add
-#    jsonutils.cpp # add
-#    jsonutils.h # add
-#delete
+set(INTEGRATION_TARGET IntegrationModule)
+
+
+set(MODULE_PUBLIC_FACADES
+    facade/IIntegrationService.h
 )
 
-target_link_libraries(IntegrationModule PRIVATE
+
+set(MODULE_PRIVATE_HEADERS)
+
+
+add_library(${INTEGRATION_TARGET} STATIC
+    ${MODULE_PUBLIC_FACADES}
+)
+
+target_link_libraries(${INTEGRATION_TARGET} PRIVATE
     Qt6::Core
     Qt6::Network
 )
 
-target_include_directories(IntegrationModule PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(${INTEGRATION_TARGET}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/facade
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/private
 )

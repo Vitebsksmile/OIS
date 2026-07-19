@@ -53,6 +53,8 @@ public slots:
     //  для уведомления о завершении предобработки (for QML about Finished)
     virtual void onPreProcessingFinished(const QString &resultFilePath) = 0;
 
+    //virtual void processFrame(Frame frame) = 0;
+
 
 //  Секция событий, на которые могут подписываться другие части программы
 //  Сигналы для отправки результатов в VisualizationModule
@@ -75,6 +77,8 @@ signals:
     //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
     //  например, «файл не найден» или «недостаточно памяти»
     void prePreProcessingError(const QString &filePath, const QString &error);
+
+    //void processedFrameFrameReady(ProcessedFrame frame);
 
 };
 
