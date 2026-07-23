@@ -9,7 +9,6 @@ set(MODULE_PRIVATE_HEADERS
 )
 
 set(MODULE_SOURCE_FILES
-  main.cpp
   #src/baslerdriver.cpp
   #src/cameraconfig.cpp
 )
@@ -17,10 +16,12 @@ set(MODULE_SOURCE_FILES
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 add_library(${CORE_TARGET} STATIC
+  main.cpp
   ${MODULE_PUBLIC_HEADERS}
   ${MODULE_PRIVATE_HEADERS}
   ${MODULE_SOURCE_FILES}
   CameraTypes.h
+  IFrameBuffer.h
 )
 
 #target_include_directories(${CORE_TARGET}
