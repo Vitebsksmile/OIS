@@ -22,6 +22,7 @@ add_library(${CORE_TARGET} STATIC
   ${MODULE_SOURCE_FILES}
   CameraTypes.h
   IFrameBuffer.h
+  Frame.h
 )
 
 #target_include_directories(${CORE_TARGET}
