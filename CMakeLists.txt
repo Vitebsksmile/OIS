@@ -19,6 +19,8 @@ set(APP_NAME "OIS by SHCHERBAKOV")
 project(OISApp VERSION 0.0.1 LANGUAGES CXX)
 
 
+set(CMAKE_CXX_STANDARD 17)
+
 #   Отключаем специфичные для компилятора расширения C++. Чистый C++
 set(CMAKE_CXX_EXTENSIONS OFF)
 
