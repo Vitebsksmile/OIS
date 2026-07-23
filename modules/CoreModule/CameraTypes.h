@@ -1,0 +1,5 @@
+#ifndef CAMERATYPES_H
+#define CAMERATYPES_H
+
+
+#endif // CAMERATYPES_H
