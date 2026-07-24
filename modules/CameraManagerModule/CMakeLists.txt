@@ -10,6 +10,7 @@ set(MODULE_PRIVATE_INTERFACE
     interface/IFrameObserver.h
     interface/IGrabStrategy.h
     interface/ICameraDriver.h
+    interface/ICameraFactory.h
 )
 
 set(MODULE_PRIVATE_HEADERS)
