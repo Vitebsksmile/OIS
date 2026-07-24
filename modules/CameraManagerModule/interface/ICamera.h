@@ -1,11 +1,14 @@
 #ifndef ICAMERA_H
 #define ICAMERA_H
 
-#include <QObject>
+#include "CameraTypes.h"
 
 
-class ICamera : public QObject
+class IFrameObserver;
+
+class ICamera
 {
+public:
     virtual ~ICamera() = default;
 
     virtual bool open() = 0;
@@ -14,9 +17,9 @@ class ICamera : public QObject
     virtual bool startGrab() = 0;
     virtual void stopGrab() = 0;
 
-    virtual void setObserver() = 0;
+    virtual void setObserver(IFrameObserver* observer) = 0;
 
-    //virtual CameraState state() = 0;
+    virtual OIS::Core::CameraState state() = 0;
 };
 
 #endif // ICAMERA_H

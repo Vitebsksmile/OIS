@@ -60,6 +60,7 @@ find_package(OpenCV REQUIRED)
 #   (автоматизирует пути сборки и размещения файлов)
 #   https://doc.qt.io/qt-6/qt-standard-project-setup.html
 qt_standard_project_setup(REQUIRES 6.8)
+qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES en ru)
 
 
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
