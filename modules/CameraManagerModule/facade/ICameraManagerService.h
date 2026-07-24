@@ -3,28 +3,47 @@
 
 #include <QObject>
 
+#include "CameraTypes.h"
+#include "Frame.h"
+
 
 class ICameraManagerService : public QObject
 {
     Q_OBJECT
 
 public:
+
     explicit ICameraManagerService(QObject* parent = nullptr) : QObject(parent) {}
 
-    virtual ~ICameraManagerService() = default;
+    virtual ~ICameraManagerService() override = default;
+
+public slots:
 
     virtual bool initialize() = 0;
 
     virtual void shutdown() = 0;
 
-    //virtual void startCamera(CameraId id) = 0;
-    //virtual void stopCamera(CameraId id) = 0;
+    virtual OIS::Core::CameraId addCamera(OIS::Core::CameraConfig config) = 0;
 
-public slots:
+    virtual bool removeCamera(OIS::Core::CameraId id) = 0;
+
+    virtual bool startCamera(OIS::Core::CameraId id) = 0;
+
+    virtual void stopCamera(OIS::Core::CameraId id) = 0;
 
 signals:
 
-    //void frameReady(Frame frame);
+    void frameReady(OIS::Core::Frame frame);
+
+    void cameraStateChanged(
+        OIS::Core::CameraId id,
+        OIS::Core::CameraState state
+    );
+
+    void errorOccured(
+        OIS::Core::CameraId id,
+        QString message
+    );
 
 };
 

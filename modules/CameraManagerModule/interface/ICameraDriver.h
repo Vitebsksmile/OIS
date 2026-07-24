@@ -20,7 +20,9 @@ public:
         double value
     ) = 0;
 
-    virtual double getParameter(const std::string& name) const = 0;
+    virtual double getParameter(
+        const std::string& name
+    ) const = 0;
 
     //virtual Parameter parameter() = 0;
 

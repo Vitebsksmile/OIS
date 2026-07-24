@@ -37,6 +37,7 @@ add_library(${CAMERA_MANAGER_TARGET} STATIC
     ${MODULE_DRIVERS_HEADERS}
     ${MODULE_CONFIG_HEADERS}
     ${MODULE_SOURCE_FILES}
+    interface/ICameraFactoryRegistry.h
 )
 
 # Подключаем заголовочные файлы pylon SDK
