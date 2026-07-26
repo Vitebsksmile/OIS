@@ -29,7 +29,7 @@ public slots:
 
     virtual bool startCamera(OIS::Core::CameraId id) = 0;
 
-    virtual void stopCamera(OIS::Core::CameraId id) = 0;
+    virtual bool stopCamera(OIS::Core::CameraId id) = 0;
 
 signals:
 

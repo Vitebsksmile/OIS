@@ -19,7 +19,7 @@ public:
 
     virtual void setObserver(IFrameObserver* observer) = 0;
 
-    virtual OIS::Core::CameraState state() = 0;
+    virtual OIS::Core::CameraState state() const = 0;
 };
 
 #endif // ICAMERA_H

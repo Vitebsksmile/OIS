@@ -16,16 +16,25 @@ set(MODULE_PRIVATE_INTERFACE
 
 set(MODULE_PRIVATE_HEADERS
     private/camerafactoryregistry.h
+    private/mockframebuffer.h
 )
 
 set(MODULE_DRIVERS_HEADERS
     drivers/baslerdriver.h
 )
 
+set(MODULE_MOCK_HEADERS
+    mock/mockcamera.h
+    mock/mockcamerafactory.h
+)
+
 set(MODULE_SOURCE_FILES
     src/cameramanagerservice.cpp
-    src/camerafactoryregistry.cpp
-    src/baslerdriver.cpp
+    private/camerafactoryregistry.cpp
+    mock/mockcamera.cpp
+    mock/mockcamerafactory.cpp
+    private/mockframebuffer.cpp
+    drivers/baslerdriver.cpp
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
@@ -35,6 +44,7 @@ add_library(${CAMERA_MANAGER_TARGET} STATIC
     ${MODULE_PRIVATE_INTERFACE}
     ${MODULE_PRIVATE_HEADERS}
     ${MODULE_DRIVERS_HEADERS}
+    ${MODULE_MOCK_HEADERS}
     ${MODULE_SOURCE_FILES}
 )
 
@@ -54,6 +64,7 @@ target_include_directories(${CAMERA_MANAGER_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/interface
         ${CMAKE_CURRENT_SOURCE_DIR}/private
         ${CMAKE_CURRENT_SOURCE_DIR}/drivers
+        ${CMAKE_CURRENT_SOURCE_DIR}/mock
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_link_libraries(${CAMERA_MANAGER_TARGET} PRIVATE

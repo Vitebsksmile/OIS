@@ -22,7 +22,11 @@ class CameraManagerService
     Q_OBJECT
 
 public:
-    explicit CameraManagerService(std::unique_ptr<ICameraFactoryRegistry> factoryRegistry);
+
+    explicit CameraManagerService(
+        std::unique_ptr<ICameraFactoryRegistry> factoryRegistry,
+        QObject* parent
+        );
 
     ~CameraManagerService() override;
 
@@ -36,7 +40,7 @@ public:
 
     bool startCamera(OIS::Core::CameraId id) override;
 
-    void stopCamera(OIS::Core::CameraId id) override;
+    bool stopCamera(OIS::Core::CameraId id) override;
 
 signals:
 
@@ -58,10 +62,15 @@ private:
 
     std::unique_ptr<ICameraFactoryRegistry> m_factoryRegistry;
 
+    //  В Qt 6 QHash с std::unique_ptr может создавать проблемы из-за требований к копируемости значений.
     std::unordered_map<
         OIS::Core::CameraId,
         std::unique_ptr<ICamera>
         > m_cameras;
+
+    bool m_initialized{
+        false
+    };
 
 };
 
