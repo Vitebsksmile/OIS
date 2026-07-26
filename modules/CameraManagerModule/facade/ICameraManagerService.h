@@ -23,7 +23,7 @@ public slots:
 
     virtual void shutdown() = 0;
 
-    virtual OIS::Core::CameraId addCamera(OIS::Core::CameraConfig config) = 0;
+    virtual OIS::Core::CameraId addCamera(const OIS::Core::CameraConfig& config) = 0;
 
     virtual bool removeCamera(OIS::Core::CameraId id) = 0;
 
