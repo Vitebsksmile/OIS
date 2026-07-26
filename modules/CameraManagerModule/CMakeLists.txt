@@ -10,33 +10,31 @@ set(MODULE_PRIVATE_INTERFACE
     interface/IGrabStrategy.h
     interface/ICameraDriver.h
     interface/ICameraFactory.h
+    interface/ICameraFactoryRegistry.h
     interface/ICameraManagerService.h
 )
 
-set(MODULE_PRIVATE_HEADERS)
+set(MODULE_PRIVATE_HEADERS
+    private/camerafactoryregistry.h
+)
 
 set(MODULE_DRIVERS_HEADERS
     drivers/baslerdriver.h
 )
 
-set(MODULE_CONFIG_HEADERS
-    config/cameraconfig.h
-)
-
 set(MODULE_SOURCE_FILES
     src/cameramanagerservice.cpp
+    src/camerafactoryregistry.cpp
     src/baslerdriver.cpp
-    src/cameraconfig.cpp)
+)
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 add_library(${CAMERA_MANAGER_TARGET} STATIC
-
     ${MODULE_PUBLIC_FACADES}
     ${MODULE_PRIVATE_INTERFACE}
     ${MODULE_PRIVATE_HEADERS}
     ${MODULE_DRIVERS_HEADERS}
-    ${MODULE_CONFIG_HEADERS}
     ${MODULE_SOURCE_FILES}
 )
 
