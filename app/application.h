@@ -20,6 +20,7 @@
 //  Компилятору достаточно знать, что это классы.
 class IVisualizationService;
 class IImageProcessingService;
+class ICameraManagerService;
 
 
 //  Главный связующий класс
@@ -60,12 +61,15 @@ private:
     QScopedPointer<QQmlApplicationEngine> m_engine;
 
 
-    //  Умный указатель на интерфейс IVisualizationModule
+    //  Умный указатель на интерфейс IVisualizationModule.
     QSharedPointer<IVisualizationService> m_visualizationService;
 
 
     //  Умный указатель на интерфейс IImageProcessingModule.
     QSharedPointer<IImageProcessingService> m_imageProcessingService;
+
+    //  Умный указатель на интерфейс ICameraManagerService.
+    QSharedPointer<ICameraManagerService> m_cameraManagerService;
 
 };
 

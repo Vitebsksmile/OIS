@@ -5,6 +5,8 @@
 #include "visualizationService.h"
 #include "IImageProcessingService.h"
 #include "imageprocessingservice.h"
+#include "ICameraManagerService.h"
+#include "cameramanagerservice.h"
 
 
 Application::Application(int &argc, char **argv, QObject *parent)
@@ -65,6 +67,20 @@ bool Application::initialize()
 
     }
 
+    //  3. Создаем фасад модуля обработки изображений
+    m_cameraManagerService = QSharedPointer<ICameraManagerService>(new CameraManagerService(this));
+
+    if (m_cameraManagerService)
+    {
+        qDebug() << "Application: CameraManagerService initialized";
+
+    } else {
+
+        qCritical() << "Application: Failed to create CameraManagerService";
+
+        return false;
+    }
+
 
     setupConnections();
 
@@ -123,6 +139,7 @@ int Application::run()
     if (m_engine->rootObjects().isEmpty())
     {
         qCritical() << "Failed to load QML file";
+
         return -1;
     }
 
