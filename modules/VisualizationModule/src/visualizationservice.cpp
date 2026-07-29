@@ -99,3 +99,9 @@ void VisualizationService::onPreProcessingError(const QString &filePath, const Q
     //emit showNotification("Error " , error);
 
 }
+
+
+void VisualizationService::onFrameReady(const OIS::Core::Frame &frame)
+{
+    qDebug() << "VisualizationService: Camera manager module result for: " << &frame;
+}

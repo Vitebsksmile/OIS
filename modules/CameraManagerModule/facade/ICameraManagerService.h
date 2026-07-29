@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#include "Frame.h"
 
 class ICameraManagerService : public QObject
 {
@@ -25,7 +26,7 @@ public slots:
 
 signals:
 
-    //void frameReady(Frame frame);
+    void frameReady(const OIS::Core::Frame &frame);
 
 };
 

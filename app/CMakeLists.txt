@@ -38,4 +38,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 #   Для гарантии регистрации QML-типов при static build
     VisualizationModuleplugin
+
+    #${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib/libPylonC_v8_0.a
 )

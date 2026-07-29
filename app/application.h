@@ -57,13 +57,11 @@ private:
 
     QScopedPointer<QGuiApplication> m_app;
 
-
     QScopedPointer<QQmlApplicationEngine> m_engine;
 
 
     //  Умный указатель на интерфейс IVisualizationModule.
     QSharedPointer<IVisualizationService> m_visualizationService;
-
 
     //  Умный указатель на интерфейс IImageProcessingModule.
     QSharedPointer<IImageProcessingService> m_imageProcessingService;

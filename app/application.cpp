@@ -67,7 +67,7 @@ bool Application::initialize()
 
     }
 
-    //  3. Создаем фасад модуля обработки изображений
+    //  3. Создаем фасад модуля камеры
     m_cameraManagerService = QSharedPointer<ICameraManagerService>(new CameraManagerService(this));
 
     if (m_cameraManagerService)
@@ -97,28 +97,33 @@ void Application::setupConnections()
 
     //  Связь: VisualizationModule -> ImageProcessingModule
     bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequested,
-            m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequested);
+                      m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequested);
 
-    if (!ok) qDebug() << "Failed to establish connection between VisualizationModule -> ImageProcessingModule";
+    if (!ok) qCritical() << "Failed to establish connection between VisualizationModule -> ImageProcessingModule";
 
 
     //  Связи: ImageProcessingModule -> VisualizationModule
-    connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingStartNotification,
-            m_visualizationService.get(), &IVisualizationService::onPreProcessingStartNotification);
+    ok = connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingStartNotification,
+                 m_visualizationService.get(), &IVisualizationService::onPreProcessingStartNotification);
 
-    if (!ok) qDebug() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
-
-
-    connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessingFinished,
-            m_visualizationService.get(), &IVisualizationService::onImagePreProcessingFinished);
-
-    if (!ok) qDebug() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
+    if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
 
-    connect(m_imageProcessingService.get(), &IImageProcessingService::prePreProcessingError,
-            m_visualizationService.get(), &IVisualizationService::onPreProcessingError);
+    ok = connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessingFinished,
+                 m_visualizationService.get(), &IVisualizationService::onImagePreProcessingFinished);
 
-    if (!ok) qDebug() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
+    if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
+
+
+    ok = connect(m_imageProcessingService.get(), &IImageProcessingService::prePreProcessingError,
+                 m_visualizationService.get(), &IVisualizationService::onPreProcessingError);
+
+    if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
+
+    ok = connect(m_cameraManagerService.get(), &ICameraManagerService::frameReady,
+                 m_visualizationService.get(), &IVisualizationService::onFrameReady);
+
+    if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> VisualizationModule";
 
 }
 

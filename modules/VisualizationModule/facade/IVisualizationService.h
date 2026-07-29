@@ -18,6 +18,8 @@
 #include <QObject>
 #include <QString>
 
+#include "Frame.h"
+
 
 //class FileHandler;  //  Forward declaration
 
@@ -62,7 +64,7 @@ public slots:
     //  в случае ошибки обработки
     virtual void onPreProcessingError(const QString &filePath, const QString &error) = 0;
 
-    //virtual void onFrameReady(Frame frame) = 0;
+    virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
 
     //virtual void onMLResult(MLResult result) = 0;
 

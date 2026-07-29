@@ -46,6 +46,8 @@ public slots:
     //  в случае ошибки обработки
     void onPreProcessingError(const QString &filePath, const QString &error) override;
 
+    void onFrameReady(const OIS::Core::Frame &frame) override;
+
 
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:

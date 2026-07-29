@@ -35,7 +35,7 @@ add_definitions(
 )
 
 
-#   Ищет базовый пакет Qt 6.8 Core (необходим для работы любых программ на Qt)
+#   Ищет пакеты Qt 6.8
 find_package(Qt6 6.8 REQUIRED COMPONENTS
     Core            #   необходим для работы любых программ на Qt
     Qml             #   нужен для работы логики языка QML

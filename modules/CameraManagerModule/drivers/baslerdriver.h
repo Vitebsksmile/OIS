@@ -1,8 +1,6 @@
 #ifndef BASLERDRIVER_H
 #define BASLERDRIVER_H
 
-#include <QObject>
-
 #include "ICameraDriver.h"
 #include "cameraconfig.h"
 
@@ -11,15 +9,18 @@
 typedef void* PYLON_DEVICE_HANDLE;
 
 
-class BaslerDriver : public ICameraDriver
+class BaslerDriver final: public ICameraDriver
 {
-    Q_OBJECT
 public:
-    explicit BaslerDriver(QObject *parent = nullptr);
-    ~BaslerDriver();
 
-    bool connect(const CameraConfig& config);     //  Метод для поиска и открытия первой камеры
-    void disconnect();         //  Метод для закрытия и освобождения камеры
+    BaslerDriver();
+    ~BaslerDriver() override;
+
+    //  Метод для поиска и открытия первой камеры
+    bool connect(const CameraConfig& config) override;
+
+    //  Метод для закрытия и освобождения камеры
+    void disconnect() override;
 
 private:
     PYLON_DEVICE_HANDLE hDev;   //  Дескриптор открытого устройства камеры

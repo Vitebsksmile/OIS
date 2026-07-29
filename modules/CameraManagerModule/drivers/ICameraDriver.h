@@ -1,18 +1,15 @@
 #ifndef ICAMERADRIVER_H
 #define ICAMERADRIVER_H
 
-#include <QObject>
+#include "cameraconfig.h"
 
-class ICameraDriver : public QObject
+class ICameraDriver
 {
-    Q_OBJECT
-
 public:
-    explicit ICameraDriver(QObject* parent = nullptr) : QObject(parent) {}
-
+    ICameraDriver() = default;
     virtual ~ICameraDriver() = default;
 
-    virtual bool connect() = 0;
+    virtual bool connect(const CameraConfig& config) = 0;
     virtual void disconnect() = 0;
     //virtual Frame grabFrame() = 0;
     //virtual void setParameter() = 0;

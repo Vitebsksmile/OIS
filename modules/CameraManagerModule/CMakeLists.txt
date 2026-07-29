@@ -13,8 +13,8 @@ set(MODULE_INTERFACE
 set(MODULE_PRIVATE_HEADERS)
 
 set(MODULE_DRIVERS_HEADERS
-    drivers/baslerdriver.h
     drivers/ICameraDriver.h
+    drivers/baslerdriver.h
 )
 
 set(MODULE_CONFIG_HEADERS
@@ -37,23 +37,34 @@ add_library(${CAMERA_MANAGER_TARGET} STATIC
     ${MODULE_SOURCE_FILES}
 )
 
-# Подключаем заголовочные файлы pylon SDK
-target_include_directories(${CAMERA_MANAGER_TARGET} PRIVATE
-    "D:/Program Files/Basler/pylon/Development/include"
-)
+target_include_directories(${CAMERA_MANAGER_TARGET}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/facade
+        #"D:/Program Files/Basler/pylon 7/Development/include"
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/interface
+        ${CMAKE_CURRENT_SOURCE_DIR}/config
+        ${CMAKE_CURRENT_SOURCE_DIR}/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/drivers
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib
 
-target_link_libraries(${CAMERA_MANAGER_TARGET} PRIVATE
-    "${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib/libPylonC.a"
 )
 
 target_include_directories(${CAMERA_MANAGER_TARGET}
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/facade
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/interface
-        ${CMAKE_CURRENT_SOURCE_DIR}/private
-        ${CMAKE_CURRENT_SOURCE_DIR}/drivers
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        "D:/Program Files/Basler/pylon 7/Development/include"
 )
 
-target_link_libraries(${CAMERA_MANAGER_TARGET} PRIVATE Qt6::Quick)
+#target_link_directories(${CAMERA_MANAGER_TARGET} PRIVATE
+#    ${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib
+#)
+
+target_link_libraries(${CAMERA_MANAGER_TARGET}
+    PRIVATE
+        Qt6::Quick
+        CoreModule
+
+        #PylonC_v8_0
+        ${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib/libPylonC_v8_0.a
+)
