@@ -83,6 +83,8 @@ signals:
     //  To FileHandler about finished
     void imagePreProcessingFinished(const QString &filePath);
 
+    void startReady();
+
 };
 
 

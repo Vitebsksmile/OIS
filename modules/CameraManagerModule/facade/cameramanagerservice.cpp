@@ -11,9 +11,18 @@ CameraManagerService::CameraManagerService(QObject* parent)
 {
     qDebug() << "CameraManagerService: creat new object";
     m_cameraDriver.reset(new BaslerDriver());
+    qDebug() << "after new";
 }
 
 CameraManagerService::~CameraManagerService() = default;
+
+void CameraManagerService::onStartReady()
+{
+    qDebug() << "CameraManagerService: Получен сигнал готовности к старту. Инициируем проверку камер...";
+
+    // Вызываем ваш метод проверки и подключения камеры
+    checkAndConnectCamera();
+}
 
 void CameraManagerService::checkAndConnectCamera()
 {

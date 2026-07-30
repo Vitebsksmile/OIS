@@ -24,6 +24,8 @@ public:
 
 public slots:
 
+    virtual void onStartReady() = 0;
+
 signals:
 
     void frameReady(const OIS::Core::Frame &frame);

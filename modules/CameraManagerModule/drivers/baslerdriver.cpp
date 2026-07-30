@@ -51,6 +51,7 @@ extern "C" {
 BaslerDriver::BaslerDriver()
     : hDev(nullptr)
 {
+    qDebug() << "PYLON_CAMEMU =" << qEnvironmentVariable("PYLON_CAMEMU");
     //  Инициализируем глобальные ресурсы Pylon Runtime один раз при создании драйвера
     GENAPIC_RESULT result = PylonInitialize();
 
@@ -82,11 +83,15 @@ bool BaslerDriver::connect(const CameraConfig& config)
 
     GENAPIC_RESULT result;
     size_t numDevices = 0;
+    qDebug() << "result = " << result;
+    qDebug() << "numDevices = " << numDevices;
 
     //  1. Опрашиваем систему на наличие подключенных камер
     result = PylonEnumerateDevices(&numDevices);
     if (result != GENAPI_E_OK || numDevices == 0) {
         qWarning() << "BaslerDriver: Камеры Basler не обнаружены или ошибка опроса. Код ошибки: " << result;
+        qDebug() << "result = " << result;
+        qDebug() << "numDevices = " << numDevices;
         return false;
     }
     qDebug() << "BaslerDriver: Найдено камер Basler в системе: " << numDevices;

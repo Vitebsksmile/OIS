@@ -40,6 +40,7 @@ void VisualizationService::onImagePreProcessingRequested(const QString &filePath
 
         //  Отправляем в ImageProcessingModule
         emit imagePreProcessingRequested(filePath);
+        emit startReady();
 
     } else {
 

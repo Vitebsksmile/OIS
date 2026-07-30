@@ -13,6 +13,7 @@ Application::Application(int &argc, char **argv, QObject *parent)
     : QObject(parent)
     , m_app(new QGuiApplication(argc, argv))
 {
+    qDebug() << qEnvironmentVariable("PATH");
     qDebug() << "Application.cpp: Created QGuiApplication";
 }
 
@@ -122,6 +123,11 @@ void Application::setupConnections()
 
     ok = connect(m_cameraManagerService.get(), &ICameraManagerService::frameReady,
                  m_visualizationService.get(), &IVisualizationService::onFrameReady);
+
+    if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> VisualizationModule";
+
+    ok = connect(m_visualizationService.get(), &IVisualizationService::startReady,
+                 m_cameraManagerService.get(), &ICameraManagerService::onStartReady);
 
     if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> VisualizationModule";
 

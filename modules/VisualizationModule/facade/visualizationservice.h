@@ -55,6 +55,7 @@ signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 
+
 private:
 
     FileHandlerManager *m_fileHandlerManager;

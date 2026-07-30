@@ -23,6 +23,10 @@ public:
 
     void checkAndConnectCamera();
 
+public slots:
+
+    void onStartReady() override;
+
 signals:
 
     void frameReady(OIS::Core::Frame &frame);
