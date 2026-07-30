@@ -10,7 +10,6 @@
 
 class ICameraDriver;
 
-
 class CameraManagerService : public ICameraManagerService
 {
     Q_OBJECT
@@ -25,7 +24,6 @@ public:
 
 public slots:
 
-    void onStartReady() override;
 
 signals:
 
@@ -34,7 +32,6 @@ signals:
 private:
 
     std::unique_ptr<ICameraDriver> m_cameraDriver;
-
 
 };
 

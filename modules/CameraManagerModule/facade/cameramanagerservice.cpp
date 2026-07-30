@@ -6,6 +6,7 @@
 #include "ICameraDriver.h"
 #include "baslerdriver.h"
 
+
 CameraManagerService::CameraManagerService(QObject* parent)
     : ICameraManagerService(parent)
 {
@@ -15,14 +16,6 @@ CameraManagerService::CameraManagerService(QObject* parent)
 }
 
 CameraManagerService::~CameraManagerService() = default;
-
-void CameraManagerService::onStartReady()
-{
-    qDebug() << "CameraManagerService: Получен сигнал готовности к старту. Инициируем проверку камер...";
-
-    // Вызываем ваш метод проверки и подключения камеры
-    checkAndConnectCamera();
-}
 
 void CameraManagerService::checkAndConnectCamera()
 {

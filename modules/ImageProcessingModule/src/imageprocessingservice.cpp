@@ -15,7 +15,6 @@
 #include <QThread>
 
 #include "imageprocessingservice.h"
-#include "imagepreprocessing.h"
 #include "processmanager.h"
 
 
@@ -26,39 +25,44 @@ ImageProcessingService::ImageProcessingService(QObject *parent)
 
 }
 
-
 //  Слот для получения пути из VisualizationModule
 //  Запуск обработки
 void ImageProcessingService::onImagePreProcessingRequested(const QString &filePath)
 {
-
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
     if (filePath.isEmpty())
     {
-        qDebug() << "ImageProcessingService: The file path is empty! Path to image: " << filePath;
+        qDebug()
+            << "ImageProcessingService: The file path is empty! Path to image: "
+            << filePath;
+
         emit prePreProcessingError(filePath, "Empty file path");
+
         return;
     }
 
     //  Запоминаем путь, чтобы потом передать его в сигнале завершения
     m_currentFilePath = filePath;
-    qDebug() << "ImageProcessingService: The file path has been obtained! Path to image: " << filePath << ". I pass it to ProcessManager.";
+
+    qDebug()
+        << "ImageProcessingService: The file path has been obtained! Path to image: "
+        << filePath
+        << ". I pass it to ProcessManager.";
+
     emit imagePreProcessingRequested(filePath);
-
 }
-
 
 //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
 //  для уведомления User о начале предобработки (for QML about Start)
 void ImageProcessingService::onPreProcessingStartNotification(bool success) {}
 
-
 //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
 //  для уведомления о завершении предобработки (for QML about Finished)
 void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePath)
 {
-
     imagePreProcessingFinished("file:///" + resultFilePath, true);
-    qDebug() << "ImageProcessingService: Preprocessing completion signal sent; resultFilePath: " << resultFilePath;
-
+    qDebug() << "ImageProcessingService: "
+                "Preprocessing completion signal sent; "
+                "resultFilePath: "
+             << resultFilePath;
 }

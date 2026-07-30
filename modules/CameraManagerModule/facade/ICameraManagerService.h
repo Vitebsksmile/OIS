@@ -5,6 +5,7 @@
 
 #include "Frame.h"
 
+
 class ICameraManagerService : public QObject
 {
     Q_OBJECT
@@ -24,7 +25,6 @@ public:
 
 public slots:
 
-    virtual void onStartReady() = 0;
 
 signals:
 

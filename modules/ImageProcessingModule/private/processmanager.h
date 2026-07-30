@@ -19,7 +19,9 @@ class ProcessManager : public QObject
 
 public:
 
-    explicit ProcessManager(IImageProcessingService *imageProcessingService, QObject *parent = nullptr);
+    explicit ProcessManager(
+        IImageProcessingService *imageProcessingService,
+        QObject *parent = nullptr);
 
 
     void setImagePreProcessing(ImagePreProcessing *preProcessing);

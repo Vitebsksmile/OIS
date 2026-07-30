@@ -7,7 +7,8 @@
 /*
  * Почему это правильный подход:
  * Разделение ответственности: Метод performProcessing ничего не знает о Qt и путях — он просто крутит пиксели.
- * Многопоточность: Благодаря QtConcurrent и QFutureWatcher, тяжелая математика OpenCV уходит в другой поток. Пользователь может продолжать нажимать кнопки в SideBar, пока фото обрабатывается.
+ * Многопоточность: Благодаря QtConcurrent и QFutureWatcher, тяжелая математика OpenCV уходит в другой поток.
+ * Пользователь может продолжать нажимать кнопки в SideBar, пока фото обрабатывается.
  * Безопасность: Использование watcher позволяет избежать проблем с синхронизацией потоков (вам не нужны мьютексы в явном виде).
 */
 
@@ -22,8 +23,6 @@
 
 class ProcessManager;
 
-//  Наследуемся от нашего интерфейса
-//  Теперь этот класс обязан реализовать метод processImage
 class ImageProcessingService : public IImageProcessingService
 {
 
@@ -39,7 +38,6 @@ public:
 public slots:
 
     //  Слот для получения пути из VisualizationModule
-    //  Слово override подтверждает переопределение
     void onImagePreProcessingRequested(const QString &filePath) override;
 
 

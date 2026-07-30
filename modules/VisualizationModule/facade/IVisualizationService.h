@@ -14,27 +14,21 @@
 #ifndef IVISUALIZATIONSERVICE_H
 #define IVISUALIZATIONSERVICE_H
 
-
 #include <QObject>
 #include <QString>
 
 #include "Frame.h"
 
 
-//class FileHandler;  //  Forward declaration
-
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IVisualizationService : public QObject
 {
-
     Q_OBJECT
-
 
 public:
 
     //  explicit — запрещает неявное приведение типов
     explicit IVisualizationService(QObject *parent = nullptr) : QObject(parent) {}
-
 
     //  Виртуальный деструктор
     //  Критически важен для интерфейсов: он гарантирует,
@@ -42,10 +36,8 @@ public:
     //  будет вызван деструктор именно дочернего (реального) класса
     virtual ~IVisualizationService() = default;
 
-
     //  Метод установки данных для отправки в другой модуль
     bool setData(const QString &filePath);
-
 
 //  public slots: Методы, которые можно вызывать из других потоков или через connect
 //  Слоты для приема пути к обработанному изображению и его результатов (сообщений)
@@ -68,24 +60,17 @@ public slots:
 
     //virtual void onMLResult(MLResult result) = 0;
 
-
 signals:
 
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
     void imagePreProcessingRequested(const QString &filePath);
 
-
     //  To FileHandler about started PreProcessing
     void preProcessingStartNotification(bool success);
 
-
     //  To FileHandler about finished
     void imagePreProcessingFinished(const QString &filePath);
-
-    void startReady();
-
 };
-
 
 #endif // IVISUALIZATIONSERVICE_H

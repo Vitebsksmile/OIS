@@ -13,7 +13,6 @@ set(MODULE_PUBLIC_FACADES
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
     private/processmanager.h
-    private/workroom.h
     private/imagepreprocessing.h
 )
 
@@ -22,10 +21,7 @@ set(MODULE_PRIVATE_HEADERS
 set(MODULE_SOURCE_FILES
     src/imageprocessingservice.cpp
     src/processmanager.cpp
-    src/workroom.cpp
     src/imagepreprocessing.cpp
-    #filters.h filters.cpp
-    #calibration.h calibration.cpp
 )
 
 

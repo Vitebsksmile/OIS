@@ -22,8 +22,6 @@ ApplicationWindow {
     minimumWidth: 500
     minimumHeight: 500
 
-    //title: "Optical Inspection System"
-
     menuBar: AppMenuBar {}
 
     Drawer {

@@ -17,21 +17,15 @@ Application::Application(int &argc, char **argv, QObject *parent)
     qDebug() << "Application.cpp: Created QGuiApplication";
 }
 
-
 Application::~Application()
 {
-
     //  Очистка в обратном порядке
     m_engine.reset();
-
 }
-
 
 bool Application::initialize()
 {
-
     qDebug() << "Application: Initializing Application...";
-
 
     //  1. Создаем фасад модуля визуализации
     m_visualizationService = QSharedPointer<IVisualizationService>(new VisualizationService(this));
@@ -39,33 +33,23 @@ bool Application::initialize()
 
     if (m_visualizationService)
     {
-
         qDebug() << "Application: VisualizationService initialized";
-
     } else {
-
         qCritical() << "Application: Failed to create VisualizationService";
 
         return false;
-
     }
-
 
     //  2. Создаем фасад модуля обработки изображений
     m_imageProcessingService = QSharedPointer<IImageProcessingService>(new ImageProcessingService(this));
 
-
     if (m_imageProcessingService)
     {
-
         qDebug() << "Application: ImageProcessingService initialized";
-
     } else {
-
         qCritical() << "Application: Failed to create ImageProcessingService";
 
         return false;
-
     }
 
     //  3. Создаем фасад модуля камеры
@@ -74,28 +58,21 @@ bool Application::initialize()
     if (m_cameraManagerService)
     {
         qDebug() << "Application: CameraManagerService initialized";
-
     } else {
-
         qCritical() << "Application: Failed to create CameraManagerService";
 
         return false;
     }
 
-
     setupConnections();
-
 
     qDebug() << "Application: Application initialized successfully.";
 
     return true;
-
 }
-
 
 void Application::setupConnections()
 {
-
     //  Связь: VisualizationModule -> ImageProcessingModule
     bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequested,
                       m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequested);
@@ -121,27 +98,19 @@ void Application::setupConnections()
 
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
+
     ok = connect(m_cameraManagerService.get(), &ICameraManagerService::frameReady,
                  m_visualizationService.get(), &IVisualizationService::onFrameReady);
 
     if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> VisualizationModule";
-
-    ok = connect(m_visualizationService.get(), &IVisualizationService::startReady,
-                 m_cameraManagerService.get(), &ICameraManagerService::onStartReady);
-
-    if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> VisualizationModule";
-
 }
 
 
 int Application::run()
 {
-
     qDebug() << "Application: Starting Application...";
 
-
     m_engine.reset(new QQmlApplicationEngine());
-
 
     const QUrl url("qrc:/qt/qml/VisualizationModule/Visualization.qml");
 
@@ -154,9 +123,7 @@ int Application::run()
         return -1;
     }
 
-
     return m_app->exec();
-
 }
 
 /*QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

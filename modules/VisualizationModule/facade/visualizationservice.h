@@ -8,7 +8,6 @@
 #ifndef VISUALIZATIONSERVICE_H
 #define VISUALIZATIONSERVICE_H
 
-
 #include <QObject>
 //#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
@@ -19,14 +18,11 @@ class FileHandlerManager;
 
 class VisualizationService : public IVisualizationService
 {
-
     Q_OBJECT
-
 
 public:
 
     explicit VisualizationService(QObject *parent = nullptr);
-
 
 //  Реализация интерфейса IVisualizationService
 public slots:
@@ -34,27 +30,21 @@ public slots:
     //  Слушает сигнал из FileHandler о старте предобработки
     void onImagePreProcessingRequested(const QString &filePath) override;
 
-
     //  From IMageProcessingModule for QML about Start
     void onPreProcessingStartNotification(bool success) override;
 
-
     //  в случае успеха обработки
     void onImagePreProcessingFinished(const QString &filePath, bool success) override;
-
 
     //  в случае ошибки обработки
     void onPreProcessingError(const QString &filePath, const QString &error) override;
 
     void onFrameReady(const OIS::Core::Frame &frame) override;
 
-
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
 
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
-
-
 
 private:
 
