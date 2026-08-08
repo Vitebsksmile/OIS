@@ -7,34 +7,39 @@
 FileHandlerManager* FileHandlerManager::s_instance = nullptr;
 
 
-FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationService, QObject *parent)
+FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationService,
+                                       QObject *parent)
     : QObject(parent),
     m_visualizationService(visualizationService)
 {
-
     s_instance = this;
 
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
-    qDebug() << "FileHandlerManager: FileHandlerManager object created. Parent: " << parent;
+    qDebug()
+        << "FileHandlerManager: FileHandlerManager object created. Parent: "
+        << parent;
 
     if (!m_visualizationService)
     {
-        qWarning() << "FileHandlerManager: FileHandlerManager object created without reference to facade";
+        qWarning()
+            << "FileHandlerManager: FileHandlerManager object created without reference to facade";
     }
-
 }
 
 
 //  Регистрирует рождение объектов FileHandler и связывает их с фасадом
 void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
 {
-
     if (fileHandler && !m_fileHandlers.contains(fileHandler))
     {
+        qDebug()
+            << "FileHandlerManager: FileHandlerManager received the object: "
+            << fileHandler;
 
-        qDebug() << "FileHandlerManager: FileHandlerManager received the object: " << fileHandler;
-        qDebug() << "FileHandlerManager: fileHandler.directionOut: " << fileHandler->directionOut();
+        qDebug()
+            << "FileHandlerManager: fileHandler.directionOut: "
+            << fileHandler->directionOut();
 
         m_fileHandlers.append(fileHandler);
 
@@ -46,22 +51,30 @@ void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
         connect(m_visualizationService, &IVisualizationService::imagePreProcessingFinished,
                 fileHandler, &FileHandler::onImagePreProcessingFinished);
 
-
         /*if (fileHandler->directionOut())
         {
-
             //  Связь: fileHandler -> visualizationService
             connect(fileHandler, &FileHandler::imagePreProcessingRequested,
                     m_visualizationService, &IVisualizationService::onImagePreProcessingRequested);
-
         } else {
-
             //  Связь: visualizationService -> fileHandler
             connect(m_visualizationService, &IVisualizationService::imagePreProcessingFinished,
                     fileHandler, &FileHandler::onImagePreProcessingFinished);
-
         }*/
-
     }
+}
 
+void FileHandlerManager::registerProvider(VideoProvider *provider)
+{
+    if (provider && !m_providers.contains(provider))
+    {
+        qDebug()
+            << "FileHandlerManager: FileHandlerManager received the object:"
+            << provider;
+
+        m_providers.append(provider);
+
+        connect(m_visualizationService, &IVisualizationService::frameReady,
+                provider, &VideoProvider::onFrameReady);
+    }
 }

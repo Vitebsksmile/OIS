@@ -3,12 +3,15 @@
 
 #include <QObject>
 //#include <QScopedPointer>
-#include <memory>
+//#include <memory>
+#include <QThread>
+#include <QImage>
 
 #include "ICameraManagerService.h"
 
 
-class ICameraDriver;
+//class ICameraDriver;
+class VideoCaptureWorker;
 
 class CameraManagerService : public ICameraManagerService
 {
@@ -23,15 +26,23 @@ public:
     void checkAndConnectCamera();
 
 public slots:
+    void startStream();
 
+private slots:
+    void onFrameReady(const QImage frame);
 
 signals:
 
-    void frameReady(OIS::Core::Frame &frame);
+    //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
 
-    std::unique_ptr<ICameraDriver> m_cameraDriver;
+    //std::unique_ptr<ICameraDriver> m_cameraDriver;
+
+    //QString m_streamUrl;
+    //QImage m_currentFrame;
+    QThread m_workerThread;
+    VideoCaptureWorker *m_worker;
 
 };
 

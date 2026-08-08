@@ -1,0 +1,4 @@
+#ifndef FACTORYCAMERA_H
+#define FACTORYCAMERA_H
+
+#endif // FACTORYCAMERA_H

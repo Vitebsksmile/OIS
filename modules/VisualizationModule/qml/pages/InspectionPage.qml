@@ -21,7 +21,6 @@ Page {
     }
 
     RowLayout {
-
         anchors.fill: parent
 
         ControlPanel {

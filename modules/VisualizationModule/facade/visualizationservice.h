@@ -9,6 +9,7 @@
 #define VISUALIZATIONSERVICE_H
 
 #include <QObject>
+#include <QImage>
 //#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
 #include "IVisualizationService.h"
@@ -39,7 +40,8 @@ public slots:
     //  в случае ошибки обработки
     void onPreProcessingError(const QString &filePath, const QString &error) override;
 
-    void onFrameReady(const OIS::Core::Frame &frame) override;
+    //void onFrameReady(const OIS::Core::Frame &frame) override;
+    void onFrameReady(const QImage frame) override;
 
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:

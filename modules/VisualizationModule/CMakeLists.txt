@@ -2,32 +2,34 @@
 #   (имя цели в CMake для компиляции)
 set(VISUALIZATION_TARGET VisualizationModule)
 
-
 #   Добавляем публичные фасады (внешнее API)
 set(MODULE_PUBLIC_FACADES
     facade/IVisualizationService.h
     facade/visualizationservice.h
 )
 
+set(MODULE_PRIVATE_INTERFACE
+
+)
 
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
     private/filehandlermanager.h
     private/filehandler.h
-
+    private/videoProvider.h
+    #private/opencvvideoitem.h
     private/mymodel.h
 )
 
-
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
-    src/filehandlermanager.cpp
-    src/filehandler.cpp
-    src/visualizationservice.cpp
-
+    facade/visualizationservice.cpp
+    private/filehandlermanager.cpp
+    #private/opencvvideoitem.cpp
+    private/filehandler.cpp
+    private/videoProvider.cpp
     src/mymodel.cpp
 )
-
 
 set(MODULE_QML_FILES
     qml/AppMenuBar.qml
@@ -37,6 +39,7 @@ set(MODULE_QML_FILES
     qml/pages/InspectionPage.qml
     qml/pages/StatisticsPage.qml
     qml/pages/SettingsPage.qml
+    qml/pages/OperatorPage.qml
 
     qml/model/InspectionStatisticsModel.qml
     qml/model/InspectionSummaryModel.qml
@@ -44,24 +47,23 @@ set(MODULE_QML_FILES
     qml/model/DetectionStatisticsModel.qml
     qml/model/StatisticsResultTableModel.qml
 
-    qml/HomeView.qml
-    qml/ImageView.qml
     qml/DetectionOverlay.qml
     qml/SideBarButton.qml
-    qml/InformationView.qml
-    qml/ImageContainerView.qml
     qml/ImagePickerDialog.qml
     qml/ButtonBar.qml
     qml/ControlPanel.qml
     qml/AppToolBar.qml
-)
 
+    qml/view/ImageContainerView.qml
+    qml/view/InformationView.qml
+    qml/view/ImageView.qml
+    qml/view/LifeView.qml
+)
 
 set(MODULE_IMAGE_FILES
     qrc/setCamera6.svg
     qrc/setVideocamera11.svg
 )
-
 
 #   Регистрирует QML-модуль для основной цели приложения
 #   Превращает созданную библиотеку в полноценный QML-модуль
@@ -83,8 +85,12 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
 
     SOURCES
         ${MODULE_PUBLIC_FACADES}
+        ${MODULE_PRIVATE_INTERFACE}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
+
+    DEPENDENCIES
+        QtMultimedia
 )
 
 

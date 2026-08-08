@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QtQml/qqml.h>
+#include <QImage>
 //#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
 #include "visualizationservice.h"
@@ -86,9 +87,17 @@ void VisualizationService::onPreProcessingError(const QString &filePath, const Q
     //emit showNotification("Error " , error);
 }
 
-void VisualizationService::onFrameReady(const OIS::Core::Frame &frame)
+/*void VisualizationService::onFrameReady(const OIS::Core::Frame &frame)
+{
+    qDebug()
+    << "VisualizationService: Camera manager module result for: "
+    << &frame;
+}*/
+
+void VisualizationService::onFrameReady(const QImage frame)
 {
     qDebug()
         << "VisualizationService: Camera manager module result for: "
-        << &frame;
+        << frame;
+    emit frameReady(frame);
 }

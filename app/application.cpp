@@ -79,26 +79,25 @@ void Application::setupConnections()
 
     if (!ok) qCritical() << "Failed to establish connection between VisualizationModule -> ImageProcessingModule";
 
-
     //  Связи: ImageProcessingModule -> VisualizationModule
     ok = connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingStartNotification,
                  m_visualizationService.get(), &IVisualizationService::onPreProcessingStartNotification);
 
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
-
+    //  Связь: ImageProcessingModule -> VisualizationModule
     ok = connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessingFinished,
                  m_visualizationService.get(), &IVisualizationService::onImagePreProcessingFinished);
 
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
-
+    //  Связь: ImageProcessingModule -> VisualizationModule
     ok = connect(m_imageProcessingService.get(), &IImageProcessingService::prePreProcessingError,
                  m_visualizationService.get(), &IVisualizationService::onPreProcessingError);
 
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
-
+    //  Связь: CameraManagerModule -> VisualizationModule
     ok = connect(m_cameraManagerService.get(), &ICameraManagerService::frameReady,
                  m_visualizationService.get(), &IVisualizationService::onFrameReady);
 

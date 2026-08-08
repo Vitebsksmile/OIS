@@ -16,6 +16,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QImage>
 
 #include "Frame.h"
 
@@ -56,7 +57,8 @@ public slots:
     //  в случае ошибки обработки
     virtual void onPreProcessingError(const QString &filePath, const QString &error) = 0;
 
-    virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
+    //virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
+    virtual void onFrameReady(const QImage frame) = 0;
 
     //virtual void onMLResult(MLResult result) = 0;
 
@@ -71,6 +73,8 @@ signals:
 
     //  To FileHandler about finished
     void imagePreProcessingFinished(const QString &filePath);
+
+    void frameReady(const QImage frame);
 };
 
 #endif // IVISUALIZATIONSERVICE_H

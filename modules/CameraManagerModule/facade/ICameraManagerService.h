@@ -2,8 +2,8 @@
 #define ICAMERAMANAGERSERVICE_H
 
 #include <QObject>
-
-#include "Frame.h"
+#include <QImage>
+//#include "Frame.h"
 
 
 class ICameraManagerService : public QObject
@@ -28,7 +28,8 @@ public slots:
 
 signals:
 
-    void frameReady(const OIS::Core::Frame &frame);
+    //void frameReady(const OIS::Core::Frame &frame);
+    void frameReady(const QImage frame);
 
 };
 

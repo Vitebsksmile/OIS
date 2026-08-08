@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.27.7)
 
 
-#   Создает переменную ORG_NAME (используется для отображаемого названия приложения)
+#   Создает переменную DOMAIN_ORG_NAME (используется для отображаемого домена)
 set(DOMAIN_ORG_NAME "vstu.by")
 
 
@@ -12,7 +12,7 @@ set(ORG_NAME "VSTU IS-23")
 
 
 #   Создает переменную APP_NAME (используется для отображаемого названия приложения)
-set(APP_NAME "OIS by SHCHERBAKOV")
+set(APP_NAME "OIS")
 
 
 #   Объявляет имя проекта (OISApp), его версию и используемый язык (C++)

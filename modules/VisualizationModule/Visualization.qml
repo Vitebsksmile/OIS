@@ -1,6 +1,5 @@
 import QtQuick          //  Базовые элементы (Rectangle, Image, Text)
 import QtQuick.Controls //  Стандартные элементы (Window, Button, Popup, Menu, SplitView)
-import QtQuick.Layouts
 
 
 pragma ComponentBehavior: Bound
@@ -14,7 +13,7 @@ ApplicationWindow {
 
     visible: true
 
-    color: "#526d80"
+    //color: "#526d80"
 
     width: 1200
     height: 700
@@ -22,7 +21,16 @@ ApplicationWindow {
     minimumWidth: 500
     minimumHeight: 500
 
-    menuBar: AppMenuBar {}
+    menuBar: AppMenuBar {
+        id: appMenuBar
+
+        width: parent.width
+        anchors.top: parent.top
+        anchors.leftMargin: 5
+        anchors.rightMargin: 5
+        anchors.topMargin: 0
+        anchors.bottomMargin: 5
+    }
 
     Drawer {
         id: menu
@@ -31,7 +39,7 @@ ApplicationWindow {
 
         ListView {
             anchors.fill: parent
-            model: ["Dashboard", "Inspection", "Statistics"]    //, "Dataset", "Settings"
+            model: ["Dashboard", "Inspection", "Statistics", "Operator"]    //, "Dataset", "Settings"
 
             delegate: ItemDelegate {
                 required property string modelData
@@ -78,11 +86,11 @@ ApplicationWindow {
         anchors.topMargin: 5
         anchors.bottomMargin: 15
 
-        background: Rectangle {
+        /*background: Rectangle {
             color: "#526d80"
-        }
+        }*/
 
-        initialItem: "qml/pages/InspectionPage.qml"
+        initialItem: "qml/pages/OperatorPage.qml"
     }
 
 }
