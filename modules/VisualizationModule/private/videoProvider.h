@@ -5,6 +5,8 @@
 #include <QVideoSink>
 #include <QVideoFrame>
 #include <QImage>
+#include <QPainter>
+#include <QPen>
 #include <QtQml/qqmlregistration.h>
 
 
@@ -29,6 +31,9 @@ public:
 public slots:
     void onFrameReady(const QImage img);
 
+    void onFrameWithBoxesReady(const QImage &frame
+                               , const std::vector<std::vector<int>> &rectanglePoints);
+
 signals:
     void videoSinkChanged();
 
@@ -37,6 +42,8 @@ private:
 
 private:
     QVideoSink* m_videoSink;
+
+    std::vector<std::vector<int>> m_smoothedBoxes;
 };
 
 #endif // VIDEOPROVIDER_H

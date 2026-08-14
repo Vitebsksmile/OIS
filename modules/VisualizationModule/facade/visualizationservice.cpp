@@ -102,10 +102,12 @@ void VisualizationService::onImageFrameReady(const QImage frame)
     emit frameReady(frame);
 }
 
-void VisualizationService::onObjectFound(const size_t &objectCount
-                                         , const std::vector<std::vector<int> > &rectanglePoints)
+void VisualizationService::onFrameWithBoxesReady(const QImage &frame
+                                                 , const std::vector<std::vector<int>> &rectanglePoints)
 {
     // qDebug()
     //     << "VisualizationService: object received:"
     //     << objectCount;
+    emit frameWithBoxesReady(frame
+                             , rectanglePoints);
 }

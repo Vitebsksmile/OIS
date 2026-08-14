@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QImage>
 #include <memory>
 #include "imagepreprocessing.h"
 #include "frameprocessing.h"
@@ -39,8 +40,8 @@ signals:
     void preProcessingFinished(const QString &resultFilePath);\
 
     //  this -> ImageProcessingService
-    void objectFound(const size_t &objectCount
-                     , const std::vector<std::vector<int>> &rectanglePoints);
+    void frameWithBoxesReady(const QImage &frame
+                             , const std::vector<std::vector<int>> &rectanglePoints);
 
 private:
     //  Создает объект ImagePreProcessing и управляет его жизненным циклом
@@ -55,6 +56,8 @@ private:
 
     void useFrameProcessing(FrameProcessing *processing);
     void useFinder(ObjectFinder *finder);
+
+    QImage matToQImage(const cv::Mat &mat);
 
 private:
     IImageProcessingService *m_imageProcessingService = nullptr;

@@ -75,10 +75,10 @@ void ImageProcessingService::onCVFrameReady(const cv::Mat &cvFrame)
 }
 
 //  ProcessManager -> this
-void ImageProcessingService::onObjectFound(const size_t &objectCount
-                                           , const std::vector<std::vector<int>> &rectanglePoints)
+void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame
+                                                   , const std::vector<std::vector<int>> &rectanglePoints)
 {
     //  this -> VisualizationService
-    emit objectFound(objectCount
-                     , rectanglePoints);
+    emit frameWithBoxesReady(frame
+                             , rectanglePoints);
 }

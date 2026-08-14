@@ -9,8 +9,8 @@ FileHandlerManager* FileHandlerManager::s_instance = nullptr;
 
 FileHandlerManager::FileHandlerManager(IVisualizationService *visualizationService,
                                        QObject *parent)
-    : QObject(parent),
-    m_visualizationService(visualizationService)
+    : QObject(parent)
+    , m_visualizationService(visualizationService)
 {
     s_instance = this;
 
@@ -74,7 +74,10 @@ void FileHandlerManager::registerProvider(VideoProvider *provider)
 
         m_providers.append(provider);
 
-        connect(m_visualizationService, &IVisualizationService::frameReady,
-                provider, &VideoProvider::onFrameReady);
+        //connect(m_visualizationService, &IVisualizationService::frameReady,
+        //        provider, &VideoProvider::onFrameReady);
+
+        connect(m_visualizationService, &IVisualizationService::frameWithBoxesReady
+                , provider, &VideoProvider::onFrameWithBoxesReady);
     }
 }

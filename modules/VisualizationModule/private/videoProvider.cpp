@@ -33,6 +33,59 @@ void VideoProvider::onFrameReady(const QImage img)
     }
 }
 
+void VideoProvider::onFrameWithBoxesReady(const QImage &frame
+                                          , const std::vector<std::vector<int>> &rectanglePoints)
+{
+    QImage editableFrame = frame;
+    if (editableFrame.isNull()) return;
+
+    QPainter painter(&editableFrame);
+
+    QPen pen(Qt::green
+             , 6
+             , Qt::SolidLine
+             , Qt::RoundCap
+             , Qt::RoundJoin);
+
+    painter.setPen(pen);
+
+    const double alpha = 0.2;
+
+    if (m_smoothedBoxes.size() != rectanglePoints.size())
+    {
+        m_smoothedBoxes = rectanglePoints;
+    } else {
+        for (size_t i = 0; i < rectanglePoints.size(); ++i)
+        {
+            if (rectanglePoints[i].size() == 4 && m_smoothedBoxes[i].size() == 4)
+            {
+                m_smoothedBoxes[i][0] = static_cast<int>(m_smoothedBoxes[i][0] * (1.0 - alpha)
+                                                         + rectanglePoints[i][0] * alpha);
+
+                m_smoothedBoxes[i][1] = static_cast<int>(m_smoothedBoxes[i][1] * (1.0 - alpha)
+                                                         + rectanglePoints[i][1] * alpha);
+
+                m_smoothedBoxes[i][2] = static_cast<int>(m_smoothedBoxes[i][2] * (1.0 - alpha)
+                                                         + rectanglePoints[i][2] * alpha);
+
+                m_smoothedBoxes[i][3] = static_cast<int>(m_smoothedBoxes[i][3] * (1.0 - alpha)
+                                                         + rectanglePoints[i][3] * alpha);
+            }
+        }
+    }
+
+    for (const auto& box : m_smoothedBoxes)
+    {
+        if (box.size() == 4)
+        {
+            painter.drawRect(box[0], box[1], box[2], box[3]);
+        }
+    }
+    painter.end();
+
+    this->processFrame(editableFrame);
+}
+
 void VideoProvider::processFrame(const QImage img)
 {
     if (!m_videoSink)

@@ -43,8 +43,8 @@ public slots:
 
     void onCVFrameReady(const cv::Mat &cvFrame) override;
 
-    void onObjectFound(const size_t &objectCount
-                       , const std::vector<std::vector<int>> &rectanglePoints) override;
+    void onFrameWithBoxesReady(const QImage &frame
+                               , const std::vector<std::vector<int>> &rectanglePoints) override;
 
 signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!

@@ -37,8 +37,8 @@ ProcessManager::ProcessManager(
             , this, &ProcessManager::onProcessFrame);
 
     //  this -> ImageProcessingService
-    connect(this, &ProcessManager::objectFound
-            , m_imageProcessingService, &IImageProcessingService::onObjectFound);
+    connect(this, &ProcessManager::frameWithBoxesReady
+            , m_imageProcessingService, &IImageProcessingService::onFrameWithBoxesReady);
 }
 
 
@@ -72,13 +72,12 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
     cv::Mat localFrame = cvFrame;
 
     m_processing = std::make_unique<FrameProcessing>(localFrame);
-    //useFrameProcessing(m_processing.get());
     m_processing->toGray().gaussianBlur(5).toBinary();
 
     m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
     m_finder->findObjects();
-    emit objectFound(m_finder->objectCount()
-                     , m_finder->rectanglePoints());
+    emit frameWithBoxesReady(this->matToQImage(cvFrame)
+                             , m_finder->rectanglePoints());
 }
 //  --- END PUBLIC SLOTS ---
 
@@ -123,4 +122,21 @@ void ProcessManager::usePreProcessing(ImagePreProcessing *preProcessing)
     {
         emit preProcessingFinished(preProcessing->finalFilePath());
     }
+}
+
+QImage ProcessManager::matToQImage(const cv::Mat &mat)
+{
+    if (mat.type() == CV_8UC3) {
+        cv::Mat rgb;
+        cv::cvtColor(mat, rgb, cv::COLOR_BGR2RGBA);
+
+        //  Создаем QImage и принудительно копируем данные в кучу Qt,
+        //  чтобы безопасно передать изображение через потоки.
+        return QImage(rgb.data, //  сырой указатель на первый байт в памяти, где лежит матрица пикселей изображения
+                      rgb.cols, //  количество столбцов матрицы
+                      rgb.rows, //  количество строк матрицы
+                      rgb.step, // шаг строки (stride) - полное количество байт в одной строке матрицы, ключая техническое выравнивание памяти
+                      QImage::Format_RGBA8888).copy();    //  формат цвета
+    }
+    return QImage();
 }

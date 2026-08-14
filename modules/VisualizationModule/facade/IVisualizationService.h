@@ -19,7 +19,7 @@
 #include <QImage>
 //#include <vector>
 
-#include "Frame.h"
+//#include "Frame.h"
 
 
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
@@ -45,7 +45,6 @@ public:
 //  Слоты для приема пути к обработанному изображению и его результатов (сообщений)
 //  из ImageProcessingModule
 public slots:
-
     //  Слушает сигнал из FileHandler о старте предобработки
     virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
 
@@ -61,13 +60,13 @@ public slots:
     //virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
     virtual void onImageFrameReady(const QImage frame) = 0;
 
-    virtual void onObjectFound(const size_t &objectCount
-                               , const std::vector<std::vector<int>> &rectanglePoints) = 0;
+    //  ImageProcessingModule -> this
+    virtual void onFrameWithBoxesReady(const QImage &frame
+                                       , const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
     //virtual void onMLResult(MLResult result) = 0;
 
 signals:
-
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
     void imagePreProcessingRequested(const QString &filePath);
@@ -79,6 +78,10 @@ signals:
     void imagePreProcessingFinished(const QString &filePath);
 
     void frameReady(const QImage frame);
+
+    //  this -> FileHandlerManager
+    void frameWithBoxesReady(const QImage &frame
+                             , const std::vector<std::vector<int>> &rectanglePoints);
 };
 
 #endif // IVISUALIZATIONSERVICE_H

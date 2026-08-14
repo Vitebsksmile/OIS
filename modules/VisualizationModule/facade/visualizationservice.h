@@ -28,7 +28,6 @@ public:
 
 //  Реализация интерфейса IVisualizationService
 public slots:
-
     //  Слушает сигнал из FileHandler о старте предобработки
     void onImagePreProcessingRequested(const QString &filePath) override;
 
@@ -42,18 +41,19 @@ public slots:
     void onPreProcessingError(const QString &filePath, const QString &error) override;
 
     //void onFrameReady(const OIS::Core::Frame &frame) override;
+
+    //  CameraManagerModule -> this
     void onImageFrameReady(const QImage frame) override;
 
-    void onObjectFound(const size_t &objectCount
-                       , const std::vector<std::vector<int>> &rectanglePoints) override;
+    //  ImageProcessingModule -> this
+    void onFrameWithBoxesReady(const QImage &frame
+                               , const std::vector<std::vector<int>> &rectanglePoints) override;
 
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
-
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
-
     FileHandlerManager *m_fileHandlerManager;
 
 };

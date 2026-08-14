@@ -104,8 +104,8 @@ void Application::setupConnections()
     if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> ImageProcessingModule";
 
     //  ImageProcessingService -> VisualizationService
-    ok = connect(m_imageProcessingService.get(), &IImageProcessingService::objectFound
-                 , m_visualizationService.get(), &IVisualizationService::onObjectFound);
+    ok = connect(m_imageProcessingService.get(), &IImageProcessingService::frameWithBoxesReady
+                 , m_visualizationService.get(), &IVisualizationService::onFrameWithBoxesReady);
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 }
 
