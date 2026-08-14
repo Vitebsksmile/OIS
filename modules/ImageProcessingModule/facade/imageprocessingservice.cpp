@@ -66,3 +66,19 @@ void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePa
                 "resultFilePath: "
              << resultFilePath;
 }
+
+//  CameraManagerService -> this
+void ImageProcessingService::onCVFrameReady(const cv::Mat &cvFrame)
+{
+    //  this -> ProcessManager
+    emit processFrame(cvFrame);
+}
+
+//  ProcessManager -> this
+void ImageProcessingService::onObjectFound(const size_t &objectCount
+                                           , const std::vector<std::vector<int>> &rectanglePoints)
+{
+    //  this -> VisualizationService
+    emit objectFound(objectCount
+                     , rectanglePoints);
+}

@@ -22,15 +22,18 @@ public slots:
     void stopCapture();
 
 signals:
-    void frameReady(const QImage img);
+    void imageFrameReady(const QImage imageFrame);
+    void cvFrameReady(const cv::Mat &cvFrame);
 
 private slots:
     void processFrame();
 
 private:
+    QImage matToQImage(const cv::Mat &mat);
+
+private:
     cv::VideoCapture m_cap;
     QTimer *m_timer;
-    QImage matToQImage(const cv::Mat &mat);
 };
 
 #endif // VIDEOCAPTUREWORKER_H

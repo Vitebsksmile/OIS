@@ -17,6 +17,7 @@
 #include <QObject>
 #include <QString>
 #include <QImage>
+//#include <vector>
 
 #include "Frame.h"
 
@@ -58,7 +59,10 @@ public slots:
     virtual void onPreProcessingError(const QString &filePath, const QString &error) = 0;
 
     //virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
-    virtual void onFrameReady(const QImage frame) = 0;
+    virtual void onImageFrameReady(const QImage frame) = 0;
+
+    virtual void onObjectFound(const size_t &objectCount
+                               , const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
     //virtual void onMLResult(MLResult result) = 0;
 

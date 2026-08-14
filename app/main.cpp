@@ -1,10 +1,9 @@
+#include "application.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QQuickStyle>
 #include <QSysInfo>
-
-#include "application.h"
-
+#include <opencv2/opencv.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +30,8 @@ int main(int argc, char *argv[])
     // Создаем и инициализируем приложение
     Application app(argc, argv);
 
+    // РЕГИСТРАЦИЯ ТИПА ДЛЯ ПОТОКОВ:
+    qRegisterMetaType<cv::Mat>("cv::Mat");
 
     if (!app.initialize()) {
         qCritical() << "Failed to initialize application";

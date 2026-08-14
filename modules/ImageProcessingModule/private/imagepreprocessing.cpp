@@ -1,10 +1,8 @@
+#include "imagepreprocessing.h"
 #include <QDebug>
 #include <QStandardPaths>
 #include <QDir>
 #include <QDateTime>
-
-#include "imagepreprocessing.h"
-
 
 ImagePreProcessing::ImagePreProcessing()
 {
@@ -53,7 +51,6 @@ bool ImagePreProcessing::loadImage(const QString &filePath)
         qWarning()
             << "ImagePreProcessing: Failed to load image at path: "
             << filePath;
-
         return false;
     }
 
@@ -123,30 +120,28 @@ ImagePreProcessing& ImagePreProcessing::resize(int width, int height)
     return *this;
 }
 
+//Переводим в оттенки серого
 ImagePreProcessing& ImagePreProcessing::toGray()
 {
     if (!m_image.empty() && m_image.channels() == 3)
     {
         cv::cvtColor(m_image, m_image, cv::COLOR_BGR2GRAY);
     }
-
     return *this;
 }
 
 ImagePreProcessing& ImagePreProcessing::toRGB()
 {
+    //  BGR to RGB
     if (!m_image.empty() && m_image.channels() == 3)
     {
-        //  OpenCV читает BGR, нейронки часто ждут RGB
         cv::cvtColor(m_image, m_image, cv::COLOR_BGR2RGB);
     }
-
+    //  GRAY to RGB
     if (!m_image.empty() && m_image.channels() == 1)
     {
-        //  OpenCV читает BGR, нейронки часто ждут RGB
         cv::cvtColor(m_image, m_image, cv::COLOR_GRAY2RGB);
     }
-
     return *this;
 }
 
@@ -165,6 +160,7 @@ ImagePreProcessing& ImagePreProcessing::normalize(float alpha, float beta)
     return *this;
 }
 
+//  Размывает изображение с помощью гауссова фильтра
 ImagePreProcessing& ImagePreProcessing::gaussianBlur(int kernelSize)
 {
     if (!m_image.empty() && kernelSize % 2)
@@ -172,5 +168,15 @@ ImagePreProcessing& ImagePreProcessing::gaussianBlur(int kernelSize)
         cv::GaussianBlur(m_image, m_image, cv::Size(kernelSize, kernelSize), 0);
     }
 
+    return *this;
+}
+
+//  Бинаризуем изображение (получаем черно-белую маску)
+ImagePreProcessing& ImagePreProcessing::toBinary()
+{
+    if (!m_image.empty())
+    {
+        cv::threshold(m_image, m_image, 100, 255, cv::THRESH_BINARY);
+    }
     return *this;
 }

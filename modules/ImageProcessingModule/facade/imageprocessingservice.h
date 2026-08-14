@@ -15,55 +15,46 @@
 #ifndef IMAGEPROCESSINGSERVICE_H
 #define IMAGEPROCESSINGSERVICE_H
 
-
 #include <QObject>
-
+#include <opencv2/opencv.hpp>
 #include "IImageProcessingService.h"
-
 
 class ProcessManager;
 
 class ImageProcessingService : public IImageProcessingService
 {
-
     Q_OBJECT
 
-
 public:
-
     explicit ImageProcessingService(QObject *parent = nullptr);
-
 
 //  Реализация интерфейса IImageProcessingService
 public slots:
-
     //  Слот для получения пути из VisualizationModule
     void onImagePreProcessingRequested(const QString &filePath) override;
-
 
     //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
     //  для уведомления User о начале предобработки (for QML about Start)
     void onPreProcessingStartNotification(bool success) override;
 
-
     //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
     //  для уведомления о завершении предобработки (for QML about Finished)
     void onPreProcessingFinished(const QString &resultFilePath) override;
 
-signals:
+    void onCVFrameReady(const cv::Mat &cvFrame) override;
 
+    void onObjectFound(const size_t &objectCount
+                       , const std::vector<std::vector<int>> &rectanglePoints) override;
+
+signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
-
 private:
-
     ProcessManager *m_processManager;
-
 
     //  Хранит путь к файлу, который обрабатывается в данный момент,
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed
     QUrl m_currentFilePath; //  !!!!!???????
-
 };
 
 #endif // IMAGEPROCESSINGSERVICE_H

@@ -3,15 +3,13 @@
 
 #include <QObject>
 #include <QImage>
-//#include "Frame.h"
-
+#include <opencv2/opencv.hpp>
 
 class ICameraManagerService : public QObject
 {
     Q_OBJECT
 
 public:
-
     explicit ICameraManagerService(QObject* parent = nullptr) : QObject(parent) {}
 
     virtual ~ICameraManagerService() = default;
@@ -27,10 +25,13 @@ public slots:
 
 
 signals:
-
     //void frameReady(const OIS::Core::Frame &frame);
-    void frameReady(const QImage frame);
 
+    //  this -> VisualizationService
+    void imageFrameReady(const QImage frame);
+
+    //  this -> ImageProcessingService
+    void cvFrameReady(const cv::Mat &frame);
 };
 
 #endif // ICAMERAMANAGERSERVICE_H

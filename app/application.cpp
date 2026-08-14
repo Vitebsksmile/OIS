@@ -76,32 +76,37 @@ void Application::setupConnections()
     //  Связь: VisualizationModule -> ImageProcessingModule
     bool ok = connect(m_visualizationService.get(), &IVisualizationService::imagePreProcessingRequested,
                       m_imageProcessingService.get(), &IImageProcessingService::onImagePreProcessingRequested);
-
     if (!ok) qCritical() << "Failed to establish connection between VisualizationModule -> ImageProcessingModule";
 
     //  Связи: ImageProcessingModule -> VisualizationModule
     ok = connect(m_imageProcessingService.get(), &IImageProcessingService::preProcessingStartNotification,
                  m_visualizationService.get(), &IVisualizationService::onPreProcessingStartNotification);
-
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
     //  Связь: ImageProcessingModule -> VisualizationModule
     ok = connect(m_imageProcessingService.get(), &IImageProcessingService::imagePreProcessingFinished,
                  m_visualizationService.get(), &IVisualizationService::onImagePreProcessingFinished);
-
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
     //  Связь: ImageProcessingModule -> VisualizationModule
     ok = connect(m_imageProcessingService.get(), &IImageProcessingService::prePreProcessingError,
                  m_visualizationService.get(), &IVisualizationService::onPreProcessingError);
-
     if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
     //  Связь: CameraManagerModule -> VisualizationModule
-    ok = connect(m_cameraManagerService.get(), &ICameraManagerService::frameReady,
-                 m_visualizationService.get(), &IVisualizationService::onFrameReady);
-
+    ok = connect(m_cameraManagerService.get(), &ICameraManagerService::imageFrameReady,
+                 m_visualizationService.get(), &IVisualizationService::onImageFrameReady);
     if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> VisualizationModule";
+
+    //  CameraManagerService -> ImageProcessingService
+    ok = connect(m_cameraManagerService.get(), &ICameraManagerService::cvFrameReady
+                 , m_imageProcessingService.get(), &IImageProcessingService::onCVFrameReady);
+    if (!ok) qCritical() << "Failed to establish connection between CameraManagerModule -> ImageProcessingModule";
+
+    //  ImageProcessingService -> VisualizationService
+    ok = connect(m_imageProcessingService.get(), &IImageProcessingService::objectFound
+                 , m_visualizationService.get(), &IVisualizationService::onObjectFound);
+    if (!ok) qCritical() << "Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 }
 
 

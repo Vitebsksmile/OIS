@@ -1,15 +1,14 @@
-#include <QDebug>
-
 #include "processmanager.h"
+#include <QDebug>
 #include "IImageProcessingService.h"
 #include "imagepreprocessing.h"
 
 
 ProcessManager::ProcessManager(
-    IImageProcessingService *imageProcessingService,
-    QObject *parent)
-    : QObject(parent),
-    m_imageProcessingService(imageProcessingService)
+    IImageProcessingService *imageProcessingService
+    , QObject *parent)
+    : QObject(parent)
+    , m_imageProcessingService(imageProcessingService)
 {
     if (!m_imageProcessingService)
     {
@@ -32,8 +31,56 @@ ProcessManager::ProcessManager(
     //  To Facade fot QML about Finished
     connect(this, &ProcessManager::preProcessingFinished,
             m_imageProcessingService, &IImageProcessingService::onPreProcessingFinished);
+
+    //  The facade listens for the appearance of a frame
+    connect(m_imageProcessingService, &IImageProcessingService::processFrame
+            , this, &ProcessManager::onProcessFrame);
+
+    //  this -> ImageProcessingService
+    connect(this, &ProcessManager::objectFound
+            , m_imageProcessingService, &IImageProcessingService::onObjectFound);
 }
 
+
+//  --- PUBLIC SLOTS ---
+//  Слушает фасад для старта предобработки
+void ProcessManager::onImagePreProcessingRequested(const QString &filePath)
+{
+    //  Создание объекта ImagePreProcessing
+    createPreProcessingObject();
+
+    // Установка изображения в обработчик
+    if (imagePreProcessing()->loadImage(filePath))
+    {
+        qDebug()
+        << "ProcessManager: The file path is valid and contains an image. "
+           "The image has been installed in the ImagePreProcessing handler! "
+           "Path to image: "
+        << filePath;
+    }
+
+    //  Используем объект
+    usePreProcessing(imagePreProcessing());
+
+    //  Удаляем объект
+    deletePreProcessingObject();
+}
+
+//  ImageProcessingService -> this
+void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
+{
+    cv::Mat localFrame = cvFrame;
+
+    m_processing = std::make_unique<FrameProcessing>(localFrame);
+    //useFrameProcessing(m_processing.get());
+    m_processing->toGray().gaussianBlur(5).toBinary();
+
+    m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
+    m_finder->findObjects();
+    emit objectFound(m_finder->objectCount()
+                     , m_finder->rectanglePoints());
+}
+//  --- END PUBLIC SLOTS ---
 
 //  Создает объект ImagePreprocessing
 void ProcessManager::createPreProcessingObject()
@@ -45,7 +92,6 @@ void ProcessManager::createPreProcessingObject()
         << "ProcessManager: Created an ImagePreProcessing object at: "
         << m_imagePreProcessing.get();
 }
-
 
 void ProcessManager::deletePreProcessingObject()
 {
@@ -59,32 +105,7 @@ void ProcessManager::deletePreProcessingObject()
         << m_imagePreProcessing.get();
 }
 
-
-//  Слушает фасад для старта предобработки
-void ProcessManager::onImagePreProcessingRequested(const QString &filePath)
-{
-    //  Создание объекта ImagePreProcessing
-    createPreProcessingObject();
-
-    // Установка изображения в обработчик
-    if (imagePreProcessing()->loadImage(filePath))
-    {
-        qDebug()
-            << "ProcessManager: The file path is valid and contains an image. "
-               "The image has been installed in the ImagePreProcessing handler! "
-               "Path to image: "
-            << filePath;
-    }
-
-    //  Используем объект
-    usePreProcessingObject(imagePreProcessing());
-
-    //  Удаляем объект
-    deletePreProcessingObject();
-}
-
-
-void ProcessManager::usePreProcessingObject(ImagePreProcessing *preProcessing)
+void ProcessManager::usePreProcessing(ImagePreProcessing *preProcessing)
 {
     //  To Facade for QML
     emit preProcessingStartNotification(true);
@@ -100,6 +121,6 @@ void ProcessManager::usePreProcessingObject(ImagePreProcessing *preProcessing)
     //  Сохранение результатов на диск
     if (preProcessing->save())
     {
-        preProcessingFinished(preProcessing->getFinalFilePath());
+        emit preProcessingFinished(preProcessing->finalFilePath());
     }
 }

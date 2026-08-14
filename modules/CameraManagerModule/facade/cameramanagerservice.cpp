@@ -13,11 +13,14 @@ CameraManagerService::CameraManagerService(QObject* parent)
 
     m_worker->moveToThread(&m_workerThread);
 
-    connect(&m_workerThread, &QThread::finished,
-            m_worker, &QObject::deleteLater);
+    connect(&m_workerThread, &QThread::finished
+            , m_worker, &QObject::deleteLater);
 
-    connect(m_worker, &VideoCaptureWorker::frameReady,
-            this, &CameraManagerService::onFrameReady);
+    connect(m_worker, &VideoCaptureWorker::imageFrameReady
+            , this, &CameraManagerService::onImageFrameReady);
+
+    connect(m_worker, &VideoCaptureWorker::cvFrameReady
+            , this, &CameraManagerService::onCVFrameReady);
 
     m_workerThread.start();
 
@@ -47,9 +50,18 @@ CameraManagerService::~CameraManagerService()
 //     }
 // }
 
-void CameraManagerService::onFrameReady(const QImage frame)
+//  SLOT VideoCaptureWorker -> this
+void CameraManagerService::onImageFrameReady(const QImage imageFrame)
 {
-    emit frameReady(frame);
+    //  this -> VisualizationService
+    emit imageFrameReady(imageFrame);
+}
+
+//  VideoCaptureWorker -> this
+void CameraManagerService::onCVFrameReady(const cv::Mat &cvFrame)
+{
+    //  this -> ImageProcessingService
+    emit cvFrameReady(cvFrame.clone());
 }
 
 void CameraManagerService::startStream()

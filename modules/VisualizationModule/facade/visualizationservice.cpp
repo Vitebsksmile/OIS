@@ -94,10 +94,18 @@ void VisualizationService::onPreProcessingError(const QString &filePath, const Q
     << &frame;
 }*/
 
-void VisualizationService::onFrameReady(const QImage frame)
+void VisualizationService::onImageFrameReady(const QImage frame)
 {
-    qDebug()
-        << "VisualizationService: Camera manager module result for: "
-        << frame;
+    // qDebug()
+    //     << "VisualizationService: Camera manager module result for: "
+    //     << frame;
     emit frameReady(frame);
+}
+
+void VisualizationService::onObjectFound(const size_t &objectCount
+                                         , const std::vector<std::vector<int> > &rectanglePoints)
+{
+    // qDebug()
+    //     << "VisualizationService: object received:"
+    //     << objectCount;
 }

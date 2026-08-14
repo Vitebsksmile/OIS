@@ -51,12 +51,12 @@ void VideoCaptureWorker::startCaptureUrl()
 
     if (!m_cap.open(url.toStdString())) {
         qWarning()
-        << "Не удалось открыть сетевой поток DroidCam:"
-        << url;
+            << "Не удалось открыть сетевой поток DroidCam:"
+            << url;
         return;
     }
     m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
-    qDebug() << "Successfully connected to DroidCam via Wi-Fi";
+    qDebug() << "VideoCaptureWorker: Successfully connected to DroidCam via Wi-Fi";
 }
 
 void VideoCaptureWorker::stopCapture()
@@ -69,13 +69,15 @@ void VideoCaptureWorker::stopCapture()
     }
 }
 
+//  SLOT QTimer::timeout -> this
 void VideoCaptureWorker::processFrame()
 {
     cv::Mat mat;
     if (m_cap.read(mat) && !mat.empty()) {
-        QImage img = matToQImage(mat);
-        if (!img.isNull()) {
-            emit frameReady(img);
+        emit cvFrameReady(mat);
+        QImage imageFrame = matToQImage(mat);
+        if (!imageFrame.isNull()) {
+            emit imageFrameReady(imageFrame);
         }
     }
 }

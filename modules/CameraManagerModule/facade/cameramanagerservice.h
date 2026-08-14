@@ -18,7 +18,6 @@ class CameraManagerService : public ICameraManagerService
     Q_OBJECT
 
 public:
-
     explicit CameraManagerService(QObject* parent = nullptr);
 
     ~CameraManagerService() override;
@@ -29,21 +28,19 @@ public slots:
     void startStream();
 
 private slots:
-    void onFrameReady(const QImage frame);
+    void onImageFrameReady(const QImage imageFrame);
+    void onCVFrameReady(const cv::Mat &cvFrame);
 
 signals:
-
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
-
     //std::unique_ptr<ICameraDriver> m_cameraDriver;
 
     //QString m_streamUrl;
     //QImage m_currentFrame;
     QThread m_workerThread;
     VideoCaptureWorker *m_worker;
-
 };
 
 #endif // CAMERAMANAGERSERVICE_H

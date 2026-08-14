@@ -14,14 +14,18 @@ set(MODULE_PUBLIC_FACADES
 set(MODULE_PRIVATE_HEADERS
     private/processmanager.h
     private/imagepreprocessing.h
+    private/objectfinder.h
+    private/frameprocessing.h
 )
 
 
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
-    src/imageprocessingservice.cpp
-    src/processmanager.cpp
-    src/imagepreprocessing.cpp
+    facade/imageprocessingservice.cpp
+    private/processmanager.cpp
+    private/imagepreprocessing.cpp
+    private/objectfinder.cpp
+    private/frameprocessing.cpp
 )
 
 
