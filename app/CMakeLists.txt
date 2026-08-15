@@ -29,7 +29,7 @@ target_compile_definitions(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE
 
     #   Библиотеки проекта для доступа к .h файлам и C++ логике
-    #DatabaseModule
+    DatabaseModule
     ImageProcessingModule
     IntegrationModule
     VisualizationModule

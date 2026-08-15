@@ -2,28 +2,22 @@
 # (3.25 нужна для многих фич Qt 6)
 cmake_minimum_required(VERSION 3.27.7)
 
-
 #   Создает переменную DOMAIN_ORG_NAME (используется для отображаемого домена)
 set(DOMAIN_ORG_NAME "vstu.by")
-
 
 #   Создает переменную ORG_NAME (используется для отображаемого названия приложения)
 set(ORG_NAME "VSTU IS-23")
 
-
 #   Создает переменную APP_NAME (используется для отображаемого названия приложения)
 set(APP_NAME "OIS")
 
-
 #   Объявляет имя проекта (OISApp), его версию и используемый язык (C++)
 project(OISApp VERSION 0.0.1 LANGUAGES CXX)
-
 
 set(CMAKE_CXX_STANDARD 17)
 
 #   Отключаем специфичные для компилятора расширения C++. Чистый C++
 set(CMAKE_CXX_EXTENSIONS OFF)
-
 
 #   Добавляем определения (флаги) компиляции для передачи препроцессорных
 #   макросов (#define) в C++ код прямо из CMake
@@ -33,7 +27,6 @@ add_definitions(
     -DAPP_NAME_STR="${APP_NAME}"
     -DAPP_VERSION="${PROJECT_VERSION}"
 )
-
 
 #   Ищет пакеты Qt 6.8
 find_package(Qt6 6.8 REQUIRED COMPONENTS
@@ -51,29 +44,24 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
     Sql             #   модуль базы данных
 )
 
-
 #   Ищет модуль OpenCV (модуль компьютерного зрения)
 find_package(OpenCV REQUIRED)
-
 
 #   Применяет стандартные настройки Qt для проекта
 #   (автоматизирует пути сборки и размещения файлов)
 #   https://doc.qt.io/qt-6/qt-standard-project-setup.html
 qt_standard_project_setup(REQUIRES 6.8)
 
-
 #   Подключает модули логики приложения (вызываются их собственные CMakeLists.txt)
 add_subdirectory(modules/CoreModule)
-#add_subdirectory(modules/DatabaseModule)
+add_subdirectory(modules/DatabaseModule)
 add_subdirectory(modules/ImageProcessingModule)
 add_subdirectory(modules/IntegrationModule)
 add_subdirectory(modules/VisualizationModule)
 add_subdirectory(modules/CameraManagerModule)
 
-
 #   Подключает папку с основным исполняемым файлом приложения (точкой входа)
 add_subdirectory(app)
-
 
 #   Создает "виртуальную" цель, чтобы файлы ниже отображались в дереве проекта в IDE
 add_custom_target(non-compiled-files SOURCES

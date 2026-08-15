@@ -2,30 +2,39 @@
 #   (имя цели в CMake для компиляции)
 set(DATABASEMODULE_TARGET DatabaseModule)
 
+set(MODULE_PUBLIC_FACADES
+    #
+)
+
+set(MODULE_PRIVATE_HEADERS
+    #filehandler.h
+    private/databasemanager.h
+)
 
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
-    #filehandler.h filehandler.cpp
+    #filehandler.cpp
+    private/databasemanager.cpp
 )
-
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается прямо в исполняемый файл при сборке
 qt_add_library(${DATABASEMODULE_TARGET} STATIC
+    ${MODULE_PUBLIC_FACADES}
+    ${MODULE_PRIVATE_HEADERS}
     ${MODULE_SOURCE_FILES}
-
 )
-
 
 #   Указываем, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
 #   PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
 target_include_directories(${DATABASEMODULE_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/public
+    ${CMAKE_CURRENT_SOURCE_DIR}/facade
+    ${CMAKE_CURRENT_SOURCE_DIR}/private
 )
 
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
-target_link_libraries(${DATABASEMODULE_TARGET} PUBLIC
+target_link_libraries(${DATABASEMODULE_TARGET} PRIVATE
     Qt6::Sql
 )
 

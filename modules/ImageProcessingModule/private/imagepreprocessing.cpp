@@ -65,7 +65,7 @@ bool ImagePreProcessing::save()
 {
     if (m_image.empty()) return false;
 
-    // 1. Получаем путь к папке данных приложения (например, C:/Users/Name/AppData/Roaming/YourApp)
+    //  1. Получаем путь к папке данных приложения (например, C:/Users/Name/AppData/Roaming/YourApp)
     QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     // 2. Создаем директорию, если её еще нет
