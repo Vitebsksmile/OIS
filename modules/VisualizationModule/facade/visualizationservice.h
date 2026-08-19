@@ -15,7 +15,6 @@
 
 #include "IVisualizationService.h"
 
-
 class FileHandlerManager;
 
 class VisualizationService : public IVisualizationService
@@ -24,7 +23,7 @@ class VisualizationService : public IVisualizationService
 
 public:
 
-    explicit VisualizationService(QObject *parent = nullptr);
+    explicit VisualizationService(QObject* parent = nullptr);
 
 //  Реализация интерфейса IVisualizationService
 public slots:
@@ -54,8 +53,7 @@ signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
-    FileHandlerManager *m_fileHandlerManager;
-
+    FileHandlerManager* m_fileHandlerManager;
 };
 
 #endif // VISUALIZATIONSERVICE_H

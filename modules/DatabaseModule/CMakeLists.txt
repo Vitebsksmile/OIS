@@ -3,7 +3,8 @@
 set(DATABASEMODULE_TARGET DatabaseModule)
 
 set(MODULE_PUBLIC_FACADES
-    #
+    facade/IDatabaseService.h
+    facade/databaseservice.h
 )
 
 set(MODULE_PRIVATE_HEADERS
@@ -15,6 +16,7 @@ set(MODULE_PRIVATE_HEADERS
 list(APPEND MODULE_SOURCE_FILES
     #filehandler.cpp
     private/databasemanager.cpp
+    facade/databaseservice.cpp
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
@@ -27,9 +29,11 @@ qt_add_library(${DATABASEMODULE_TARGET} STATIC
 
 #   Указываем, что папка с этим модулем должна быть доступна для поиска заголовков (.h)
 #   PUBLIC означает, что любой проект, подключивший эту библиотеку, тоже увидит её заголовки
-target_include_directories(${DATABASEMODULE_TARGET} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/facade
-    ${CMAKE_CURRENT_SOURCE_DIR}/private
+target_include_directories(${DATABASEMODULE_TARGET}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/facade
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/private
 )
 
 

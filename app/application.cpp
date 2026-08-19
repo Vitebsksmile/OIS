@@ -3,6 +3,8 @@
 #include "application.h"
 #include "IVisualizationService.h"
 #include "visualizationService.h"
+#include "IDatabaseService.h"
+#include "databaseservice.h"
 #include "IImageProcessingService.h"
 #include "imageprocessingservice.h"
 #include "ICameraManagerService.h"
@@ -27,40 +29,39 @@ bool Application::initialize()
 {
     qDebug() << "Application: Initializing Application...";
 
-    //  1. Создаем фасад модуля визуализации
+    //  Создаем фасад модуля визуализации
     m_visualizationService = QSharedPointer<IVisualizationService>(new VisualizationService(this));
-
-
-    if (m_visualizationService)
-    {
+    if (m_visualizationService) {
         qDebug() << "Application: VisualizationService initialized";
     } else {
         qCritical() << "Application: Failed to create VisualizationService";
-
         return false;
     }
 
-    //  2. Создаем фасад модуля обработки изображений
-    m_imageProcessingService = QSharedPointer<IImageProcessingService>(new ImageProcessingService(this));
+    //  Create facade database module
+    m_databaseService = QSharedPointer<IDatabaseService>(new DatabaseService(this));
+    if (m_databaseService) {
+        qDebug() << "Application: DatabaseService initialized";
+    } else {
+        qCritical() << "Application: Failed to create DatabaseService";
+        return false;
+    }
 
-    if (m_imageProcessingService)
-    {
+    //  Создаем фасад модуля обработки изображений
+    m_imageProcessingService = QSharedPointer<IImageProcessingService>(new ImageProcessingService(this));
+    if (m_imageProcessingService) {
         qDebug() << "Application: ImageProcessingService initialized";
     } else {
         qCritical() << "Application: Failed to create ImageProcessingService";
-
         return false;
     }
 
-    //  3. Создаем фасад модуля камеры
+    //  Создаем фасад модуля камеры
     m_cameraManagerService = QSharedPointer<ICameraManagerService>(new CameraManagerService(this));
-
-    if (m_cameraManagerService)
-    {
+    if (m_cameraManagerService) {
         qDebug() << "Application: CameraManagerService initialized";
     } else {
         qCritical() << "Application: Failed to create CameraManagerService";
-
         return false;
     }
 

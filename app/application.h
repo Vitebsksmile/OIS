@@ -17,6 +17,7 @@
 //  Ускоряет компиляцию и убирает лишние зависимости в хедере.
 //  Компилятору достаточно знать, что это классы.
 class IVisualizationService;
+class IDatabaseService;
 class IImageProcessingService;
 class ICameraManagerService;
 
@@ -48,13 +49,9 @@ private:
 
     QScopedPointer<QQmlApplicationEngine> m_engine;
 
-    //  Умный указатель на интерфейс IVisualizationModule.
     QSharedPointer<IVisualizationService> m_visualizationService;
-
-    //  Умный указатель на интерфейс IImageProcessingModule.
+    QSharedPointer<IDatabaseService> m_databaseService;
     QSharedPointer<IImageProcessingService> m_imageProcessingService;
-
-    //  Умный указатель на интерфейс ICameraManagerService.
     QSharedPointer<ICameraManagerService> m_cameraManagerService;
 };
 

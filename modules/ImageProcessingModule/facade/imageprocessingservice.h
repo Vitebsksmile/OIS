@@ -26,7 +26,7 @@ class ImageProcessingService : public IImageProcessingService
     Q_OBJECT
 
 public:
-    explicit ImageProcessingService(QObject *parent = nullptr);
+    explicit ImageProcessingService(QObject* parent = nullptr);
 
 //  Реализация интерфейса IImageProcessingService
 public slots:
@@ -50,7 +50,7 @@ signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
-    ProcessManager *m_processManager;
+    ProcessManager* m_processManager;
 
     //  Хранит путь к файлу, который обрабатывается в данный момент,
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed

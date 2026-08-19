@@ -15,7 +15,7 @@ class IImageProcessingService : public QObject
 
 public:
     //  explicit — запрещает неявное приведение типов
-    explicit IImageProcessingService(QObject *parent = nullptr) : QObject(parent) {}
+    explicit IImageProcessingService(QObject* parent = nullptr) : QObject(parent) {}
 
     //  Виртуальный деструктор
     //  Критически важен для интерфейсов: он гарантирует,

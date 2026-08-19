@@ -12,18 +12,18 @@ class DatabaseManager
 {
 public:
     DatabaseManager(const DatabaseManager& ) = delete;
-    ~DatabaseManager() { m_instance = nullptr; }
 
-    static DatabaseManager* instance();
+    static DatabaseManager& instance();
 
     bool initDatabase();
 
 private:
     DatabaseManager() {}
+    ~DatabaseManager() {}
 
     bool creatTables();
+    QDir dir();
 private:
-    static DatabaseManager* m_instance;
     QSqlDatabase m_db;
 };
 
