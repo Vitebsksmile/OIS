@@ -13,13 +13,12 @@
 class VideoProvider : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
-
     //  Связываем C++ и Qml: св-во, к-рое Qml будет слушать
     Q_PROPERTY(QVideoSink* videoSink
                    READ videoSink
                        WRITE setVideoSink
                            NOTIFY videoSinkChanged)
+    QML_ELEMENT
 
 public:
     explicit VideoProvider(QObject *parent = nullptr);

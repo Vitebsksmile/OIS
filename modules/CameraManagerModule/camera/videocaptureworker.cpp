@@ -5,6 +5,9 @@
 VideoCaptureWorker::VideoCaptureWorker(QObject *parent)
     : QObject(parent), m_timer(nullptr)
 {
+    // Регистрируем тип, чтобы Qt умел копировать его между потоками (QueuedConnection)
+    qRegisterMetaType<CVFrameBuffer>("CVFrameBuffer");
+
     m_timer = new QTimer(this);
 
     connect(m_timer, &QTimer::timeout,
@@ -47,7 +50,7 @@ void VideoCaptureWorker::startCapture(int cameraIndex)
 void VideoCaptureWorker::startCaptureUrl()
 {
     stopCapture();
-    QString url = "http://192.168.100.14:4747/video";
+    QString url = "http://192.168.100.16:4747/video";
 
     if (!m_cap.open(url.toStdString())) {
         qWarning()
@@ -75,9 +78,19 @@ void VideoCaptureWorker::processFrame()
     cv::Mat mat;
     if (m_cap.read(mat) && !mat.empty()) {
         emit cvFrameReady(mat);
+
         QImage imageFrame = matToQImage(mat);
         if (!imageFrame.isNull()) {
             emit imageFrameReady(imageFrame);
+        }
+
+        CVFrameBuffer customFrame = matToFrame(mat);
+        if (customFrame.data() != nullptr) {
+            emit frameReady(customFrame);
+        } else {
+            qDebug()
+                << "VideoCaptureWorker: Не удалось создать кадр. Возможно, неподдерживаемый формат матрицы:"
+                << mat.type();
         }
     }
 }
@@ -98,3 +111,18 @@ QImage VideoCaptureWorker::matToQImage(const cv::Mat &mat)
     }
     return QImage();
 }
+
+CVFrameBuffer VideoCaptureWorker::matToFrame(const cv::Mat &mat)
+{
+    if (!mat.empty() && mat.type() == CV_8UC3) {
+        cv::Mat rgb;
+        cv::cvtColor(mat, rgb, cv::COLOR_BGR2RGBA);
+
+        //  Creat a CVFrameBuffer and forcibly copy the data to the heap
+        //return std::make_shared<CVFrameBuffer>(std::move(rgb));
+        return CVFrameBuffer(rgb.clone());
+    }
+    return CVFrameBuffer();
+}
+
+

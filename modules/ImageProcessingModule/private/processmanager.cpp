@@ -37,6 +37,10 @@ ProcessManager::ProcessManager(
             , this, &ProcessManager::onProcessFrame);
 
     //  this -> ImageProcessingService
+    connect(this, &ProcessManager::frameReady
+            , m_imageProcessingService, &IImageProcessingService::onFrameReady);
+
+    //  this -> ImageProcessingService
     connect(this, &ProcessManager::frameWithBoxesReady
             , m_imageProcessingService, &IImageProcessingService::onFrameWithBoxesReady);
 }
@@ -72,7 +76,8 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
     cv::Mat localFrame = cvFrame;
 
     m_processing = std::make_unique<FrameProcessing>(localFrame);
-    m_processing->toGray().gaussianBlur(5).toBinary();
+    m_processing->toGray().gaussianBlur(1).toBinary();
+    emit frameReady(this->matToQImage(m_processing->cvFrame()));
 
     m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
     m_finder->findObjects();
@@ -126,7 +131,15 @@ void ProcessManager::usePreProcessing(ImagePreProcessing *preProcessing)
 
 QImage ProcessManager::matToQImage(const cv::Mat &mat)
 {
-    if (mat.type() == CV_8UC3) {
+    if (mat.type() == CV_8UC1) {
+
+        return QImage(mat.data,
+                      mat.cols,
+                      mat.rows,
+                      mat.step,
+                      QImage::Format_Grayscale8).copy();
+
+    } else if (mat.type() == CV_8UC3) {
         cv::Mat rgb;
         cv::cvtColor(mat, rgb, cv::COLOR_BGR2RGBA);
 
@@ -140,3 +153,46 @@ QImage ProcessManager::matToQImage(const cv::Mat &mat)
     }
     return QImage();
 }
+
+QImage ProcessManager::matToGrayQImage(const cv::Mat &mat)
+{
+    // Проверяем, что матрица не пустая
+    if (mat.empty()) {
+        return QImage();
+    }
+
+    // Если это одноканальное изображение (GrayScale или Binary после .toBinary())
+    if (mat.type() == CV_8UC1) {
+        return QImage(
+                   reinterpret_cast<const uchar*>(mat.data),
+                   mat.cols,
+                   mat.rows,
+                   static_cast<int>(mat.step),
+                   QImage::Format_Grayscale8
+                   ).copy(); // Копируем данные в кучу Qt для безопасной передачи
+    }
+    // На случай, если сюда всё же придет цветное изображение (защитный код)
+    if (mat.type() == CV_8UC3) {
+        cv::Mat gray;
+        cv::cvtColor(mat, gray, cv::COLOR_BGR2GRAY);
+        return QImage(
+                   reinterpret_cast<const uchar*>(gray.data),
+                   gray.cols,
+                   gray.rows,
+                   static_cast<int>(gray.step),
+                   QImage::Format_Grayscale8
+                   ).copy();
+    }
+
+    return QImage();
+}
+
+// OIS::Core::Frame ProcessManager::matToFrame(const cv::Mat &mat) const
+// {
+//     if (mat.type() == CV_8UC3) {
+//         cv::Mat rgb;
+//         cv::cvtColor(mat, rgb, cv::COLOR_BGR2RGB);
+
+//         return Frame()
+//     }
+// }

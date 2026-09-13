@@ -6,9 +6,9 @@ Page {
     id: root
     title: "Statistics"
 
-    // Переопределяем фон страницы
+    // Main background layer
     background: Rectangle {
-        color: "transparent"//"#f0f0f0"
+        color: Theme.cBg
         radius: 16       // Радиус скругления углов
     }
 

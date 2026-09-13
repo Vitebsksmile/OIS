@@ -24,7 +24,8 @@ Rectangle {
 
         Component.onCompleted: {
             //  Pass object to C++
-            FileHandlerManager.registerProvider(videoProvider)
+            //FileHandlerManager.registerProvider(videoProvider)
+            DbModelController.registerProvider(videoProvider)
         }
     }
 }

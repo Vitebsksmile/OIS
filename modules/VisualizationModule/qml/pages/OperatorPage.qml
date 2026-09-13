@@ -6,26 +6,15 @@ Page {
     id: root
     title: "Operator"
 
-    // Палитра согласно CSS переменным (:root) шаблона
-    readonly property color cBg: "#F4F6F9"
-    readonly property color cPanel: "#FFFFFF"
-    readonly property color cBorder: "#D1D5DB"
-    readonly property color cText: "#1F2937"
-    readonly property color cTextMuted: "#6B7280"
-    readonly property color cPrimary: "#2563EB"
-    readonly property color cSuccess: "#10B981"
-    readonly property color cDanger: "#EF4444"
-    readonly property color cWarning: "#F59E0B"
-
     // Сигналы для навигации
-    signal settingsRequested()
-    signal helpRequested()
+    //signal settingsRequested()
+    //signal helpRequested()
     signal repairConfirmed()
 
-    // Главная подложка фона
-    Rectangle {
-        anchors.fill: parent
-        color: root.cBg
+    /// Main background layer
+    background: Rectangle {
+        color: Theme.cBg
+        radius: 16
     }
 
     ColumnLayout {
@@ -33,14 +22,9 @@ Page {
         anchors.margins: 20
         spacing: 15
 
-
-
         // --- ЗАГОЛОВОК СТРАНИЦЫ (.page-title) ---
-        Text {
-            text: "Оператор линии"
-            font.pixelSize: 22
-            font.bold: true
-            color: root.cText
+        TitleText {
+            text: root.title
             Layout.fillWidth: true
 
             // Нижняя линия заголовка
@@ -49,7 +33,7 @@ Page {
                 anchors.bottomMargin: -8
                 width: parent.width
                 height: 2
-                color: root.cBorder
+                color: Theme.cBorder
             }
         }
 
@@ -70,24 +54,30 @@ Page {
                 Layout.columnSpan: 12
                 Layout.fillWidth: true
                 implicitHeight: 54
-                color: "#FEE2E2"
-                border.color: root.cDanger
+                color: Theme.cDanger
+                border.color: Theme.cBorderDanger
                 border.width: 2
                 radius: 6
+
+                //  Видимость панели предупреждения зависит от модели
+                visible: OperatorModel.hasAlarm
 
                 // Анимация мигания (blink)
                 SequentialAnimation on opacity {
                     loops: Animation.Infinite
-                    NumberAnimation { to: 0.6; duration: 1000; easing.type: Easing.InOutQuad }
-                    NumberAnimation { to: 1.0; duration: 1000; easing.type: Easing.InOutQuad }
+                    NumberAnimation {
+                        to: 0.6
+                        duration: 1000
+                        easing.type: Easing.InOutQuad }
+                    NumberAnimation {
+                        to: 1.0
+                        duration: 1000
+                        easing.type: Easing.InOutQuad }
                 }
 
-                Text {
+                TitleText {
                     anchors.centerIn: parent
-                    text: "⚠️ СЕРИЙНЫЙ БРАК! Компонент R12 [Смещение] на 3-х платах подряд!"
-                    color: "#991B1B"
-                    font.pixelSize: 16
-                    font.bold: true
+                    text: OperatorModel.alarmMessage
                 }
             }
 
@@ -95,24 +85,38 @@ Page {
             Rectangle {
                 Layout.columnSpan: 3
                 Layout.fillWidth: true
-                //Layout.fillHeight: true
                 implicitHeight: 120
-                color: root.cPanel
-                border.color: root.cBorder
+                color: Theme.cPanel
+                border.color: Theme.cBorder
                 radius: 6
 
                 // Декоративная левая полоса (.border-left)
                 Rectangle {
-                    width: 5; height: parent.height; color: root.cPrimary
-                    anchors.left: parent.left; radius: 3
+                    width: 5;
+                    height: parent.height;
+                    color: Theme.cPrimary
+                    anchors.left: parent.left;
+                    radius: 3
                 }
 
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 15; spacing: 5
-                    Text { text: "ТЕКУЩИЙ СТАТУС"; font.pixelSize: 12; font.bold: true; color: root.cTextMuted }
-                    Text { text: "РАБОТА"; font.pixelSize: 32; font.bold: true; color: root.cPrimary }
+                    anchors.fill: parent;
+                    anchors.margins: 15;
+                    spacing: 5
+                    HeadingText {
+                        text: "ТЕКУЩИЙ СТАТУС"
+                    }
+
+                    KpiText {
+                        text: OperatorModel.currentStatus
+                        color: Theme.cPrimary
+                    }
+
                     Item { Layout.fillHeight: true }
-                    Text { text: "Оператор: Иванов И.И."; font.pixelSize: 12; color: root.cText }
+
+                    MutedText {
+                        text: "Оператор: " + OperatorModel.operatorName
+                    }
                 }
             }
 
@@ -120,23 +124,34 @@ Page {
             Rectangle {
                 Layout.columnSpan: 3
                 Layout.fillWidth: true
-                //Layout.fillHeight: true
                 implicitHeight: 120
-                color: root.cPanel
-                border.color: root.cBorder
+                color: Theme.cPanel
+                border.color: Theme.cBorder
                 radius: 6
 
                 Rectangle {
-                    width: 5; height: parent.height; color: root.cSuccess
-                    anchors.left: parent.left; radius: 3
+                    width: 5;
+                    height: parent.height
+                    color: Theme.cSuccess
+                    anchors.left: parent.left
+                    radius: 3
                 }
 
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 15; spacing: 5
-                    Text { text: "FIRST PASS YIELD (FPY)"; font.pixelSize: 12; font.bold: true; color: root.cTextMuted }
-                    Text { text: "98.4 %"; font.pixelSize: 32; font.bold: true; color: root.cSuccess }
+                    anchors.fill: parent;
+                    anchors.margins: 15;
+                    spacing: 5
+                    HeadingText {
+                        text: "FIRST PASS YIELD (FPY)"
+                    }
+                    KpiText {
+                        text: OperatorModel.fpyValue
+                        color: Theme.cSuccess
+                    }
                     Item { Layout.fillHeight: true }
-                    Text { text: "Порог нормы: >97.5%"; font.pixelSize: 12; color: root.cTextMuted }
+                    MutedText {
+                        text: "Порог нормы: " + OperatorModel.fpyThreshold
+                    }
                 }
             }
 
@@ -144,15 +159,18 @@ Page {
             Rectangle {
                 Layout.columnSpan: 6
                 Layout.fillWidth: true
-                //Layout.fillHeight: true
                 implicitHeight: 120
-                color: root.cPanel
-                border.color: root.cBorder
+                color: Theme.cPanel
+                border.color: Theme.cBorder
                 radius: 6
 
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 15; spacing: 5
-                    Text { text: "СЧЕТЧИКИ ЗА ТЕКУЩУЮ СМЕНУ"; font.pixelSize: 12; font.bold: true; color: root.cTextMuted }
+                    anchors.fill: parent
+                    anchors.margins: 15
+                    spacing: 5
+                    HeadingText {
+                        text: "СЧЕТЧИКИ ЗА ТЕКУЩУЮ СМЕНУ";
+                    }
 
                     RowLayout {
                         Layout.fillWidth: true
@@ -160,18 +178,33 @@ Page {
 
                         Column {
                             Layout.fillWidth: true
-                            Text { text: "Проверено:"; font.pixelSize: 13; color: root.cText }
-                            Text { text: "1,245"; font.pixelSize: 24; font.bold: true; color: root.cText }
+                            NormalText {
+                                text: "Проверено:"
+                            }
+                            KpiText {
+                                text: OperatorModel.countTotal.toString()
+                                color: Theme.cText
+                            }
                         }
                         Column {
                             Layout.fillWidth: true
-                            Text { text: "Годны (Pass):"; font.pixelSize: 13; color: root.cText }
-                            Text { text: "1,225"; font.pixelSize: 24; font.bold: true; color: root.cSuccess }
+                            NormalText {
+                                text: "Годны (Pass):"
+                            }
+                            KpiText {
+                                text: OperatorModel.countPass.toString()
+                                color: Theme.cSuccess
+                            }
                         }
                         Column {
                             Layout.fillWidth: true
-                            Text { text: "Брак (Fail):"; font.pixelSize: 13; color: root.cText }
-                            Text { text: "20"; font.pixelSize: 24; font.bold: true; color: root.cDanger }
+                            NormalText {
+                                text: "Брак (Fail):"
+                            }
+                            KpiText {
+                                text: OperatorModel.countFail.toString()
+                                color: Theme.cTextDanger
+                            }
                         }
                     }
                     Item { Layout.fillHeight: true }
@@ -184,22 +217,40 @@ Page {
                 Layout.rowSpan: 2
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: root.cPanel
-                border.color: root.cBorder
+                color: Theme.cPanel
+                border.color: Theme.cBorder
                 radius: 6
 
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 15
+                    anchors.fill: parent;
+                    anchors.margins: 15
 
-                    Text { text: "ТЕКУЩАЯ ИНСПЕКЦИЯ: КАРТА ДЕФЕКТОВ ПЛАТЫ"; font.pixelSize: 12; font.bold: true; color: root.cTextMuted }
+                    HeadingText {
+                        text: "ТЕКУЩАЯ ИНСПЕКЦИЯ: КАРТА ДЕФЕКТОВ ПЛАТЫ";
+                    }
 
-                    LifeView {
-                        id: sourceViewer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                    RowLayout {
+                        //Layout.alignment: 0
 
-                        Layout.minimumWidth: 200
-                        Layout.minimumHeight: 200
+                        //  Интерактивная карта
+                        LifeView {
+                            id: sourceViewer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            Layout.minimumWidth: 200
+                            Layout.minimumHeight: 200
+                        }
+
+                        //  Предобработанные кадры
+                        ProcessingView {
+                            id: processingView
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            Layout.minimumWidth: 200
+                            Layout.minimumHeight: 200
+                        }
                     }
 
                     /*
@@ -247,18 +298,17 @@ Page {
                 Layout.rowSpan: 2
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: root.cPanel
-                border.color: root.cBorder
+                color: Theme.cPanel
+                border.color: Theme.cBorder
                 radius: 6
 
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 15; spacing: 10
+                    anchors.fill: parent;
+                    anchors.margins: 15;
+                    spacing: 10
 
-                    Text {
-                        text:
-                            "ПОСЛЕДНИЙ ОБНАРУЖЕННЫЙ БРАК";
-                        font.pixelSize: 12; font.bold: true;
-                        color: root.cTextMuted
+                    HeadingText {
+                        text: "ПОСЛЕДНИЙ ОБНАРУЖЕННЫЙ БРАК";
                     }
 
                     // Окно имитации камеры (.live-cam)
@@ -270,8 +320,14 @@ Page {
 
                         Text {
                             anchors.centerIn: parent
-                            text: "[ ФОТО С КАМЕРЫ ]\nПозиция: R12\nДефект: Смещение компонента X/Y"
+                            text: OperatorModel.lastDefectPhoto
+                                  + "\nПозиция: "
+                                  + OperatorModel.lastDefectPosition
+                                  + "\nДефект: "
+                                  + OperatorModel.lastDefectType
+
                             color: "white"
+                            font.family: Theme.fFamily
                             font.pixelSize: 13
                             lineHeight: 1.5
                             horizontalAlignment: Text.AlignHCenter
@@ -283,20 +339,34 @@ Page {
                         id: repairBtn
                         Layout.fillWidth: true
                         implicitHeight: 40
-
-                        background: Rectangle {
-                            //color: repairBtn.pressed ? "#D97706" : (repairBtn.hovered ? "#F59E0B" : "#FBBF24")
-                            radius: 4
-                        }
-
-                        contentItem: Text {
+                        // Text {
+                        //     text: "Подтвердить / Отправить в ремонт"
+                        //     color: Theme.cText
+                        //     font.family: Theme.fFamily
+                        //     font.pixelSize: 14
+                        //     font.bold: true
+                        //     horizontalAlignment: Text.AlignHCenter
+                        //     verticalAlignment: Text.AlignVCenter
+                        // }
+                        NormalText {
                             text: "Подтвердить / Отправить в ремонт"
-                            color: root.cText
-                            font.pixelSize: 14
-                            font.bold: true
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
+                            color: Theme.cTextDanger
                         }
+
+                        // background: Rectangle {
+                        //     color: repairBtn.pressed ? "#D97706" : (repairBtn.hovered ? "#F59E0B" : "#FBBF24")
+                        //     radius: 4
+                        // }
+
+                        // contentItem: Text {
+                        //     text: "Подтвердить / Отправить в ремонт"
+                        //     color: Theme.cText
+                        //     font.family: Theme.fFamily
+                        //     font.pixelSize: 14
+                        //     font.bold: true
+                        //     horizontalAlignment: Text.AlignHCenter
+                        //     verticalAlignment: Text.AlignVCenter
+                        // }
 
                         onClicked: root.repairConfirmed()
                     }

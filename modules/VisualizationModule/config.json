@@ -1,0 +1,30 @@
+{
+    "theme": {
+        "cBg": "#F4F6F9",
+        "cPanel": "#FFFFFF",
+        "cBorder": "#D1D5DB",
+        "cText": "#1F2937",
+        "cTextMuted": "#6B7280",
+        "cTextDanger": "#991B1B",
+        "cPrimary": "#2563EB",
+        "cSuccess": "#10B981",
+        "cDanger": "#FEE2E2",
+        "cBorderDanger": "#EF4444",
+        "cWarning": "#F59E0B"
+    },
+
+    "typography": {
+        "fontFamily": "Segor UI",
+        "fSizeTitle": 22,
+        "fBoldTitle": true,
+        "fSizeHeading": 14,
+        "fBoldHeading": true,
+        "fSizeKpi": 32,
+        "fBoldKpi": true,
+        "fSizeDesc": 12,
+        "fboldDesc": true,
+        "fLetterSpacingDesc": 0.5,
+        "fSizeNormal": 14,
+        "fBoldNormal": false
+    }
+}

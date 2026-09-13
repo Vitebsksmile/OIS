@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
+#include "cvframebuffer.h"
 
 class VideoCaptureWorker : public QObject
 {
@@ -24,12 +25,14 @@ public slots:
 signals:
     void imageFrameReady(const QImage imageFrame);
     void cvFrameReady(const cv::Mat &cvFrame);
+    void frameReady(const CVFrameBuffer &frame);
 
 private slots:
     void processFrame();
 
 private:
     QImage matToQImage(const cv::Mat &mat);
+    CVFrameBuffer matToFrame(const cv::Mat &mat);
 
 private:
     cv::VideoCapture m_cap;

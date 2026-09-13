@@ -2,13 +2,11 @@
 #define CAMERAMANAGERSERVICE_H
 
 #include <QObject>
-//#include <QScopedPointer>
-//#include <memory>
 #include <QThread>
 #include <QImage>
-
+#include <opencv2/opencv.hpp>
 #include "ICameraManagerService.h"
-
+#include "cvframebuffer.h"
 
 //class ICameraDriver;
 class VideoCaptureWorker;
@@ -24,17 +22,16 @@ public:
 
     void checkAndConnectCamera();
 
-public slots:
-    void startStream();
-
 private slots:
     void onImageFrameReady(const QImage imageFrame);
     void onCVFrameReady(const cv::Mat &cvFrame);
+    void onFrameReady(const CVFrameBuffer &frame);
 
 signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
+    void startStream();
     //std::unique_ptr<ICameraDriver> m_cameraDriver;
 
     //QString m_streamUrl;

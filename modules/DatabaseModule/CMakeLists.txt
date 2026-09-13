@@ -1,22 +1,23 @@
-#   Сщздает переменную DATABASEMODULE_TARGET со значением "DatabaseModuleLib"
+#   Создает переменную DATABASEMODULE_TARGET со значением "DatabaseModuleLib"
 #   (имя цели в CMake для компиляции)
 set(DATABASEMODULE_TARGET DatabaseModule)
 
 set(MODULE_PUBLIC_FACADES
-    facade/IDatabaseService.h
     facade/databaseservice.h
 )
 
 set(MODULE_PRIVATE_HEADERS
-    #filehandler.h
-    private/databasemanager.h
+
+)
+
+set(models_headers
+    private/models/dbmodel.h
 )
 
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
-    #filehandler.cpp
-    private/databasemanager.cpp
     facade/databaseservice.cpp
+    private/models/dbmodel.cpp
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
@@ -24,6 +25,7 @@ list(APPEND MODULE_SOURCE_FILES
 qt_add_library(${DATABASEMODULE_TARGET} STATIC
     ${MODULE_PUBLIC_FACADES}
     ${MODULE_PRIVATE_HEADERS}
+    ${models_headers}
     ${MODULE_SOURCE_FILES}
 )
 
@@ -34,12 +36,15 @@ target_include_directories(${DATABASEMODULE_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/facade
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/private/models
 )
 
 
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
 target_link_libraries(${DATABASEMODULE_TARGET} PRIVATE
     Qt6::Sql
+    Qt6::Network
+    CoreModule
 )
 
 

@@ -22,6 +22,9 @@ CameraManagerService::CameraManagerService(QObject* parent)
     connect(m_worker, &VideoCaptureWorker::cvFrameReady
             , this, &CameraManagerService::onCVFrameReady);
 
+    connect (m_worker, &VideoCaptureWorker::frameReady
+            , this, &CameraManagerService::onFrameReady);
+
     m_workerThread.start();
 
     this->startStream();
@@ -64,9 +67,20 @@ void CameraManagerService::onCVFrameReady(const cv::Mat &cvFrame)
     emit cvFrameReady(cvFrame.clone());
 }
 
+void CameraManagerService::onFrameReady(const CVFrameBuffer &frame)
+{
+
+}
+
 void CameraManagerService::startStream()
 {
     QMetaObject::invokeMethod(m_worker, [this] () {
         m_worker->startCaptureUrl();
     }, Qt::QueuedConnection );
+}
+
+//  Factory method
+QSharedPointer<ICameraManagerService> createCameraManagerService(QObject* parent)
+{
+    return QSharedPointer<ICameraManagerService>(new CameraManagerService(parent));
 }

@@ -25,6 +25,13 @@ ImageProcessingService::ImageProcessingService(QObject *parent)
 
 }
 
+bool ImageProcessingService::setDbService(IDatabaseService *dbService)
+{
+    m_dbService = dbService;
+    if (m_dbService) { return true; }
+    return false;
+}
+
 //  Слот для получения пути из VisualizationModule
 //  Запуск обработки
 void ImageProcessingService::onImagePreProcessingRequested(const QString &filePath)
@@ -74,11 +81,24 @@ void ImageProcessingService::onCVFrameReady(const cv::Mat &cvFrame)
     emit processFrame(cvFrame);
 }
 
+void ImageProcessingService::onFrameReady(const QImage &frame)
+{
+    emit frameReady(frame);
+}
+
 //  ProcessManager -> this
-void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame
-                                                   , const std::vector<std::vector<int>> &rectanglePoints)
+void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame,
+                                                   const std::vector<std::vector<int>> &rectanglePoints)
 {
     //  this -> VisualizationService
-    emit frameWithBoxesReady(frame
-                             , rectanglePoints);
+    emit frameWithBoxesReady(frame,
+                             rectanglePoints);
+
+    m_dbService -> logNewDefect(777, 1, "R105", 20, 45);
+}
+
+//  Factory method
+QSharedPointer<IImageProcessingService> createImageProcessingService(QObject* parent)
+{
+    return QSharedPointer<IImageProcessingService>(new ImageProcessingService(parent));
 }

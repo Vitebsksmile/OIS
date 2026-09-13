@@ -16,8 +16,9 @@
 //  Forward Declaration
 //  Ускоряет компиляцию и убирает лишние зависимости в хедере.
 //  Компилятору достаточно знать, что это классы.
-class IVisualizationService;
 class IDatabaseService;
+class IVisualizationService;
+
 class IImageProcessingService;
 class ICameraManagerService;
 
@@ -32,8 +33,8 @@ public:
     ~Application();
 
     //  Метод для инициализации приложения (создание объектов, настройка связей).
-    //  Это лучше делать в отдельном методе, а не в конструкторе.
     bool initialize();
+    bool modulesIntegration();
 
     //  Запуск приложения
     int run();
@@ -49,8 +50,9 @@ private:
 
     QScopedPointer<QQmlApplicationEngine> m_engine;
 
+    QSharedPointer<IDatabaseService> m_dbService;
     QSharedPointer<IVisualizationService> m_visualizationService;
-    QSharedPointer<IDatabaseService> m_databaseService;
+
     QSharedPointer<IImageProcessingService> m_imageProcessingService;
     QSharedPointer<ICameraManagerService> m_cameraManagerService;
 };

@@ -34,8 +34,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     IntegrationModule
     VisualizationModule
     CameraManagerModule
+    CoreModule
 
-    ${OpenCV_LIBS}
+    #${OpenCV_LIBS}
 
 #   Для гарантии регистрации QML-типов при static build
     VisualizationModuleplugin

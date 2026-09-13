@@ -1,7 +1,6 @@
 set(CAMERA_MANAGER_TARGET CameraManagerModule)
 
 set(MODULE_PUBLIC_FACADES
-    facade/ICameraManagerService.h
     facade/cameramanagerservice.h
 )
 
@@ -28,11 +27,16 @@ set(MODULE_CONFIG_HEADERS
     config/cameraconfig.h
 )
 
+set(frame_headers
+    frame/cvframebuffer.h
+)
+
 set(MODULE_SOURCE_FILES
     facade/cameramanagerservice.cpp
     drivers/baslerdriver.cpp
     config/cameraconfig.cpp
     camera/videocaptureworker.cpp
+
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
@@ -43,6 +47,7 @@ add_library(${CAMERA_MANAGER_TARGET} STATIC
     ${MODULE_FACTORY}
     ${MODULE_DRIVERS_HEADERS}
     ${MODULE_CONFIG_HEADERS}
+    ${frame_headers}
     ${MODULE_SOURCE_FILES}
 )
 
@@ -58,7 +63,7 @@ target_include_directories(${CAMERA_MANAGER_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/drivers
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/lib
-
+        ${CMAKE_CURRENT_SOURCE_DIR}/frame
 )
 
 target_include_directories(${CAMERA_MANAGER_TARGET}

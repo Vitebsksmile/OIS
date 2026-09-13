@@ -2,13 +2,10 @@
 #   (имя цели в CMake для компиляции)
 set(IMAGE_PROCESSING_TARGET ImageProcessingModule)
 
-
 #   Добавляем публичные фасады (внешнее API)
 set(MODULE_PUBLIC_FACADES
-    facade/IImageProcessingService.h
     facade/imageprocessingservice.h
 )
-
 
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
@@ -17,7 +14,6 @@ set(MODULE_PRIVATE_HEADERS
     private/objectfinder.h
     private/frameprocessing.h
 )
-
 
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
@@ -28,7 +24,6 @@ set(MODULE_SOURCE_FILES
     private/frameprocessing.cpp
 )
 
-
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 add_library(${IMAGE_PROCESSING_TARGET} STATIC
@@ -36,7 +31,6 @@ add_library(${IMAGE_PROCESSING_TARGET} STATIC
     ${MODULE_PRIVATE_HEADERS}
     ${MODULE_SOURCE_FILES}
 )
-
 
 #   Include директории
 target_include_directories(${IMAGE_PROCESSING_TARGET}
@@ -47,9 +41,9 @@ target_include_directories(${IMAGE_PROCESSING_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-
 #   Линкует (связывает) приложение с необходимыми библиотеками и зависимостями
 target_link_libraries(${IMAGE_PROCESSING_TARGET} PUBLIC
     Qt6::Quick
     ${OpenCV_LIBS}
+    CoreModule
 )

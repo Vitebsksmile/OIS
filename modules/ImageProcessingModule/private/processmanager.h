@@ -8,6 +8,7 @@
 #include "imagepreprocessing.h"
 #include "frameprocessing.h"
 #include "objectfinder.h"
+#include "Frame.h"
 
 class IImageProcessingService;
 
@@ -40,6 +41,9 @@ signals:
     void preProcessingFinished(const QString &resultFilePath);\
 
     //  this -> ImageProcessingService
+    void frameReady(const QImage &frame);
+
+    //  this -> ImageProcessingService
     void frameWithBoxesReady(const QImage &frame
                              , const std::vector<std::vector<int>> &rectanglePoints);
 
@@ -58,6 +62,8 @@ private:
     void useFinder(ObjectFinder *finder);
 
     QImage matToQImage(const cv::Mat &mat);
+    QImage matToGrayQImage(const cv::Mat &mat);
+    OIS::Core::Frame matToFrame(const cv::Mat &mat) const;
 
 private:
     IImageProcessingService *m_imageProcessingService = nullptr;

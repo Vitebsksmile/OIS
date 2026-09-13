@@ -42,6 +42,7 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
     #   низкоуровневых графических API OpenGL ES.
     Multimedia
     Sql             #   модуль базы данных
+    Network
 )
 
 #   Ищет модуль OpenCV (модуль компьютерного зрения)

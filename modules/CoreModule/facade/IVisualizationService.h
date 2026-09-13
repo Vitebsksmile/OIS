@@ -17,10 +17,10 @@
 #include <QObject>
 #include <QString>
 #include <QImage>
-//#include <vector>
 
-//#include "Frame.h"
-
+class IDatabaseService;
+class ICameraManagerService;
+class IImageProcessingService;
 
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IVisualizationService : public QObject
@@ -28,7 +28,6 @@ class IVisualizationService : public QObject
     Q_OBJECT
 
 public:
-
     //  explicit — запрещает неявное приведение типов
     explicit IVisualizationService(QObject *parent = nullptr) : QObject(parent) {}
 
@@ -38,33 +37,39 @@ public:
     //  будет вызван деструктор именно дочернего (реального) класса
     virtual ~IVisualizationService() = default;
 
-    //  Метод установки данных для отправки в другой модуль
-    bool setData(const QString &filePath);
+    virtual bool setDbService(IDatabaseService *dbService) = 0;
+    virtual bool setCamService(ICameraManagerService *camService) = 0;
+    virtual bool setProcService(IImageProcessingService *procService) = 0;
 
-//  public slots: Методы, которые можно вызывать из других потоков или через connect
-//  Слоты для приема пути к обработанному изображению и его результатов (сообщений)
-//  из ImageProcessingModule
 public slots:
-    //  Слушает сигнал из FileHandler о старте предобработки
+    //  FileHandler -> this
     virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
 
-    //  From IImageProcessingModule for QML about Start
+    //  IImageProcessingModule -> this
     virtual void onPreProcessingStartNotification(bool success) = 0;
 
-    //  в случае успеха предварительной обработки
-    virtual void onImagePreProcessingFinished(const QString &filePath, bool success) = 0;
+    //  IImageProcessingModule -> this
+    virtual void onImagePreProcessingFinished(const QString &filePath,
+                                              bool success) = 0;
 
-    //  в случае ошибки обработки
-    virtual void onPreProcessingError(const QString &filePath, const QString &error) = 0;
+    //  IImageProcessingModule -> this
+    virtual void onPreProcessingError(const QString &filePath,
+                                      const QString &error) = 0;
 
     //virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
     virtual void onImageFrameReady(const QImage frame) = 0;
 
+    //  IImageProcessingModule -> this
+    virtual void onFrameReady(const QImage &frame) = 0;
+
     //  ImageProcessingModule -> this
-    virtual void onFrameWithBoxesReady(const QImage &frame
-                                       , const std::vector<std::vector<int>> &rectanglePoints) = 0;
+    virtual void onFrameWithBoxesReady(const QImage &frame,
+                                       const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
     //virtual void onMLResult(MLResult result) = 0;
+
+    //  DatabaseModule -> this
+    virtual void onDefectAdded() = 0;
 
 signals:
     //  Создан для отправки в ImageProcessingModule
@@ -77,11 +82,14 @@ signals:
     //  To FileHandler about finished
     void imagePreProcessingFinished(const QString &filePath);
 
-    void frameReady(const QImage frame);
+    //void frameReady(const QImage frame);
 
     //  this -> FileHandlerManager
-    void frameWithBoxesReady(const QImage &frame
-                             , const std::vector<std::vector<int>> &rectanglePoints);
+    void frameWithBoxesReady(const QImage &frame,
+                             const std::vector<std::vector<int>> &rectanglePoints);
 };
+
+//  Factory method
+QSharedPointer<IVisualizationService> createVisualizationService(QObject* parent);
 
 #endif // IVISUALIZATIONSERVICE_H

@@ -25,7 +25,7 @@ public:
 
     virtual std::uint32_t stride() const noexcept = 0;
 
-    virtual PixelFormat pixelFormat() const noexcept = 0;
+    //virtual PixelFormat pixelFormat() const noexcept = 0;
 };
 
 }

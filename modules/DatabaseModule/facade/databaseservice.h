@@ -1,17 +1,50 @@
 #ifndef DATABASESERVICE_H
 #define DATABASESERVICE_H
 
+#include <QSqlDatabase>
+#include <QDir>
 #include "IDatabaseService.h"
+#include "dbmodel.h"
 
-class DatabaseManager;
 
 class DatabaseService : public IDatabaseService
 {
+    Q_OBJECT
+
 public:
-    explicit DatabaseService(QObject* parent = nullptr);
+    explicit DatabaseService(QObject *parent = nullptr);
+    ~DatabaseService() override;
+
+    IDbModel* itemModel() const override;
+    IDbModel* model(const QString&) const override;
+
+    bool logNewDefect(int boardId,
+                      int typeId,
+                      const QString &designator,
+                      double x,
+                      double y) override;  //  new
+
+    const QStringList availableTables() const override;
+
+signals:
 
 private:
-    DatabaseManager* m_databaseManager;
+    //  Initialize the database and load it into the model
+    bool initDatabase(const QString &dbName) override;
+
+    bool creatTables();
+    bool insertDefaultDataIfNeeded();
+    bool creatModel(const QString &nameTable);
+    bool populateModelsMap();
+
+    QDir dir();
+
+    bool logNewComputer();
+
+    QSqlDatabase m_db;
+    QHash<QString, DbModel*> m_modelsMap{};
+
+    DbModel *m_itemModel;
 };
 
 #endif // DATABASESERVICE_H

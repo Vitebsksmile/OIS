@@ -5,22 +5,68 @@
  * Переиспользование: Вы можете заменить FileHandler на другой класс (например, NetworkDownloader), и логика визуализации не изменится.
 */
 
-
+#include "visualizationservice.h"
 #include <QDebug>
 #include <QThread>
 #include <QtQml/qqml.h>
 #include <QImage>
 //#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
-
-#include "visualizationservice.h"
 #include "filehandlermanager.h"
-
+#include "dbmodelcontroller.h"
+#include "videostreamservice.h"
 
 VisualizationService::VisualizationService(QObject *parent)
-    : IVisualizationService(parent),
-    m_fileHandlerManager(new FileHandlerManager(this, this))
+    : IVisualizationService(parent)
+    , m_fileHandlerManager(new FileHandlerManager(this, this))
+    , m_dbController(new DbModelController(this, this))
+    , m_streamService(new VideoStreamService(this, this))
 {
+    qDebug()
+        << "VisualizationService: VisualizationService object created. Parent: "
+        << parent;
+}
 
+bool VisualizationService::setDbService(IDatabaseService *dbService)
+{
+    m_dbService = dbService;
+    m_dbController->setDbService(m_dbService);
+
+    QStringList namesTables = m_dbService->availableTables();
+
+    m_dbController->setOperatorsModel(m_dbService->itemModel());
+
+    return true;
+}
+
+bool VisualizationService::setCamService(ICameraManagerService *camService)
+{
+    m_camService = camService;
+
+    return true;
+}
+
+bool VisualizationService::setProcService(IImageProcessingService *procService)
+{
+    m_procService = procService;
+
+    bool ok = false;
+    ok = connect(m_procService, &IImageProcessingService::frameReady
+            , this, &VisualizationService::onFrameReady);
+    if (!ok) {
+        qCritical()
+        << "WARNING! VisualizationService: Failed to subscribe to ImageProcessingModule signals";
+        return false;
+    }
+
+    ok = connect(m_procService, &IImageProcessingService::frameWithBoxesReady
+            , this, &VisualizationService::onFrameWithBoxesReady);
+    if (!ok) {
+        qCritical()
+            << "WARNING! VisualizationService: Failed to subscribe to ImageProcessingModule signals";
+        return false;
+    }
+
+    return true;
 }
 
 //  Слушает сигнал из FileHandler о старте предобработки
@@ -99,6 +145,14 @@ void VisualizationService::onImageFrameReady(const QImage frame)
     // qDebug()
     //     << "VisualizationService: Camera manager module result for: "
     //     << frame;
+    //emit frameReady(frame);
+}
+
+void VisualizationService::onFrameReady(const QImage &frame)
+{
+    // qDebug()
+    //     << "VisualizationService: frame ="
+    //     << frame;
     emit frameReady(frame);
 }
 
@@ -110,4 +164,15 @@ void VisualizationService::onFrameWithBoxesReady(const QImage &frame
     //     << objectCount;
     emit frameWithBoxesReady(frame
                              , rectanglePoints);
+}
+
+void VisualizationService::onDefectAdded()
+{
+////////////////////////////
+}
+
+//  Factory method
+QSharedPointer<IVisualizationService> createVisualizationService(QObject* parent)
+{
+    return QSharedPointer<IVisualizationService>(new VisualizationService(parent));
 }

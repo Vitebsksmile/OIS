@@ -3,7 +3,10 @@
 
 #include <QObject>
 #include <QImage>
-#include <opencv2/opencv.hpp>
+
+namespace cv { class Mat; }
+
+class IFrameBuffer;
 
 class ICameraManagerService : public QObject
 {
@@ -32,6 +35,11 @@ signals:
 
     //  this -> ImageProcessingService
     void cvFrameReady(const cv::Mat &frame);
+
+    void frameReady(const IFrameBuffer &frame);
 };
+
+//  Factory method
+QSharedPointer<ICameraManagerService> createCameraManagerService(QObject* parent);
 
 #endif // ICAMERAMANAGERSERVICE_H

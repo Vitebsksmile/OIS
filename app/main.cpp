@@ -7,13 +7,11 @@
 
 int main(int argc, char *argv[])
 {
-
     // Устанавливаем атрибуты приложения
     QCoreApplication::setOrganizationName(APP_ORG_NAME_STR);            // имя компании
     QCoreApplication::setOrganizationDomain(APP_DOMAIN_ORG_NAME_STR);   // домен компании
     QCoreApplication::setApplicationName(APP_NAME_STR);                 // имя приложения
     QCoreApplication::setApplicationVersion(APP_VERSION);               // версия приложения
-
 
     // 1. Динамический выбор стиля в зависимости от ОС
     #if defined(Q_OS_WIN)
@@ -26,18 +24,21 @@ int main(int argc, char *argv[])
         QQuickStyle::setStyle("Basic");
     #endif
 
-
     // Создаем и инициализируем приложение
     Application app(argc, argv);
 
     // РЕГИСТРАЦИЯ ТИПА ДЛЯ ПОТОКОВ:
     qRegisterMetaType<cv::Mat>("cv::Mat");
+    //qRegisterMetaType<cv::Mat>("IItemModel");
 
     if (!app.initialize()) {
-        qCritical() << "Failed to initialize application";
+        qCritical() << "WARNING! Failed to initialize application";
         return -1;
     }
-
+    if (!app.modulesIntegration()) {
+        qCritical() << "WARNING! Failed to integrate the modules!";
+        return -1;
+    }
 
     // Запускаем приложение
     return app.run();

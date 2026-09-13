@@ -18,6 +18,7 @@
 #include <QObject>
 #include <opencv2/opencv.hpp>
 #include "IImageProcessingService.h"
+#include "IDatabaseService.h"
 
 class ProcessManager;
 
@@ -27,6 +28,8 @@ class ImageProcessingService : public IImageProcessingService
 
 public:
     explicit ImageProcessingService(QObject* parent = nullptr);
+
+    bool setDbService(IDatabaseService *dbService) override;
 
 //  Реализация интерфейса IImageProcessingService
 public slots:
@@ -41,10 +44,16 @@ public slots:
     //  для уведомления о завершении предобработки (for QML about Finished)
     void onPreProcessingFinished(const QString &resultFilePath) override;
 
+    //  CameraManagerService -> this
     void onCVFrameReady(const cv::Mat &cvFrame) override;
 
+    //  ProcessManager -> this
+    void onFrameReady(const QImage &frame) override;
+
+    //  ProcessManager -> this
     void onFrameWithBoxesReady(const QImage &frame
                                , const std::vector<std::vector<int>> &rectanglePoints) override;
+
 
 signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
@@ -55,6 +64,7 @@ private:
     //  Хранит путь к файлу, который обрабатывается в данный момент,
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed
     QUrl m_currentFilePath; //  !!!!!???????
+    IDatabaseService *m_dbService = nullptr;
 };
 
 #endif // IMAGEPROCESSINGSERVICE_H
