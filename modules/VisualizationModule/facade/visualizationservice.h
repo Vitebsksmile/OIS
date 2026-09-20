@@ -18,9 +18,10 @@
 #include "ICameraManagerService.h"
 #include "IImageProcessingService.h"
 
-class FileHandlerManager;
+class AuthController;
+class FileHandlerController;
 class DbModelController;
-class VideoStreamService;
+class VideoStreamController;
 
 class VisualizationService : public IVisualizationService
 {
@@ -32,6 +33,8 @@ public:
     bool setDbService(IDatabaseService *dbService) override;
     bool setCamService(ICameraManagerService *camService) override;
     bool setProcService(IImageProcessingService *procService) override;
+
+    //IDbModel* dbModel()
 
 //  Реализация интерфейса IVisualizationService
 public slots:
@@ -65,13 +68,19 @@ signals:
     //  this -> VideoStreamService
     void frameReady(const QImage &frame);
 
+    //  this -> FileHandlerManager
+    void frameWithBoxesReady(const QImage &frame,
+                             const std::vector<std::vector<int>> &rectanglePoints);
+
 private:
     IDatabaseService *m_dbService = nullptr;
     ICameraManagerService *m_camService = nullptr;
     IImageProcessingService *m_procService = nullptr;
-    FileHandlerManager *m_fileHandlerManager = nullptr;
+
+    AuthController *m_auth = nullptr;
+    FileHandlerController *m_fileHandlerManager = nullptr;
     DbModelController *m_dbController = nullptr;
-    VideoStreamService *m_streamService = nullptr;
+    VideoStreamController *m_videoController = nullptr;
 };
 
 #endif // VISUALIZATIONSERVICE_H

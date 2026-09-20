@@ -34,6 +34,29 @@ IDbModel* DatabaseService::model(const QString &name) const
     return m_modelsMap[name];
 }
 
+QAbstractTableModel* DatabaseService::abstractTableModel(const QString &tableName)
+{
+    qDebug() << "DatabaseService: Request for the model accepted";
+    if (m_relationalModelsMap.contains(tableName)) {
+        qDebug() << "DatabaseService: The model is already exists";
+        return m_relationalModelsMap.value(tableName);
+    } else {
+        qDebug() << "DatabaseService: The model is does not already exists";
+    }
+    DbRelationalTableModel *relationalTableModel = new DbRelationalTableModel(this, m_db);
+    relationalTableModel->setTable(tableName);
+    if (!relationalTableModel->select()) {
+        qCritical() << "WARNING! DatabaseService: The model is not being populated with data from the table";
+    } else {
+        qDebug() << "DatabaseService: The select() method exequted successfully";
+    }
+    m_relationalModelsMap.insert(tableName, relationalTableModel);
+    if (!m_relationalModelsMap.contains(tableName)) {
+        qCritical() << "WARNING! DatabaseService: The model is not being added to the model map";
+    }
+    return relationalTableModel;
+}
+
 bool DatabaseService::logNewDefect(int boardId,
                                    int typeId,
                                    const QString &designator,
@@ -69,9 +92,9 @@ bool DatabaseService::logNewDefect(int boardId,
         return false;
     } else {
         trueTypeId = checkQuery.boundValue(":id");
-        qDebug()
-            << "DatabaseService: trueTypeId ="
-            << trueTypeId;
+        // qDebug()
+        //     << "DatabaseService: trueTypeId ="
+        //     << trueTypeId;
     }
 
     int newRow = sqlModel->rowCount();
@@ -416,8 +439,8 @@ bool DatabaseService::insertDefaultDataIfNeeded()
                 qInfo() << "DatabaseService: Computer informations successfully added.";
             } else {
                 qCritical()
-                << "CRITICAL! DatabaseService: ERROR inserting into the computers table."
-                << insertQuery.lastError().text();
+                    << "CRITICAL! DatabaseService: ERROR inserting into the computers table."
+                    << insertQuery.lastError().text();
             }
         }
     } else {
@@ -469,11 +492,9 @@ bool DatabaseService::logNewComputer()
 {
     // 1. Получение сетевого имени ПК
     QString computerName = QHostInfo::localHostName();
-    qDebug() << computerName;
 
     // 2. Получение данных об операционной системе
     QString osPrettyName = QSysInfo::prettyProductName(); // Полное красивое имя ОС
-    qDebug() << osPrettyName;
 
     // 3. Получение физического (MAC) адреса активной сетевой карты
     QString macAddress = "Not found";
@@ -488,7 +509,6 @@ bool DatabaseService::logNewComputer()
         QString hardwareAddress = interface.hardwareAddress();
         if (!hardwareAddress.isEmpty()) {
             macAddress = hardwareAddress;
-            qDebug() << macAddress;
             break; // Берем первый попавшийся активный физический адрес
         }
     }

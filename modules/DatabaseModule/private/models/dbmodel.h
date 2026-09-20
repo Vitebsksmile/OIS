@@ -20,9 +20,9 @@ public:
     void setTable(const QString &tableName);
 
     void setRelation(int columnIdx,
-                     const QString& foreignTable,
-                     const QString& foreignId,
-                     const QString& displayField
+                     const QString &foreignTable,
+                     const QString &foreignId,
+                     const QString &displayField
                      );
 
     //  Реализация методов интерфейса IItemModel

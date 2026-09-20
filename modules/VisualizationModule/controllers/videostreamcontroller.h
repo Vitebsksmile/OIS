@@ -1,5 +1,5 @@
-#ifndef VIDEOSTREAMSERVICE_H
-#define VIDEOSTREAMSERVICE_H
+#ifndef VIDEOSTREAMCONTROLLER_H
+#define VIDEOSTREAMCONTROLLER_H
 
 #include <QObject>
 #include <QtQml/qqmlregistration.h>
@@ -7,7 +7,7 @@
 #include "visualizationservice.h"
 #include "videoProvider.h"
 
-class VideoStreamService : public QObject
+class VideoStreamController : public QObject
 {
     Q_OBJECT
     QML_SINGLETON
@@ -15,13 +15,13 @@ class VideoStreamService : public QObject
     // Запрещаем создавать объект этого типа напрямую из QML:
     QML_UNCREATABLE("Interface")
 
-    static VideoStreamService *s_instance;
+    static VideoStreamController *s_instance;
 
 public:
-    explicit VideoStreamService(VisualizationService *visualization,
+    explicit VideoStreamController(VisualizationService *visualization,
                                 QObject *parent = nullptr);
 
-    static VideoStreamService* create(QQmlEngine *, QJSEngine *) { return s_instance; }
+    static VideoStreamController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
 
     Q_INVOKABLE void registerProvider(VideoProvider *provider = nullptr);
 
@@ -30,4 +30,4 @@ private:
     QList<QPointer<VideoProvider>> m_providers;
 };
 
-#endif // VIDEOSTREAMSERVICE_H
+#endif // VIDEOSTREAMCONTROLLER_H

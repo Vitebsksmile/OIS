@@ -8,10 +8,10 @@ set(MODULE_PUBLIC_FACADES
 )
 
 set(MODULE_PRIVATE_CONTROLLERS
-    controllers/filehandlermanager.h
-    controllers/videostreamservice.h
+    controllers/filehandlerController.h
+    controllers/videostreamcontroller.h
     controllers/dbmodelcontroller.h
-    controllers/AuthController.h
+    controllers/authController.h
 )
 
 set(private_models )
@@ -26,8 +26,9 @@ set(MODULE_PRIVATE_HEADERS
 #   Добавляем файлы исходного кода
 set(MODULE_SOURCE_FILES
     facade/visualizationservice.cpp
-    controllers/filehandlermanager.cpp
-    controllers/videostreamservice.cpp
+    controllers/authController.cpp
+    controllers/filehandlerController.cpp
+    controllers/videostreamcontroller.cpp
     controllers/dbmodelcontroller.cpp
     #private/opencvvideoitem.cpp
     private/filehandler.cpp
@@ -38,13 +39,15 @@ set(PLAIN_QML_FILES
     qml/AppMenuBar.qml
     qml/AppSideBar.qml
 
-    qml/pages/LoginPage.qml
+    qml/pages/LoginRegistrationPage.qml
     qml/pages/DashboardPage.qml
     qml/pages/InspectionPage.qml
     qml/pages/StatisticsPage.qml
     qml/pages/SettingsPage.qml
     qml/pages/OperatorPage.qml
-    qml/pages/OperatorsTablePage.qml
+    qml/pages/UserListPage.qml
+    qml/pages/UserListPage_2.qml
+    qml/pages/UserManualPage.qml
 
     qml/settings/TitleText.qml
     qml/settings/HeadingText.qml
@@ -125,7 +128,7 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
 
     DEPENDENCIES
         QtMultimedia
-        QML_FILES config.json
+        QML_FILES config.json 
 )
 
 

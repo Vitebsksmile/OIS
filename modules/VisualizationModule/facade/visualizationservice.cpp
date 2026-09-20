@@ -10,16 +10,17 @@
 #include <QThread>
 #include <QtQml/qqml.h>
 #include <QImage>
-//#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
-#include "filehandlermanager.h"
+#include "authController.h"
+#include "filehandlerController.h"
 #include "dbmodelcontroller.h"
-#include "videostreamservice.h"
+#include "videostreamcontroller.h"
 
 VisualizationService::VisualizationService(QObject *parent)
     : IVisualizationService(parent)
-    , m_fileHandlerManager(new FileHandlerManager(this, this))
+    , m_auth(new AuthController(this, this))
+    , m_fileHandlerManager(new FileHandlerController(this, this))
     , m_dbController(new DbModelController(this, this))
-    , m_streamService(new VideoStreamService(this, this))
+    , m_videoController(new VideoStreamController(this, this))
 {
     qDebug()
         << "VisualizationService: VisualizationService object created. Parent: "
@@ -32,8 +33,6 @@ bool VisualizationService::setDbService(IDatabaseService *dbService)
     m_dbController->setDbService(m_dbService);
 
     QStringList namesTables = m_dbService->availableTables();
-
-    m_dbController->setOperatorsModel(m_dbService->itemModel());
 
     return true;
 }

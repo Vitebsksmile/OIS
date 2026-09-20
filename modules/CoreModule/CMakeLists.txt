@@ -9,6 +9,7 @@ set(INTERFACE_FACADES
 
 set(interface_models
     models/IDbModel.h
+    #models/IDbSqlRelationTableModel.h
 )
 
 set(MODULE_PUBLIC_HEADERS

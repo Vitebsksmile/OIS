@@ -5,6 +5,9 @@ import QtQuick.Layouts
 
 Page {
     id: dashboardPage
+
+    signal closeRequested()
+
     title: "Dashboard"
 
     // Main background layer

@@ -12,12 +12,14 @@ set(MODULE_PRIVATE_HEADERS
 
 set(models_headers
     private/models/dbmodel.h
+    private/models/dbrelationaltablemodel.h
 )
 
 #   Создает список файлов исходного кода и заголовков
 list(APPEND MODULE_SOURCE_FILES
     facade/databaseservice.cpp
     private/models/dbmodel.cpp
+    private/models/dbrelationaltablemodel.cpp
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt

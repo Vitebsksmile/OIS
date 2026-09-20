@@ -6,9 +6,7 @@ Page {
     id: root
     title: "Operator"
 
-    // Сигналы для навигации
-    //signal settingsRequested()
-    //signal helpRequested()
+    signal closeRequested()
     signal repairConfirmed()
 
     /// Main background layer

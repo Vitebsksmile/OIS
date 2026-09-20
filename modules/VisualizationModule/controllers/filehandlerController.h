@@ -1,5 +1,5 @@
-#ifndef FILEHANDLERMANAGER_H
-#define FILEHANDLERMANAGER_H
+#ifndef FILEHANDLERCONTROLLER_H
+#define FILEHANDLERCONTROLLER_H
 
 #include <QObject>
 //  Макрос для автоматической регистрации класса в системе QML:
@@ -13,7 +13,7 @@
 #include <QSharedPointer>
 #include "IDbModel.h"
 
-class FileHandlerManager : public QObject
+class FileHandlerController : public QObject
 {
     Q_OBJECT
     QML_SINGLETON
@@ -21,13 +21,13 @@ class FileHandlerManager : public QObject
     // Запрещаем создавать объект этого типа напрямую из QML:
     QML_UNCREATABLE("Interface")
 
-    static FileHandlerManager* s_instance;
+    static FileHandlerController* s_instance;
 
 public:
-    explicit FileHandlerManager(IVisualizationService* visualization,
+    explicit FileHandlerController(IVisualizationService* visualization,
                                 QObject* parent = nullptr);
 
-    static FileHandlerManager* create(QQmlEngine *, QJSEngine *) { return s_instance; }
+    static FileHandlerController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
 
     Q_INVOKABLE void registerFileHandler(FileHandler* fileHandler = nullptr);
 
@@ -42,4 +42,4 @@ private:
     QSharedPointer<IDbModel> m_dbModel;
 };
 
-#endif // FILEHANDLERMANAGER_H
+#endif // FILEHANDLERCONTROLLER_H

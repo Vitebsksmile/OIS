@@ -1,16 +1,24 @@
 #include "videoProvider.h"
 #include <QDebug>
 
-VideoProvider::VideoProvider(QObject* parent)
+VideoProvider::VideoProvider(QObject* parent)//, const QString &frameSource
     : QObject(parent)
     , m_videoSink(nullptr)
+    //, m_frameSource(frameSource)
 {
+}
+
+void VideoProvider::setFrameSource(const QString &frameSource)
+{
+    m_frameSource = frameSource;
 }
 
 void VideoProvider::setVideoSink(QVideoSink* sink)
 {
     // Выводим лог при любой попытке QML передать указатель
-    qDebug() << "VideoProvider: setVideoSink вызван! Адрес sink:" << sink;
+    qDebug()
+        << "VideoProvider: setVideoSink вызван! Адрес sink:"
+        << sink;
 
     if (m_videoSink != sink)
     {

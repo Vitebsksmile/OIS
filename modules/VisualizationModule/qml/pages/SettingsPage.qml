@@ -5,6 +5,9 @@ import QtQml.Models
 
 Page {
     id: root
+
+    signal closeRequested()
+
     title: "Settings"
 
     // Main background layer
@@ -18,18 +21,28 @@ Page {
         anchors.margins: 20
         spacing: 20
 
-        // --- PAGE TITLE ---
-        TitleText {
-            text: root.title
-            Layout.fillWidth: true
+        RowLayout {
+            // --- PAGE TITLE ---
+            TitleText {
+                text: root.title
+                Layout.fillWidth: true
 
-            //  Bottom title line
-            Rectangle {
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: -8
-                width: parent.width
-                height: 2
-                color: Theme.cBorder
+                //  Bottom title line
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: -8
+                    width: parent.width
+                    height: 2
+                    color: Theme.cBorder
+                }
+            }
+
+            Button {
+                Layout.preferredWidth: implicitHeight
+                text: "\u2715"
+                icon.name: "close"
+
+                onClicked: root.closeRequested()
             }
         }
 

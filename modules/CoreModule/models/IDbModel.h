@@ -10,7 +10,7 @@ class IDbModel : public QObject
     Q_OBJECT
 
 public:
-    explicit IDbModel(QObject* parent = nullptr) : QObject(parent) {}
+    explicit IDbModel(QObject *parent = nullptr) : QObject(parent) {}
     virtual ~IDbModel() = default;
 
     virtual QAbstractItemModel* dbModel() = 0;

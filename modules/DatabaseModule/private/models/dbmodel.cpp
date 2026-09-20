@@ -57,10 +57,10 @@ void DbModel::setTable(const QString &tableName)
 }
 
 void DbModel::setRelation(int columnIdx,
-                              const QString &foreignTable,
-                              const QString &foreignId,
-                              const QString &displayField
-                              )
+                          const QString &foreignTable,
+                          const QString &foreignId,
+                          const QString &displayField
+                          )
 {
     if (m_tableDbModel) {
         // columnIdx   - индекс колонки в текущей таблице (например, 4-я колонка session_id в таблице boards)

@@ -4,6 +4,9 @@ import QtQuick.Layouts
 
 Page {
     id: root
+
+    signal closeRequested()
+
     title: "Statistics"
 
     // Main background layer

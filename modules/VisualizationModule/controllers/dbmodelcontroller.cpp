@@ -2,7 +2,7 @@
 
 DbModelController* DbModelController::s_instance = nullptr;
 
-DbModelController::DbModelController(IVisualizationService *visualization,
+DbModelController::DbModelController(VisualizationService *visualization,
                                      QObject *parent)
     : m_visualization(visualization)
     , QObject(parent)
@@ -18,20 +18,6 @@ DbModelController::DbModelController(IVisualizationService *visualization,
     if (!m_visualization) {
         qWarning()
             << "WARNING! DbModelController: DbModelController object created without reference to facade";
-    }
-}
-
-void DbModelController::registerProvider(VideoProvider *provider)
-{
-    if (provider && !m_providers.contains(provider)) {
-        qDebug()
-            << "DbModelController: DbModelController received the provider object:"
-            << provider;
-
-        m_providers.append(provider);
-
-        connect(m_visualization, &IVisualizationService::frameWithBoxesReady
-                , provider, &VideoProvider::onFrameWithBoxesReady);
     }
 }
 
@@ -57,14 +43,16 @@ QAbstractItemModel* DbModelController::dbModel(const QString &tableName) const
     return nullptr;
 }
 
-QAbstractItemModel *DbModelController::currentModel() const
+QAbstractTableModel* DbModelController::abstractTableModel(const QString &tableName)
 {
-    return m_currentModel;
-}
-
-void DbModelController::setOperatorsModel(IDbModel *dbModel)
-{
-    m_dbModel.reset(dbModel);
+    if (m_abstractModelsMap.contains(tableName)) {
+        qDebug() << "DbModelController: The model already exists";
+        return m_abstractModelsMap.value(tableName);
+    }
+    qDebug() << "DbModelController: The model does not yet exists";
+    QAbstractTableModel *abstractModelsMap = m_dbService->abstractTableModel(tableName);
+    m_abstractModelsMap.insert(tableName, abstractModelsMap);
+    return m_abstractModelsMap.value(tableName);
 }
 
 void DbModelController::updateModel(IDbModel *dbModel)
@@ -135,11 +123,11 @@ void DbModelController::logQmlModelRoles(QAbstractItemModel *model)
 
     qDebug() << "================ LOGGING QML ROLES ================";
 
-    for (int r = 0; r < rows; ++r) {
-        qDebug() << QString("--- Запись %1 ---").arg(r);
+    for (int row = 0; row < rows; ++row) {
+        qDebug() << QString("--- Запись %1 ---").arg(row);
 
         // В первой колонке (индекс 0) запрашиваем данные по всем кастомным ролям
-        QModelIndex index = model->index(r, 0);
+        QModelIndex index = model->index(row, 0);
 
         QHashIterator<int, QByteArray> it(roles);
         while (it.hasNext()) {

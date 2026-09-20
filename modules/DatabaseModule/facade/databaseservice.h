@@ -5,6 +5,7 @@
 #include <QDir>
 #include "IDatabaseService.h"
 #include "dbmodel.h"
+#include "dbrelationaltablemodel.h"
 
 
 class DatabaseService : public IDatabaseService
@@ -16,7 +17,8 @@ public:
     ~DatabaseService() override;
 
     IDbModel* itemModel() const override;
-    IDbModel* model(const QString&) const override;
+    IDbModel* model(const QString &tableName) const override;
+    QAbstractTableModel* abstractTableModel(const QString &tableName) override;
 
     bool logNewDefect(int boardId,
                       int typeId,
@@ -43,8 +45,9 @@ private:
 
     QSqlDatabase m_db;
     QHash<QString, DbModel*> m_modelsMap{};
-
     DbModel *m_itemModel;
+
+    QHash<QString, DbRelationalTableModel*> m_relationalModelsMap;
 };
 
 #endif // DATABASESERVICE_H

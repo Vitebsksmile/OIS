@@ -82,7 +82,7 @@ signals:
     //  To FileHandler about finished
     void imagePreProcessingFinished(const QString &filePath);
 
-    //void frameReady(const QImage frame);
+    //void frameReady(const QImage &frame);
 
     //  this -> FileHandlerManager
     void frameWithBoxesReady(const QImage &frame,

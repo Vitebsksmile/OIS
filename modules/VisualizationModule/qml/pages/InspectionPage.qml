@@ -5,6 +5,9 @@ import QtQuick.Layouts
 
 Page {
     id: inspectionPage
+
+    signal closeRequested()
+
     title: "Inspection"
 
 

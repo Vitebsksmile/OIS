@@ -5,8 +5,11 @@ import QtQuick.Dialogs
 
 MenuBar {
     id: root
-    padding: 10
 
+    signal openTriggered()
+    signal menuItemClicked(string pathToPage)
+
+    padding: 10
     // Привязываем ToolBar с учетом левого и правого маргина
     anchors.left: parent.left
     anchors.leftMargin: parent.anchors.leftMargin
@@ -21,7 +24,7 @@ MenuBar {
 
     delegate: MenuBarItem {
         id: menuBarItem
-        implicitWidth: 100
+        //implicitWidth: 100
 
         contentItem: Text {
             text: menuBarItem.text
@@ -47,13 +50,8 @@ MenuBar {
         colorGroup: SystemPalette.Active
     }
 
-    //  Пробрасываем сигналы
-    signal openTriggered()
-
-
     //  Системное окно Справки
     MessageDialog {
-
         id: aboutDialog
 
         title: qsTr("About ") + Qt.application.name
@@ -62,10 +60,8 @@ MenuBar {
 
     }
 
-
     //  1. Описание логики действий (Actions) - это "мозг" кнопок и меню
     Action {
-
         id: openAction
 
         text: qsTr("&Open...")         //  Символ '&' позволяет нажать Alt+О для активации
@@ -76,7 +72,6 @@ MenuBar {
 
 
     Action {
-
         id: exitAction
 
         text: qsTr("&Exit")
@@ -85,15 +80,36 @@ MenuBar {
 
     }
 
-
-    // 2. Добавляем элементы меню
     Menu {
         id: fileMenu
+        title: qsTr("File")
+
+        MenuItem {
+            text: qsTr("Users list")
+            onTriggered: root.menuItemClicked("qml/pages/UserListPage.qml")
+        }
+        MenuItem {
+            text: qsTr("User list_2")
+            onTriggered: root.menuItemClicked("qml/pages/UserListPage_2.qml")
+        }
+    }
+
+    Menu {
+        id: settingsMenu
         title: qsTr("Settings")
 
         // Привязываем пункты меню к ранее созданным Action
         MenuItem { action: openAction }
         MenuItem { action: exitAction }
+        MenuItem {
+            text: qsTr("Settings")
+            onTriggered: root.menuItemClicked("qml/pages/SettingsPage.qml")
+        }
+        MenuItem {
+            id: logInMenu
+            text: qsTr("LogIn")
+            onTriggered: root.menuItemClicked("qml/pages/LoginRegistrationPage.qml")
+        }
     }
 
     Menu {
@@ -102,8 +118,12 @@ MenuBar {
 
         MenuItem {
             text: qsTr("About ") + Qt.application.name
-            onTriggered: aboutDialog.open()
+            onTriggered: root.menuItemClicked("qml/pages/UserListPage_2.qml")
+        }
+
+        MenuItem {
+            text: qsTr("User Manual")
+            onTriggered: root.menuItemClicked("qml/pages/UserManualPage.qml")
         }
     }
-
 }

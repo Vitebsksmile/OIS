@@ -21,8 +21,9 @@ Rectangle {
         videoSink: videoOutput.videoSink
 
         Component.onCompleted: {
+            videoProvider.setFrameSource("camera")
             //  Pass object to C++
-            VideoStreamService.registerProvider(videoProvider)
+            VideoStreamController.registerProvider(videoProvider)
         }
     }
 }

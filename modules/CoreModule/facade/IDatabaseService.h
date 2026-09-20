@@ -2,7 +2,7 @@
 #define IDATABASESERVICE_H
 
 #include <QObject>
-//#include <QSharedPointer>
+#include <QAbstractTableModel>
 
 class IDbModel;
 
@@ -18,8 +18,9 @@ public:
     virtual bool initDatabase(const QString& dbName) = 0;
 
     //  Model returning a method
-    virtual IDbModel *itemModel() const = 0;
-    virtual IDbModel *model(const QString &) const = 0;
+    virtual IDbModel* itemModel() const = 0;
+    virtual IDbModel* model(const QString &tableName) const = 0;
+    virtual QAbstractTableModel* abstractTableModel(const QString &tableName) = 0;
 
     virtual bool logNewDefect(int boardId,
                               int typeId,

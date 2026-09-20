@@ -1,9 +1,9 @@
-#include "filehandlermanager.h"
+#include "filehandlerController.h"
 #include <QDebug>
 
-FileHandlerManager* FileHandlerManager::s_instance = nullptr;
+FileHandlerController* FileHandlerController::s_instance = nullptr;
 
-FileHandlerManager::FileHandlerManager(IVisualizationService* visualization,
+FileHandlerController::FileHandlerController(IVisualizationService* visualization,
                                        QObject *parent)
     : QObject(parent)
     , m_visualization(visualization)
@@ -23,7 +23,7 @@ FileHandlerManager::FileHandlerManager(IVisualizationService* visualization,
 }
 
 //  Регистрирует рождение объектов FileHandler и связывает их с фасадом
-void FileHandlerManager::registerFileHandler(FileHandler *fileHandler)
+void FileHandlerController::registerFileHandler(FileHandler *fileHandler)
 {
     if (fileHandler && !m_fileHandlers.contains(fileHandler)) {
         qDebug()

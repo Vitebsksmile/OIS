@@ -23,9 +23,10 @@ Rectangle {
         videoSink: videoOutput.videoSink
 
         Component.onCompleted: {
+            videoProvider.setFrameSource("processor")
             //  Pass object to C++
-            //FileHandlerManager.registerProvider(videoProvider)
-            DbModelController.registerProvider(videoProvider)
+            //DbModelController.registerProvider(videoProvider)
+            VideoStreamController.registerProvider(videoProvider)
         }
     }
 }

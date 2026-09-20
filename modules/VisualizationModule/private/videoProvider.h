@@ -21,17 +21,19 @@ class VideoProvider : public QObject
     QML_ELEMENT
 
 public:
-    explicit VideoProvider(QObject *parent = nullptr);
+    explicit VideoProvider(QObject *parent = nullptr);//, const QString &frameSource = "camera"
 
     QVideoSink* videoSink() const { return m_videoSink; }
+    const QString& frameSource() const { return m_frameSource; }
 
+    Q_INVOKABLE void setFrameSource(const QString &frameSource);
     void setVideoSink(QVideoSink* sink);
 
 public slots:
     void onFrameReady(const QImage img);
 
-    void onFrameWithBoxesReady(const QImage &frame
-                               , const std::vector<std::vector<int>> &rectanglePoints);
+    void onFrameWithBoxesReady(const QImage &frame,
+                               const std::vector<std::vector<int>> &rectanglePoints);
 
 signals:
     void videoSinkChanged();
@@ -43,6 +45,8 @@ private:
     QVideoSink* m_videoSink;
 
     std::vector<std::vector<int>> m_smoothedBoxes;
+
+    QString m_frameSource;
 };
 
 #endif // VIDEOPROVIDER_H
