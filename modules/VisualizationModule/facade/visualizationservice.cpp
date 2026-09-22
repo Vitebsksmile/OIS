@@ -22,6 +22,7 @@ VisualizationService::VisualizationService(QObject *parent)
     , m_dbController(new DbModelController(this, this))
     , m_videoController(new VideoStreamController(this, this))
 {
+    m_auth->setDbController(m_dbController);
     qDebug()
         << "VisualizationService: VisualizationService object created. Parent: "
         << parent;

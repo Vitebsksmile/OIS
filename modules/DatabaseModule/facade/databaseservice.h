@@ -37,6 +37,8 @@ private:
     bool creatTables();
     bool insertDefaultDataIfNeeded();
     bool creatModel(const QString &nameTable);
+
+    void autoPopulateRelations(QSqlRelationalTableModel *model, const QString &displayField = "name");
     bool populateModelsMap();
 
     QDir dir();

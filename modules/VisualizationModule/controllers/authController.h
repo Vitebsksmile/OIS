@@ -22,10 +22,14 @@ public:
 
     static AuthController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
 
-    Q_INVOKABLE bool login(const QString &username,
-                           const QString &password);
+    void setDbController(DbModelController *dbController);
+
+    Q_INVOKABLE bool login(const QString &username, const QString &password);
+    Q_INVOKABLE bool identification(const QString &username);
+    Q_INVOKABLE bool autentification(const QString &username, const QString &password);
 
 signals:
+    void identificationSuccess();
     void authSuccess();
     void authFailed(const QString &error);
 
@@ -33,6 +37,10 @@ private:
     VisualizationService *m_visualization = nullptr;
 
     DbModelController *m_dbController = nullptr;
+    int m_identificationColumn = -1;
+    int m_identificationRow = -1;
+    QString m_username;
+    QString m_fullname;
 };
 
 #endif // AUTHCONTROLLER_H

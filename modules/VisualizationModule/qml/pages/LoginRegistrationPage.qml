@@ -13,6 +13,13 @@ Page {
     signal closeRequested()
     signal helpClicked
 
+    Connections {
+        target: AuthController
+        function onAuthFailed() {
+            //usernameField.color: "red"
+        }
+    }
+
     title: titlePage
 
     //  Main background layer
@@ -84,8 +91,22 @@ Page {
                     id: usernameField
                     Layout.preferredWidth: 200
                     Layout.alignment: Qt.AlignHCenter
-                    placeholderText: "Введите логин"
+
+                    property bool error: false
+
+                    background: Rectangle {
+                        border.color: usernameField.error ? Theme.cBorderDanger : Theme.cBorder
+                    }
+
                     color: "black"
+                    placeholderText: "Введите логин"
+                    onEditingFinished: {
+                        if (!AuthController.identification(text)) {
+                            error = true
+                        } else {
+                            error = false
+                        }
+                    }
                 }
 
                 //  Поле ввода пароля
@@ -93,9 +114,9 @@ Page {
                     id: passwordField
                     Layout.preferredWidth: 200
                     Layout.alignment: Qt.AlignHCenter
+                    color: "black"
                     placeholderText: "Введите пароль"
                     echoMode: TextField.Password    //  Скрывает вводимые символы точками
-                    color: "black"
                 }
 
                 RowLayout {
@@ -109,7 +130,7 @@ Page {
                         onClicked: {
                             // Вызываем C++ функцию проверки
                             //root.authBackend.login(usernameField.text, passwordField.text)
-                            AuthController.login(usernameField.text, passwordField.text)
+                            AuthController.autentification(usernameField.text, passwordField.text)
                         }
                     }
 

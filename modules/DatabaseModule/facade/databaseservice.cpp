@@ -2,6 +2,7 @@
 #include <QStandardPaths>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QHostInfo>
 #include <QSysInfo>
 #include <QNetworkInterface>
@@ -36,19 +37,15 @@ IDbModel* DatabaseService::model(const QString &name) const
 
 QAbstractTableModel* DatabaseService::abstractTableModel(const QString &tableName)
 {
-    qDebug() << "DatabaseService: Request for the model accepted";
     if (m_relationalModelsMap.contains(tableName)) {
-        qDebug() << "DatabaseService: The model is already exists";
         return m_relationalModelsMap.value(tableName);
-    } else {
-        qDebug() << "DatabaseService: The model is does not already exists";
     }
     DbRelationalTableModel *relationalTableModel = new DbRelationalTableModel(this, m_db);
     relationalTableModel->setTable(tableName);
+    this->autoPopulateRelations(relationalTableModel, "name");
+
     if (!relationalTableModel->select()) {
         qCritical() << "WARNING! DatabaseService: The model is not being populated with data from the table";
-    } else {
-        qDebug() << "DatabaseService: The select() method exequted successfully";
     }
     m_relationalModelsMap.insert(tableName, relationalTableModel);
     if (!m_relationalModelsMap.contains(tableName)) {
@@ -459,6 +456,36 @@ bool DatabaseService::creatModel(const QString &nameTable)
     m_itemModel->refreshData();         //  Делаем первый выбор данных (select)
 
     return true;
+}
+
+void DatabaseService::autoPopulateRelations(QSqlRelationalTableModel *model, const QString &defaultDisplayField)
+{
+    QString displayField;
+    displayField.replace(displayField, defaultDisplayField);
+
+    QString tableName = model->tableName();
+    QSqlRecord record = model->record();
+
+    QSqlQuery query(QString("PRAGMA foreign_key_list(%1);").arg(tableName), m_db);
+    while (query.next()) {
+        QString foreignTable = query.value("table").toString();
+        if (foreignTable == "sessions") {
+            displayField.replace(displayField, "started_at");
+        }
+        if (foreignTable == "boards") {
+            displayField.replace(displayField, "serial_number");
+        }
+        if (foreignTable == "defects") {
+            displayField.replace(displayField, "component_designator");
+        }
+
+        QString foreignColumn = query.value("to").toString();
+        int localColumnIndex = record.indexOf(query.value("from").toString());
+
+        if (localColumnIndex != -1) {
+            model->setRelation(localColumnIndex, QSqlRelation(foreignTable, foreignColumn, displayField));
+        }
+    }
 }
 
 bool DatabaseService::populateModelsMap()
