@@ -20,18 +20,28 @@ Page {
         anchors.margins: 20
         spacing: 15
 
-        // --- ЗАГОЛОВОК СТРАНИЦЫ (.page-title) ---
-        TitleText {
-            text: root.title
-            Layout.fillWidth: true
+        RowLayout {
+            // --- ЗАГОЛОВОК СТРАНИЦЫ (.page-title) ---
+            TitleText {
+                text: root.title
+                Layout.fillWidth: true
 
-            // Нижняя линия заголовка
-            Rectangle {
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: -8
-                width: parent.width
-                height: 2
-                color: Theme.cBorder
+                // Нижняя линия заголовка
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: -8
+                    width: parent.width
+                    height: 2
+                    color: Theme.cBorder
+                }
+            }
+
+            Button {
+                Layout.preferredWidth: implicitHeight
+                text: "\u2715"
+                icon.name: "close"
+
+                onClicked: root.closeRequested()
             }
         }
 

@@ -14,7 +14,9 @@ set(MODULE_PRIVATE_CONTROLLERS
     controllers/authController.h
 )
 
-set(private_models )
+set(models
+    models/ListModel.h
+)
 
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
@@ -121,14 +123,14 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     SOURCES
         ${MODULE_PUBLIC_FACADES}
         ${MODULE_PRIVATE_CONTROLLERS}
-        ${private_models}
+        ${models}
         ${MODULE_PRIVATE_INTERFACE}
         ${MODULE_PRIVATE_HEADERS}
         ${MODULE_SOURCE_FILES}
 
     DEPENDENCIES
         QtMultimedia
-        QML_FILES config.json 
+        QML_FILES config.json
 )
 
 

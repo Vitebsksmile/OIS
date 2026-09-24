@@ -6,9 +6,6 @@ pragma ComponentBehavior: Bound
 ApplicationWindow {
     id: window
 
-    //readonly property Drawer mainMenu: menu
-    //signal settingsClicked()
-
     visible: true
 
     width: 1200
@@ -36,7 +33,7 @@ ApplicationWindow {
 
         Connections {
             target: AuthController
-            function onAuthSuccess() {
+            function onAuthenticationSuccess() {
                 mainLoader.source = "qml/pages/OperatorPage.qml"
             }
             function onAuthFailed(error) {

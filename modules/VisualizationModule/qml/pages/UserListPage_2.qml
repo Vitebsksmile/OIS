@@ -37,7 +37,6 @@ Page {
 
             Text {
                 anchors.centerIn: parent
-
                 text: cell.modelData
             }
         }

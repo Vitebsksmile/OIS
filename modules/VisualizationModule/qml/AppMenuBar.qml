@@ -53,45 +53,62 @@ MenuBar {
     //  Системное окно Справки
     MessageDialog {
         id: aboutDialog
-
         title: qsTr("About ") + Qt.application.name
         text: Qt.application.name + "\nВерсия v" + Qt.application.version + "\nРазработано на Qt 6"
         buttons: MessageDialog.Ok
-
     }
 
     //  1. Описание логики действий (Actions) - это "мозг" кнопок и меню
     Action {
         id: openAction
-
         text: qsTr("&Open...")         //  Символ '&' позволяет нажать Alt+О для активации
         shortcut: StandardKey.Open  //  Автоматически подхватывает Ctrl+O (Win) или Cmd+O (Mac)
         onTriggered: console.log(`Нажали ${openAction.text}`)
-
     }
-
 
     Action {
         id: exitAction
-
         text: qsTr("&Exit")
         shortcut: "Ctrl+Q"  //  Быстрое сочетание клавиш
         onTriggered: console.log(`Нажали ${exitAction.text}`) | Qt.quit()  //  Стандартная ф-ция выхода
+    }
 
+    Action {
+        id: userList
+        text: qsTr("Users list")
+        onTriggered: root.menuItemClicked("qml/pages/UserListPage.qml")
+    }
+
+    Action {
+        id: userList_2
+        text: qsTr("User list_2")
+        onTriggered: root.menuItemClicked("qml/pages/UserListPage_2.qml")
+    }
+
+    Action {
+        id: settings
+        text: qsTr("Settings")
+        onTriggered: root.menuItemClicked("qml/pages/SettingsPage.qml")
+    }
+
+    Action {
+        id: logInMenu
+        text: qsTr("LogIn")
+        onTriggered: root.menuItemClicked("qml/pages/LoginRegistrationPage.qml")
+    }
+
+    Action {
+        id: userManual
+        text: qsTr("User Manual")
+        onTriggered: root.menuItemClicked("qml/pages/UserManualPage.qml")
     }
 
     Menu {
         id: fileMenu
         title: qsTr("File")
 
-        MenuItem {
-            text: qsTr("Users list")
-            onTriggered: root.menuItemClicked("qml/pages/UserListPage.qml")
-        }
-        MenuItem {
-            text: qsTr("User list_2")
-            onTriggered: root.menuItemClicked("qml/pages/UserListPage_2.qml")
-        }
+        MenuItem { action: userList }
+        MenuItem { action: userList_2 }
     }
 
     Menu {
@@ -101,15 +118,8 @@ MenuBar {
         // Привязываем пункты меню к ранее созданным Action
         MenuItem { action: openAction }
         MenuItem { action: exitAction }
-        MenuItem {
-            text: qsTr("Settings")
-            onTriggered: root.menuItemClicked("qml/pages/SettingsPage.qml")
-        }
-        MenuItem {
-            id: logInMenu
-            text: qsTr("LogIn")
-            onTriggered: root.menuItemClicked("qml/pages/LoginRegistrationPage.qml")
-        }
+        MenuItem { action: settings }
+        MenuItem { action: logInMenu }
     }
 
     Menu {
@@ -118,12 +128,9 @@ MenuBar {
 
         MenuItem {
             text: qsTr("About ") + Qt.application.name
-            onTriggered: root.menuItemClicked("qml/pages/UserListPage_2.qml")
+            onTriggered: aboutDialog.open()
         }
 
-        MenuItem {
-            text: qsTr("User Manual")
-            onTriggered: root.menuItemClicked("qml/pages/UserManualPage.qml")
-        }
+        MenuItem { action: userManual }
     }
 }

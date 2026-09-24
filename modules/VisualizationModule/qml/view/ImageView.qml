@@ -32,27 +32,21 @@ Rectangle {
     radius: 10
 
     Image {
-
         id: mainImage
         anchors.margins: 5
-
         //  Заполняем изображением всю площадь родителя
         anchors.fill: parent
-
         //  Сохраняем пропорции изображения
         fillMode: Image.PreserveAspectFit
-
         //  Автоматическая связь с c++ свойством
         //  Автоматически обновляем картинку, когда в C++ срабатывает сигнал
         source: fileHandler.currentImagePath
-
         //  Анимация: если прозрачность (opacity) изменится, это произойдет плавно за 0.5 сек
         Behavior on opacity {
             NumberAnimation {
                 duration: 500
             }
         }
-
         //  Отключаем кеш, чтобы увидеть изменения при перезагрузке того же файла
         //  Заставляем QML перечитывать файл с диска каждый раз (нужно для OpenCV)
         cache: false
@@ -61,12 +55,10 @@ Rectangle {
 
     //  Текст виден только если в Image ничего не загружено (Null)
     ColumnLayout {
-
         visible: mainImage.status === Image.Null
         anchors.centerIn: parent //      Центрируем надпись
 
         Text {
-
             id: statusText
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("No image selected.")
@@ -74,20 +66,15 @@ Rectangle {
         }
 
         Text {
-
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Click to select a file")
             color: "gray"
         }
-
-
     }
 
     //  Всплывающее окно для коротких сообщений (аналог Toast в Android)
     Popup {
-
         id: statusPopup
-
         property string message: "" //  Свое свойство для текста ошибки или успеха
 
         //  Центрируем по горизонтали и поднимаем на 100 пикселей от низа
@@ -105,7 +92,6 @@ Rectangle {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
         Text {
-
             anchors.centerIn: parent //  Центрируем надпись
             text: statusPopup.message //  Отображаем текст из свойства выше
         }

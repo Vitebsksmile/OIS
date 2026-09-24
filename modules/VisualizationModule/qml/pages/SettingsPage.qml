@@ -40,7 +40,7 @@ Page {
             Button {
                 Layout.preferredWidth: implicitHeight
                 text: "\u2715"
-                icon.name: "close"
+                icon.name: "exit"
 
                 onClicked: root.closeRequested()
             }

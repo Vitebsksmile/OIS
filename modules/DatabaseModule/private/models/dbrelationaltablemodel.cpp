@@ -14,8 +14,6 @@ void DbRelationalTableModel::setTable(const QString &tableName)
     if (tableName.isEmpty()) {
         qCritical() << "DbRelationalTableModel: Table name is empty";
         return;
-    } else {
-        qDebug() << "DbRelationalTableModel: Table name is not empty";
     }
     QSqlRelationalTableModel::setTable(tableName);
 }
