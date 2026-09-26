@@ -28,19 +28,26 @@ public:
 
     //identified
     Q_INVOKABLE bool existsByLogin(const QString &username);
-    Q_INVOKABLE bool authenticate(const QString &username, const QString &password);
+
+    Q_INVOKABLE bool authenticate(const QString &username,
+                                  const QString &password);
+
     Q_INVOKABLE bool isUsernameUnique(const QString &username);
-    //Q_INVOKABLE bool registrUser(const QStringList &registerForm);
+
+    Q_INVOKABLE bool registerUser(const QString &username,
+                                  const QString &fullname,
+                                  const QString &password);
+
     Q_INVOKABLE bool isAuthorizated();
-    Q_INVOKABLE QStandardItemModel* registrationModel();
-    Q_INVOKABLE ListModel* userRegistrationModel();
+    Q_INVOKABLE QStandardItemModel* registrationModel();    //  +++++
+    Q_INVOKABLE ListModel* userRegistrationModel();         //  -----
 
 signals:
     void identificationSuccess();
     void authenticationSuccess();
     void authorization();
     void authFailed(const QString &error);
-    void registrationModelReady();
+    //void registrationModelReady();
 
 private slots:
     //void onRegistrationRequired();

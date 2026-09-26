@@ -1,4 +1,5 @@
 #include "authController.h"
+#include "dbrecord.h"
 
 AuthController* AuthController::s_instance = nullptr;
 
@@ -94,6 +95,25 @@ bool AuthController::isUsernameUnique(const QString &username)
         columnCount--;
     }
     return true;
+}
+
+bool AuthController::registerUser(const QString &username,
+                                  const QString &fullName,
+                                  const QString &password)
+{
+    Core::DbRecord record;
+
+    record.setValue("username", username);
+    record.setValue("full_name", fullName);
+    record.setValue("password", password);
+
+    if (m_visualization->dbService()->insertRecord("operators", record)) {
+        authFailed("Registration was successful!");
+        return true;
+    } else {
+        authFailed("Registration failed!");
+        return false;
+    }
 }
 
 bool AuthController::isAuthorizated()

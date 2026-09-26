@@ -129,6 +129,43 @@ bool DatabaseService::logNewDefect(int boardId,
     return true;
 }
 
+bool DatabaseService::insertRecord(const QString &tableName,
+                                   const Core::DbRecord &record)
+{
+    if (tableName.isEmpty() || record.isEmpty()) { return false; }
+
+    //  проверить существование такой таблицы
+    //  проверить FK, если требуется
+
+    QSqlQuery query(m_db);
+    //  Реализовать метод keys() в Core::DbRecord!!!!!!!
+    //  чтобы избавиться от следующей строки: QVariantMap << QVariantMap
+    const QVariantMap &values = record.values();
+    QStringList fields = values.keys();
+    QStringList placeholders;
+
+    for (const QString &field : fields) { placeholders << ":" + field; }
+
+    query.prepare(QString("INSERT INTO %1 (%2) VALUES (%3)")
+                      .arg(tableName,
+                           fields.join(", "),
+                           placeholders.join(", "))
+                  );
+
+    for (const QString &field : fields) {
+        query.bindValue(":" + field, values.value(field));
+    }
+
+    if (!query.exec()) {
+        qWarning()
+            << "DatabaseService: INSERT failed:"
+            << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
 const QStringList DatabaseService::availableTables() const
 {
     QStringList tables{};
@@ -458,17 +495,17 @@ bool DatabaseService::creatModel(const QString &nameTable)
     return true;
 }
 
-void DatabaseService::autoPopulateRelations(QSqlRelationalTableModel *model, const QString &defaultDisplayField)
+void DatabaseService::autoPopulateRelations(QSqlRelationalTableModel *relationalTableModel, const QString &defaultDisplayField)
 {
     QString displayField;
     displayField.replace(displayField, defaultDisplayField);
 
-    QString tableName = model->tableName();
-    QSqlRecord record = model->record();
+    QString tableName = relationalTableModel->tableName();
+    QSqlRecord record = relationalTableModel->record();
 
     QSqlQuery query(QString("PRAGMA foreign_key_list(%1);").arg(tableName), m_db);
     while (query.next()) {
-        QString foreignTable = query.value("table").toString();
+        QString foreignTable = query.value("table").toString(); //  перепроверить!!!
         if (foreignTable == "sessions") {
             displayField.replace(displayField, "started_at");
         }
@@ -483,7 +520,7 @@ void DatabaseService::autoPopulateRelations(QSqlRelationalTableModel *model, con
         int localColumnIndex = record.indexOf(query.value("from").toString());
 
         if (localColumnIndex != -1) {
-            model->setRelation(localColumnIndex, QSqlRelation(foreignTable, foreignColumn, displayField));
+            relationalTableModel->setRelation(localColumnIndex, QSqlRelation(foreignTable, foreignColumn, displayField));
         }
     }
 }

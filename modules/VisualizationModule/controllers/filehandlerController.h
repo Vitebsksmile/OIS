@@ -19,7 +19,7 @@ class FileHandlerController : public QObject
     QML_SINGLETON
     QML_ELEMENT
     // Запрещаем создавать объект этого типа напрямую из QML:
-    QML_UNCREATABLE("Interface")
+    QML_UNCREATABLE("Controllers")
 
     static FileHandlerController* s_instance;
 

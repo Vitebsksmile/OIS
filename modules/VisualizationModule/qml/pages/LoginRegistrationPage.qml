@@ -232,12 +232,22 @@ Page {
                     }
 
                     Button {
-                        text: qsTr("Registration")
+                        text: qsTr("Sign up")
                         Layout.preferredWidth: 100
                         highlighted: true
                         onClicked: {
-                            mainStack.push(registration)
-                            root.title = qsTr("Registration")
+                            //  вызов ф-ции регистрации
+                            if (AuthController.registerUser(usernameField.text,
+                                                            fullNameField.text,
+                                                            passwordField.text)) {
+                                //  обработка результата:
+                                //  - если успех - уведобление об успехе и переход на страницу входа
+                                mainStack.push(logIn)
+                                root.title = qsTr("LogIn")
+                            } else {
+                                //  обработка результата:
+                                //  - если ошибка - уведомление об ошибке
+                            }
                         }
                     }
                 }

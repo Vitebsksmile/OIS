@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QAbstractTableModel>
+#include "dbrecord.h"
 
 class IDbModel;
 
@@ -27,6 +28,9 @@ public:
                               const QString &designator,
                               double x,
                               double y) = 0;
+
+    virtual bool insertRecord(const QString &tableName,
+                              const Core::DbRecord &record) = 0;
 
     //  Method that returning a list tables
     virtual const QStringList availableTables() const = 0;

@@ -26,6 +26,9 @@ public:
                       double x,
                       double y) override;  //  new
 
+    bool insertRecord(const QString &tableName,
+                      const Core::DbRecord &record) override;
+
     const QStringList availableTables() const override;
 
 signals:

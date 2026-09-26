@@ -19,6 +19,14 @@ set(MODULE_PUBLIC_HEADERS
     include/Operators.h
 )
 
+set(PIBLIC_CORE_HEADERS
+    core/dbrecord.h
+)
+
+set(MODULE_SOURCE_FILES
+    core/dbrecord.cpp
+)
+
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt
 #   Статическая библиотека "вшивается" прямо в исполняемый файл при сборке
 add_library(${CORE_TARGET} STATIC
@@ -26,12 +34,15 @@ add_library(${CORE_TARGET} STATIC
     ${interface_models}
     ${MODULE_PUBLIC_HEADERS}
     ${MODULE_PRIVATE_HEADERS}
+    ${PIBLIC_CORE_HEADERS}
+    ${MODULE_SOURCE_FILES}
 )
 
 target_include_directories(${CORE_TARGET} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/facade>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/models>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>
 )
 
 target_link_libraries(${CORE_TARGET} PRIVATE

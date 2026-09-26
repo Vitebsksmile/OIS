@@ -31,10 +31,6 @@ VisualizationService::VisualizationService(QObject *parent)
 bool VisualizationService::setDbService(IDatabaseService *dbService)
 {
     m_dbService = dbService;
-    m_dbController->setDbService(m_dbService);
-
-    QStringList namesTables = m_dbService->availableTables();
-
     return true;
 }
 
@@ -67,6 +63,11 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     }
 
     return true;
+}
+
+IDatabaseService *VisualizationService::dbService()
+{
+    return m_dbService;
 }
 
 //  Слушает сигнал из FileHandler о старте предобработки

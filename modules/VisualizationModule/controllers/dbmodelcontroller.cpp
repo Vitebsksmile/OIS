@@ -21,28 +21,6 @@ DbModelController::DbModelController(VisualizationService *visualization,
     }
 }
 
-void DbModelController::setDbService(IDatabaseService *dbService)
-{
-    m_dbService = dbService;
-    qDebug()
-        << "DbModelController: m_dbService ="
-        << m_dbService;
-
-    this->populateModelsMap();
-}
-
-QAbstractItemModel* DbModelController::dbModel(const QString &tableName) const
-{
-    if (m_dbModelMap.contains(tableName)) {
-        auto modelPointer = m_dbModelMap[tableName];
-
-        if (!modelPointer.isNull()) {
-            return modelPointer->dbModel();
-        }
-    }
-    return nullptr;
-}
-
 QAbstractTableModel* DbModelController::abstractTableModel(const QString &tableName)
 {
     if (m_abstractModelsMap.contains(tableName)) {
@@ -50,33 +28,11 @@ QAbstractTableModel* DbModelController::abstractTableModel(const QString &tableN
         return m_abstractModelsMap.value(tableName);
     }
     qDebug() << "DbModelController: The model does not yet exists";
-    QAbstractTableModel *abstractModelsMap = m_dbService->abstractTableModel(tableName);
-    m_abstractModelsMap.insert(tableName, abstractModelsMap);
+    //QAbstractTableModel *abstractModelsMap = m_dbService->abstractTableModel(tableName);    //  ---
+    QAbstractTableModel *abstractModel = m_visualization->dbService()->abstractTableModel(tableName);
+    //m_abstractModelsMap.insert(tableName, abstractModelsMap);   //  ---
+    m_abstractModelsMap.insert(tableName, abstractModel);
     return m_abstractModelsMap.value(tableName);
-}
-
-void DbModelController::updateModel(IDbModel *dbModel)
-{
-    m_dbModel.reset(dbModel);
-
-    //  Пинаем QML, чтобы данные обновились
-    emit operatorsModelChanged();
-}
-
-void DbModelController::populateModelsMap()
-{
-    QStringList tables = m_dbService->availableTables();
-    m_dbModelMap.clear();
-
-    for (const QString &tableName : tables) {
-        IDbModel* dbModel = m_dbService->model(tableName);
-
-        if (dbModel) {
-            m_dbModelMap.insert(tableName, QPointer<IDbModel>(dbModel));
-        } else {
-            qCritical() << "DbModelController: Модель пуста!";
-        }
-    }
 }
 
 void DbModelController::logAbstractModel(QAbstractItemModel *model)

@@ -34,6 +34,8 @@ public:
     bool setCamService(ICameraManagerService *camService) override;
     bool setProcService(IImageProcessingService *procService) override;
 
+    IDatabaseService* dbService();
+
     //IDbModel* dbModel()
 
 //  Реализация интерфейса IVisualizationService

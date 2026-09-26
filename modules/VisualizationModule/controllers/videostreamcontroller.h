@@ -13,7 +13,7 @@ class VideoStreamController : public QObject
     QML_SINGLETON
     QML_ELEMENT
     // Запрещаем создавать объект этого типа напрямую из QML:
-    QML_UNCREATABLE("Interface")
+    QML_UNCREATABLE("Controllers")
 
     static VideoStreamController *s_instance;
 
