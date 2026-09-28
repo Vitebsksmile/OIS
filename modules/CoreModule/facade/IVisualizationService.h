@@ -71,6 +71,8 @@ public slots:
     //  DatabaseModule -> this
     virtual void onDefectAdded() = 0;
 
+    //virtual void onDbExecutionError(const QString &error) = 0;
+
 signals:
     //  Создан для отправки в ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing

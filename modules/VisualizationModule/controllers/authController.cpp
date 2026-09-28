@@ -107,12 +107,15 @@ bool AuthController::registerUser(const QString &username,
     record.setValue("full_name", fullName);
     record.setValue("password", password);
 
-    if (m_visualization->dbService()->insertRecord("operators", record)) {
-        authFailed("Registration was successful!");
-        return true;
-    } else {
-        authFailed("Registration failed!");
+    Core::DbOperationResult result = m_visualization->dbService()->insertRecord("operators", record, "New user registration");
+
+    if (!result.success) {
+        authFailed("Registration failed!", result.error);
+        qCritical() << "AuthController: Registration failed!" + result.error;
         return false;
+    } else {
+        authFailed("Registration was successful!", "");
+        return true;
     }
 }
 

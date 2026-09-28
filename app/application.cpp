@@ -98,6 +98,7 @@ bool Application::modulesIntegration()
     if (flag) {
         return true;
     } else {
+        qCritical() << "Application: Modules integration failure!";
         return false;
     }
 }

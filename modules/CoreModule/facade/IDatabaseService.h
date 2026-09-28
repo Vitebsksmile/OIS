@@ -29,8 +29,9 @@ public:
                               double x,
                               double y) = 0;
 
-    virtual bool insertRecord(const QString &tableName,
-                              const Core::DbRecord &record) = 0;
+    virtual Core::DbOperationResult insertRecord(const QString &tableName,
+                                                 const Core::DbRecord &record,
+                                                 const QString &message) = 0;
 
     //  Method that returning a list tables
     virtual const QStringList availableTables() const = 0;
@@ -41,6 +42,8 @@ signals:
     void computersAdded();
     void cameraAdded();
     void defectAdded();
+
+    //void dbExecutionError(const QString &error);
 };
 
 //  Factory method

@@ -26,12 +26,16 @@ public:
                       double x,
                       double y) override;  //  new
 
-    bool insertRecord(const QString &tableName,
-                      const Core::DbRecord &record) override;
+    //bool logNewComputer();
+
+    Core::DbOperationResult insertRecord(const QString &tableName,
+                                         const Core::DbRecord &record,
+                                         const QString &message) override;
 
     const QStringList availableTables() const override;
 
 signals:
+
 
 private:
     //  Initialize the database and load it into the model
@@ -44,15 +48,15 @@ private:
     void autoPopulateRelations(QSqlRelationalTableModel *model, const QString &displayField = "name");
     bool populateModelsMap();
 
+    QString handleDatabaseError(const QSqlError &error,
+                                const QString &contextAction);
+
     QDir dir();
 
-    bool logNewComputer();
-
-    QSqlDatabase m_db;
     QHash<QString, DbModel*> m_modelsMap{};
     DbModel *m_itemModel;
 
-    QHash<QString, DbRelationalTableModel*> m_relationalModelsMap;
+    QHash<QString, DbRelationalTableModel*> m_relationalModelsMap{};
 };
 
 #endif // DATABASESERVICE_H

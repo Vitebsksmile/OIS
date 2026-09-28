@@ -31,6 +31,7 @@ VisualizationService::VisualizationService(QObject *parent)
 bool VisualizationService::setDbService(IDatabaseService *dbService)
 {
     m_dbService = dbService;
+
     return true;
 }
 

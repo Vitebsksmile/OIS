@@ -46,7 +46,7 @@ signals:
     void identificationSuccess();
     void authenticationSuccess();
     void authorization();
-    void authFailed(const QString &error);
+    void authFailed(const QString &errorTitle, const QString &errorDetails = "");
     //void registrationModelReady();
 
 private slots:

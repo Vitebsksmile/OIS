@@ -6,6 +6,12 @@
 
 namespace Core {
 
+struct DbOperationResult
+{
+    bool success = false;
+    QString error;
+};
+
 class DbRecord
 {
 public:

@@ -36,9 +36,12 @@ ApplicationWindow {
             function onAuthenticationSuccess() {
                 mainLoader.source = "qml/pages/OperatorPage.qml"
             }
-            function onAuthFailed(error) {
-                if (mainLoader.item && mainLoader.item.hasOwnProperty("errorMessage")) {
-                    mainLoader.item.errorMessage = error
+            function onAuthFailed(errorTitle, errorDetails) {
+                if (mainLoader.item && mainLoader.item.hasOwnProperty("errorTitle")) {
+                    mainLoader.item.errorTitle = errorTitle
+                }
+                if (mainLoader.item && mainLoader.item.hasOwnProperty("errorDetails")) {
+                    mainLoader.item.errorDetails = errorDetails
                 }
             }
         }

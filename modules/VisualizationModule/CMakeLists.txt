@@ -81,6 +81,8 @@ set(PLAIN_QML_FILES
     qml/view/MLSettingsView.qml
     qml/view/DatabaseSettingsView.qml
     qml/view/ButtonSettingsView.qml
+
+    qml/popups/ErrorDetails.qml
 )
 
 set(qml_model_singleton
