@@ -37,14 +37,7 @@ void VideoProvider::onRawImageFrameReady(const QImage &frame)
 {
     if (!frame.isNull())
     {
-        qDebug()
-            << "*************VisualizationService: !frame.isNull(): "
-            << frame;
         this->processFrame(frame);
-    } else {
-        qCritical()
-            << "*************VisualizationService: Frame received: "
-            << frame;
     }
 }
 

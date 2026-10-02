@@ -249,7 +249,7 @@ Page {
                             Layout.minimumWidth: 200
                             Layout.minimumHeight: 200
 
-                            frameSource: "camera"
+                            frameSource: "processor"
                         }
 
                         LifeView {

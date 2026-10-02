@@ -153,9 +153,9 @@ void VisualizationService::onPreProcessingError(const QString &filePath, const Q
 
 void VisualizationService::onRawImageFrameReady(const QImage &frame)
 {
-    qDebug()
-        << "*************VisualizationService: Frame received: "
-        << frame;
+    // qDebug()
+    //     << "*************VisualizationService: Frame received: "
+    //     << frame;
     emit rawImageFrameReady(frame);
 }
 
