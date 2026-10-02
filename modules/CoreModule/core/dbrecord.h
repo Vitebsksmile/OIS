@@ -10,6 +10,7 @@ struct DbOperationResult
 {
     bool success = false;
     QString error;
+    int insertedId = -1;
 };
 
 class DbRecord
@@ -17,16 +18,17 @@ class DbRecord
 public:
     DbRecord() = default;
 
-    void setValue(const QString &field, const QVariant &value);
+    void insert(const QString &field, const QVariant &value);
     QVariant value(const QString &field) const;
 
     bool contains(const QString &field) const;
     bool isEmpty() const;
 
-    const QVariantMap& values() const;
+    const QVariantMap &values() const;
 
 private:
     QVariantMap m_values;
+    DbOperationResult m_info;
 };
 
 }

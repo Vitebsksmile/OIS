@@ -14,6 +14,20 @@ Rectangle {
     color: "white"
     border.color: "#dcdcdc"
 
+    Loader {
+        id: mainLoader
+        active: false
+        //anchors.fill: parent
+        source: "../popups/CameraSettingsPopup.qml"
+
+        onLoaded: {
+            mainLoader.item.popupClosed.connect(function() {
+                mainLoader.active = false
+            })
+            item.open()
+        }
+    }
+
     ColumnLayout {
         id: rootLayout
         anchors.left: parent.left
@@ -30,6 +44,22 @@ Rectangle {
             text: "Camera Settings"
             font.pixelSize: 22
             font.bold: true
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: implicitHeight
+            Layout.alignment: Qt.AlignVCenter
+
+            Button {
+                id: connectButton
+                Layout.preferredWidth: 180
+                Layout.alignment: Qt.AlignVCenter
+                text: "Connect the camera"
+                onClicked: {
+                    mainLoader.active = true
+                }
+            }
         }
 
         RowLayout {

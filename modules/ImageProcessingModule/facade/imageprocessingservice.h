@@ -19,6 +19,7 @@
 #include <opencv2/opencv.hpp>
 #include "IImageProcessingService.h"
 #include "IDatabaseService.h"
+#include "ICameraManagerService.h"
 
 class ProcessManager;
 
@@ -30,6 +31,7 @@ public:
     explicit ImageProcessingService(QObject* parent = nullptr);
 
     bool setDbService(IDatabaseService *dbService) override;
+    bool setCamService(ICameraManagerService *camService) override;
 
 //  Реализация интерфейса IImageProcessingService
 public slots:
@@ -38,25 +40,29 @@ public slots:
 
     //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
     //  для уведомления User о начале предобработки (for QML about Start)
-    void onPreProcessingStartNotification(bool success) override;
+    void onPreProcessingStartNotification(bool success);
 
-    //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
+    //  ProcessManager -> this
     //  для уведомления о завершении предобработки (for QML about Finished)
-    void onPreProcessingFinished(const QString &resultFilePath) override;
+    void onPreProcessingFinished(const QString &resultFilePath);
 
     //  CameraManagerService -> this
-    void onCVFrameReady(const cv::Mat &cvFrame) override;
+    void onRawCVFrameReady(const cv::Mat &cvFrame) override;
 
     //  ProcessManager -> this
-    void onFrameReady(const QImage &frame) override;
+    void onProcessedFrameReady(const QImage &frame);
 
     //  ProcessManager -> this
-    void onFrameWithBoxesReady(const QImage &frame
-                               , const std::vector<std::vector<int>> &rectanglePoints) override;
-
+    void onFrameWithBoxesReady(const QImage &frame,
+                               const std::vector<std::vector<int>> &rectanglePoints);
 
 signals:
-    //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
+    //  Сигнал для ProcessManager -> создай imagePreProcessing
+    void imagePreProcessingRequested(const QString &filePath);  //  Добавить параметры "тип" предобработки
+
+    //  this -> ProcessManager
+    void processFrame(const cv::Mat &cvFrame);
+    //void processedFrameReady(ProcessedFrame frame);
 
 private:
     ProcessManager* m_processManager;
@@ -65,6 +71,7 @@ private:
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed
     QUrl m_currentFilePath; //  !!!!!???????
     IDatabaseService *m_dbService = nullptr;
+    ICameraManagerService *m_camService = nullptr;
 };
 
 #endif // IMAGEPROCESSINGSERVICE_H

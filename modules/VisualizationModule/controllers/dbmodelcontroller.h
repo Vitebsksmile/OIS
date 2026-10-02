@@ -30,6 +30,8 @@ public:
     Q_INVOKABLE void logAbstractModel(QAbstractItemModel *model);
     Q_INVOKABLE void logQmlModelRoles(QAbstractItemModel *model);
 
+    QAbstractTableModel* getAbstractTableModel(const QString &tableName);
+
 private:
     VisualizationService *m_visualization = nullptr;
     IDatabaseService *m_dbService = nullptr;

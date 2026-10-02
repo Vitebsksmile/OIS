@@ -23,9 +23,9 @@ public:
     void checkAndConnectCamera();
 
 private slots:
-    void onImageFrameReady(const QImage imageFrame);
-    void onCVFrameReady(const cv::Mat &cvFrame);
-    void onFrameReady(const CVFrameBuffer &frame);
+    void onRawCVFrameReady(const cv::Mat &cvFrame);
+    void onRawImageFrameReady(const QImage &frame);
+    void onCustomFrameReady(const CVFrameBuffer &frame);
 
 signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!

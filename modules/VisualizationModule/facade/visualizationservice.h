@@ -34,14 +34,16 @@ public:
     bool setCamService(ICameraManagerService *camService) override;
     bool setProcService(IImageProcessingService *procService) override;
 
+    DbModelController* dbController();
+
     IDatabaseService* dbService();
 
     //IDbModel* dbModel()
 
 //  Реализация интерфейса IVisualizationService
 public slots:
-    //  Слушает сигнал из FileHandler о старте предобработки
-    void onImagePreProcessingRequested(const QString &filePath) override;
+    //  FileHandler -> this : Слушает сигнал из FileHandler о старте предобработки
+    void onImagePreProcessingRequested(const QString &filePath);
 
     //  From IMageProcessingModule for QML about Start
     void onPreProcessingStartNotification(bool success) override;
@@ -53,10 +55,10 @@ public slots:
     void onPreProcessingError(const QString &filePath, const QString &error) override;
 
     //  CameraManagerModule -> this
-    void onImageFrameReady(const QImage frame) override;
+    void onRawImageFrameReady(const QImage &frame) override;
 
     //  IImageProcessingModule -> this
-    void onFrameReady(const QImage &frame) override;
+    void onProcessedFrameReady(const QImage &frame) override;
 
     //  ImageProcessingModule -> this
     void onFrameWithBoxesReady(const QImage &frame
@@ -69,10 +71,19 @@ public slots:
 
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
-    //  this -> VideoStreamService
-    void frameReady(const QImage &frame);
+    //  To FileHandler about started PreProcessing
+    void preProcessingStartNotification(bool success);
 
-    //  this -> FileHandlerManager
+    //  To FileHandler about finished
+    void imagePreProcessingFinished(const QString &filePath);
+
+    //  this -> VideoStreamController
+    void rawImageFrameReady(const QImage &frame);
+
+    //  this -> VideoStreamService
+    void processedFrameReady(const QImage &frame);
+
+    //  this -> VideoStreamService
     void frameWithBoxesReady(const QImage &frame,
                              const std::vector<std::vector<int>> &rectanglePoints);
 
@@ -82,8 +93,8 @@ private:
     IImageProcessingService *m_procService = nullptr;
 
     AuthController *m_auth = nullptr;
-    FileHandlerController *m_fileHandlerManager = nullptr;
     DbModelController *m_dbController = nullptr;
+    FileHandlerController *m_fileHandlerManager = nullptr;
     VideoStreamController *m_videoController = nullptr;
 };
 

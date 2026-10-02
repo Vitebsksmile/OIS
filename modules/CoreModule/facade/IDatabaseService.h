@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QAbstractTableModel>
 #include "dbrecord.h"
+#include "Authenticate.h"
 
 class IDbModel;
 
@@ -29,17 +30,29 @@ public:
                               double x,
                               double y) = 0;
 
-    virtual Core::DbOperationResult insertRecord(const QString &tableName,
-                                                 const Core::DbRecord &record,
-                                                 const QString &message) = 0;
+    virtual const Core::AuthResult authenticate(const QString &username,
+                                                const QString &password,
+                                                const QString &message = "Authentication user") = 0;
+
+    virtual const Core::DbOperationResult creatUser(const QString &username,
+                                                    const QString &password,
+                                                    const QString &fullName,
+                                                    const QString &jobTitle,
+                                                    const QString &message = "New user creat") = 0;
+
+    virtual const Core::DbOperationResult creatCamera(const QString &address,
+                                                      const QString &message = "New camera creat") = 0;
+
+    virtual const Core::SessionContext creatSession(Core::AuthResult result) = 0;
+
+    // virtual const Core::DbOperationResult findRecord(const QString &tableName,
+    //                                                  const Core::DbRecord &record,
+    //                                                  const QString &message) = 0;
 
     //  Method that returning a list tables
     virtual const QStringList availableTables() const = 0;
 
 signals:
-    void sessionAdded();
-    void operatorAdded();
-    void computersAdded();
     void cameraAdded();
     void defectAdded();
 

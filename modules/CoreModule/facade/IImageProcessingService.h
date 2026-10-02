@@ -6,11 +6,11 @@
 #include <QObject>
 #include <QString>
 #include <QUrl>
-#include "Frame.h"
 
 namespace cv { class Mat; }
 
 class IDatabaseService;
+class ICameraManagerService;
 
 //  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IImageProcessingService : public QObject
@@ -28,6 +28,7 @@ public:
     virtual ~IImageProcessingService() = default;
 
     virtual bool setDbService(IDatabaseService *dbService) = 0;
+    virtual bool setCamService(ICameraManagerService *camService) = 0;
 
 //  Логика обработки (слоты)
 //  public slots: Методы, которые можно вызывать из других потоков или через connect
@@ -37,26 +38,23 @@ public slots:
 
     //  ProcessManager -> this
     //  для уведомления User о начале предобработки (for QML about Start)
-    virtual void onPreProcessingStartNotification(bool success) = 0;
+    //virtual void onPreProcessingStartNotification(bool success) = 0;
 
     //  ProcessManager -> this
     //  для уведомления о завершении предобработки (for QML about Finished)
-    virtual void onPreProcessingFinished(const QString &resultFilePath) = 0;
+    //virtual void onPreProcessingFinished(const QString &resultFilePath) = 0;
 
     //  CameraManagerModule -> this
-    virtual void onCVFrameReady(const cv::Mat &frame) = 0;
+    virtual void onRawCVFrameReady(const cv::Mat &frame) = 0;
 
     //  ProcessManager -> this
-    virtual void onFrameReady(const QImage &frame) = 0;
+    //virtual void onFrameReady(const QImage &frame) = 0;
 
     //  ProcessManager -> this
-    virtual void onFrameWithBoxesReady(const QImage &frame,
-                                       const std::vector<std::vector<int>> &rectanglePoints) = 0;
+    //virtual void onFrameWithBoxesReady(const QImage &frame,
+    //                                   const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
 signals:
-    //  Сигнал для ProcessManager -> создай imagePreProcessing
-    void imagePreProcessingRequested(const QString &filePath);  //  Добавить параметры "тип" предобработки
-
     //  For VisualizationService about Start
     void preProcessingStartNotification(bool success);
 
@@ -71,24 +69,16 @@ signals:
     void prePreProcessingError(const QString &filePath,
                                const QString &error);
 
-    //  this -> ProcessManager
-    void processFrame(const cv::Mat &cvFrame);
-    //void processedFrameReady(ProcessedFrame frame);
-
     //  this -> VisualizationModule
     void objectFound(const size_t &objectCount,
                      const std::vector<std::vector<int>> &rectanglePoints);
 
     //  this -> VisualizationModule
-    void frameReady(const QImage &frame);
+    void processedFrameReady(const QImage &frame);
 
     //  this -> VisualizationModule
     void frameWithBoxesReady(const QImage &frame,
                              const std::vector<std::vector<int>> &rectanglePoints);
-
-    //  this -> ImageProcessingService
-    // void stframeWithBoxesReady(const Frame &frame
-    //                          , const std::vector<std::vector<int>> &rectanglePoints);
 };
 
 //  Factory method

@@ -42,9 +42,6 @@ public:
     virtual bool setProcService(IImageProcessingService *procService) = 0;
 
 public slots:
-    //  FileHandler -> this
-    virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
-
     //  IImageProcessingModule -> this
     virtual void onPreProcessingStartNotification(bool success) = 0;
 
@@ -56,11 +53,14 @@ public slots:
     virtual void onPreProcessingError(const QString &filePath,
                                       const QString &error) = 0;
 
+    //  ????????????? 02.10.26
     //virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
-    virtual void onImageFrameReady(const QImage frame) = 0;
+
+    //  CameraManagerModule -> this
+    virtual void onRawImageFrameReady(const QImage &frame) = 0;
 
     //  IImageProcessingModule -> this
-    virtual void onFrameReady(const QImage &frame) = 0;
+    virtual void onProcessedFrameReady(const QImage &frame) = 0;
 
     //  ImageProcessingModule -> this
     virtual void onFrameWithBoxesReady(const QImage &frame,
@@ -74,21 +74,9 @@ public slots:
     //virtual void onDbExecutionError(const QString &error) = 0;
 
 signals:
-    //  Создан для отправки в ImageProcessingModule
+    //  this -> ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
     void imagePreProcessingRequested(const QString &filePath);
-
-    //  To FileHandler about started PreProcessing
-    void preProcessingStartNotification(bool success);
-
-    //  To FileHandler about finished
-    void imagePreProcessingFinished(const QString &filePath);
-
-    //void frameReady(const QImage &frame);
-
-    //  this -> FileHandlerManager
-    void frameWithBoxesReady(const QImage &frame,
-                             const std::vector<std::vector<int>> &rectanglePoints);
 };
 
 //  Factory method

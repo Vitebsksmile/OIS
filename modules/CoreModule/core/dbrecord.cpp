@@ -2,7 +2,7 @@
 
 namespace Core {
 
-void Core::DbRecord::setValue(const QString &field, const QVariant &value)
+void Core::DbRecord::insert(const QString &field, const QVariant &value)
 {
     m_values.insert(field, value);
 }

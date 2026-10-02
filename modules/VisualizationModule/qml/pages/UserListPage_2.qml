@@ -7,7 +7,7 @@ Page {
     title: "Operators List"
 
     signal closeRequested()
-    property var tableModel: DbModelController.abstractTableModel("computers")
+    property var tableModel: DbModelController.abstractTableModel("sessions")
 
     HorizontalHeaderView {
         id: horizontalHeader

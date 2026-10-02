@@ -6,6 +6,8 @@ pragma ComponentBehavior: Bound
 Page {
     id: root
 
+    //property alias copyErrorTitle: errorTitle
+
     property string errorTitle: ""
     property string errorDetails: ""
     property string titlePage: qsTr("Login")
@@ -29,8 +31,8 @@ Page {
 
         //  Title page
         TitleText {
-            text: root.title
             Layout.fillWidth: true
+            text: root.title
 
             // Нижняя линия заголовка
             Rectangle {
@@ -56,62 +58,10 @@ Page {
 
             initialItem: logIn
 
-            ErrorDetails {
-                id: errorDetails
-            }
-
-            Popup {
-                id: errorPopup
-                property string message: "" //  Свое свойство для текста ошибки или успеха
-
-                //  Центрируем по горизонтали и поднимаем на 100 пикселей от низа
-                x: (parent.width - width) / 2
-                y: parent.height - 100
-                //width: Math.min(400, parent.width * 0.8)
-
-                //  Настройки закрытия всплывающего окна
-                modal: false //  Не блокирует взаимодействие с основным окном
-                focus: false //  Не перехватывает ввод (Escape не сработает при false)
-
-                visible: root.errorTitle !== ""
-
-                // При закрытии окна автоматически очищаем текст ошибки в родителе
-                onClosed: {
-                    root.errorTitle = ""
-                    root.errorDetails = ""
-                }
-
-                //  Закроется, если нажать Esc (нужен focus: true) или кликнуть мимо
-                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-                contentItem: Column {
-                    anchors.centerIn: parent
-                    spacing: 10
-                    TitleText {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        //font.bold: Theme.fBoldTitle
-                        text: root.errorTitle
-                    }
-                    NormalText {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        horizontalAlignment: Text.AlignRight
-                        color: "blue"
-                        font.underline: true
-                        text: qsTr("more details about the error")
-
-                        MouseArea {
-                            width: parent.width
-                            height: parent.height
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                errorDetails.errorTitle = root.errorTitle
-                                errorDetails.errorDetails = root.errorDetails
-                                errorDetails.open()
-                            }
-                        }
-                    }
-                }
+            ErrorTitlePopup {
+                id: errorTitle
+                errorTitle: root.errorTitle
+                errorDetails: root.errorDetails
             }
         }
     }
@@ -165,8 +115,8 @@ Page {
                         highlighted: true
                         onClicked: {
                             // Вызываем C++ функцию проверки
-                            if (AuthController.authenticate(usernameField.text, passwordField.text)) {
-                                errorAuthenticated: true
+                            if (AuthController.login(usernameField.text, passwordField.text)) {
+                                authenticationError: true
                             }
                         }
                     }
@@ -232,8 +182,6 @@ Page {
 
                     property bool error: false
 
-                    //color: activeFocus ? "black" : buttonIn.errorAuthenticated ? "black" : "red"
-
                     placeholderText: qsTr("Create a password")
                     echoMode: TextField.Password    //  Скрывает вводимые символы точками
                 }
@@ -244,7 +192,6 @@ Page {
 
                     Button {
                         id: buttonIn
-                        property bool errorAuthenticated: false
                         text: qsTr("Back")
                         Layout.preferredWidth: 100
 

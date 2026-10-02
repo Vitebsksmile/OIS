@@ -34,19 +34,16 @@ void VideoStreamController::registerProvider(VideoProvider *provider)
 
         QString frameSource = provider->frameSource();
         if (frameSource == "camera") {
-            qDebug()
-                << "VideoStreamController: provider ="
-                << provider
-                << "provider->frameSource ="
-                << provider->frameSource();
-
-            connect(m_visualization, &VisualizationService::frameReady
-                    , provider, &VideoProvider::onFrameReady);
+            connect(m_visualization, &VisualizationService::rawImageFrameReady
+                    , provider, &VideoProvider::onRawImageFrameReady);
         }
         if (frameSource == "processor") {
+            connect(m_visualization, &VisualizationService::processedFrameReady
+                    , provider, &VideoProvider::onProcessedFrameReady);
+        }
+        if (frameSource == "object") {
             connect(m_visualization, &VisualizationService::frameWithBoxesReady
                     , provider, &VideoProvider::onFrameWithBoxesReady);
         }
-
     }
 }

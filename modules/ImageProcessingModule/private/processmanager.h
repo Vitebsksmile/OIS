@@ -10,16 +10,15 @@
 #include "objectfinder.h"
 #include "Frame.h"
 
-class IImageProcessingService;
+class ImageProcessingService;
 
 class ProcessManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ProcessManager(
-        IImageProcessingService *imageProcessingService,
-        QObject *parent = nullptr);
+    explicit ProcessManager(ImageProcessingService *imageProcessingService,
+                            QObject *parent = nullptr);
 
     void setImagePreProcessing(ImagePreProcessing *preProcessing);
 
@@ -41,7 +40,7 @@ signals:
     void preProcessingFinished(const QString &resultFilePath);\
 
     //  this -> ImageProcessingService
-    void frameReady(const QImage &frame);
+    void processedFrameReady(const QImage &frame);
 
     //  this -> ImageProcessingService
     void frameWithBoxesReady(const QImage &frame
@@ -66,7 +65,7 @@ private:
     OIS::Core::Frame matToFrame(const cv::Mat &mat) const;
 
 private:
-    IImageProcessingService *m_imageProcessingService = nullptr;
+    ImageProcessingService *m_imageProcessingService = nullptr;
 
     // Умный указатель 'unique_ptr': сам удалит объект в деструкторе или при замене
     // std::make_unique — самый безопасный способ создания объекта в куче.

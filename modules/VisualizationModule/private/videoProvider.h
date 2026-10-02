@@ -30,7 +30,9 @@ public:
     void setVideoSink(QVideoSink* sink);
 
 public slots:
-    void onFrameReady(const QImage img);
+    void onRawImageFrameReady(const QImage &frame);
+
+    void onProcessedFrameReady(const QImage &frame);
 
     void onFrameWithBoxesReady(const QImage &frame,
                                const std::vector<std::vector<int>> &rectanglePoints);
@@ -39,7 +41,7 @@ signals:
     void videoSinkChanged();
 
 private:
-    void processFrame(const QImage img);
+    void processFrame(const QImage &img);
 
 private:
     QVideoSink* m_videoSink;

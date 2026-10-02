@@ -99,3 +99,17 @@ void DbModelController::logQmlModelRoles(QAbstractItemModel *model)
     }
     qDebug() << "==================================================";
 }
+
+QAbstractTableModel *DbModelController::getAbstractTableModel(const QString &tableName)
+{
+    if (m_abstractModelsMap.contains(tableName)) {
+        qDebug() << "DbModelController: The model already exists";
+        return m_abstractModelsMap.value(tableName);
+    }
+    qDebug() << "DbModelController: The model does not yet exists";
+    //QAbstractTableModel *abstractModelsMap = m_dbService->abstractTableModel(tableName);    //  ---
+    QAbstractTableModel *abstractModel = m_visualization->dbService()->abstractTableModel(tableName);
+    //m_abstractModelsMap.insert(tableName, abstractModelsMap);   //  ---
+    m_abstractModelsMap.insert(tableName, abstractModel);
+    return m_abstractModelsMap.value(tableName);
+}

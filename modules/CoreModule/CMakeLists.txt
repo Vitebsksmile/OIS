@@ -21,6 +21,8 @@ set(MODULE_PUBLIC_HEADERS
 
 set(PIBLIC_CORE_HEADERS
     core/dbrecord.h
+    core/Authenticate.h
+
 )
 
 set(MODULE_SOURCE_FILES

@@ -7,7 +7,7 @@
 #include <QQmlEngine>
 #include <QList>
 #include <QPointer>
-#include "IVisualizationService.h"
+#include "VisualizationService.h"
 #include "filehandler.h"
 #include <QAbstractItemModel>
 #include <QSharedPointer>
@@ -24,7 +24,7 @@ class FileHandlerController : public QObject
     static FileHandlerController* s_instance;
 
 public:
-    explicit FileHandlerController(IVisualizationService* visualization,
+    explicit FileHandlerController(VisualizationService* visualization,
                                 QObject* parent = nullptr);
 
     static FileHandlerController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
@@ -35,7 +35,7 @@ signals:
     void operatorsModelChanged();
 
 private:
-    IVisualizationService* m_visualization = nullptr;
+    VisualizationService* m_visualization = nullptr;
 
     QList<QPointer<FileHandler>> m_fileHandlers;
 

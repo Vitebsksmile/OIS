@@ -50,7 +50,7 @@ void VideoCaptureWorker::startCapture(int cameraIndex)
 void VideoCaptureWorker::startCaptureUrl()
 {
     stopCapture();
-    QString url = "http://192.168.100.16:4747/video";
+    QString url = "http://192.168.100.17:4747/video";
 
     if (!m_cap.open(url.toStdString())) {
         qWarning()
@@ -77,16 +77,16 @@ void VideoCaptureWorker::processFrame()
 {
     cv::Mat mat;
     if (m_cap.read(mat) && !mat.empty()) {
-        emit cvFrameReady(mat);
+        emit rawCVFrameReady(mat);
 
         QImage imageFrame = matToQImage(mat);
         if (!imageFrame.isNull()) {
-            emit imageFrameReady(imageFrame);
+            emit rawImageFrameReady(imageFrame);
         }
 
         CVFrameBuffer customFrame = matToFrame(mat);
         if (customFrame.data() != nullptr) {
-            emit frameReady(customFrame);
+            emit customFrameReady(customFrame);
         } else {
             qDebug()
                 << "VideoCaptureWorker: Не удалось создать кадр. Возможно, неподдерживаемый формат матрицы:"

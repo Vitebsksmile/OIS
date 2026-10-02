@@ -11,6 +11,8 @@ Popup {
     property string errorTitle: ""
     property string errorDetails: ""
 
+    closePolicy: Popup.CloseOnEscape | Popup.NoAutoClose
+
     contentItem: Column {
         spacing: 10
         anchors.centerIn: parent
@@ -36,6 +38,4 @@ Popup {
             }
         }
     }
-
-    closePolicy: Popup.CloseOnEscape | Popup.NoAutoClose
 }

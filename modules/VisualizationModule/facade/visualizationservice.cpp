@@ -38,7 +38,11 @@ bool VisualizationService::setDbService(IDatabaseService *dbService)
 bool VisualizationService::setCamService(ICameraManagerService *camService)
 {
     m_camService = camService;
-
+    bool ok = false;
+    ok = connect(m_camService, &ICameraManagerService::rawImageFrameReady,
+                 this, &VisualizationService::onRawImageFrameReady);
+    if (!ok) qCritical()
+            << "WARNING! VisualizationService: Failed to subscribe to CameraManagerModule signals";
     return true;
 }
 
@@ -47,11 +51,11 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     m_procService = procService;
 
     bool ok = false;
-    ok = connect(m_procService, &IImageProcessingService::frameReady
-            , this, &VisualizationService::onFrameReady);
+    ok = connect(m_procService, &IImageProcessingService::processedFrameReady
+            , this, &VisualizationService::onProcessedFrameReady);
     if (!ok) {
         qCritical()
-        << "WARNING! VisualizationService: Failed to subscribe to ImageProcessingModule signals";
+            << "WARNING! VisualizationService: Failed to subscribe to ImageProcessingModule signals";
         return false;
     }
 
@@ -64,6 +68,11 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     }
 
     return true;
+}
+
+DbModelController* VisualizationService::dbController()
+{
+    return m_dbController;
 }
 
 IDatabaseService *VisualizationService::dbService()
@@ -142,20 +151,20 @@ void VisualizationService::onPreProcessingError(const QString &filePath, const Q
     << &frame;
 }*/
 
-void VisualizationService::onImageFrameReady(const QImage frame)
+void VisualizationService::onRawImageFrameReady(const QImage &frame)
 {
-    // qDebug()
-    //     << "VisualizationService: Camera manager module result for: "
-    //     << frame;
-    //emit frameReady(frame);
+    qDebug()
+        << "*************VisualizationService: Frame received: "
+        << frame;
+    emit rawImageFrameReady(frame);
 }
 
-void VisualizationService::onFrameReady(const QImage &frame)
+void VisualizationService::onProcessedFrameReady(const QImage &frame)
 {
     // qDebug()
     //     << "VisualizationService: frame ="
     //     << frame;
-    emit frameReady(frame);
+    emit processedFrameReady(frame);
 }
 
 void VisualizationService::onFrameWithBoxesReady(const QImage &frame

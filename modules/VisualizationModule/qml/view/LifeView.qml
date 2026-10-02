@@ -1,11 +1,9 @@
 import QtQuick 2.15
 import QtMultimedia
-import VisualizationModule
 
 Rectangle {
     id: root
-
-    //anchors.fill: parent
+    property string frameSource: ""
     color: "#065F46"
     border.color: "#047857"
     border.width: 2
@@ -23,9 +21,8 @@ Rectangle {
         videoSink: videoOutput.videoSink
 
         Component.onCompleted: {
-            videoProvider.setFrameSource("processor")
+            videoProvider.setFrameSource(root.frameSource)
             //  Pass object to C++
-            //DbModelController.registerProvider(videoProvider)
             VideoStreamController.registerProvider(videoProvider)
         }
     }

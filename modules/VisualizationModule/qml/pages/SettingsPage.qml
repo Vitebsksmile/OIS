@@ -56,7 +56,7 @@ Page {
             Layout.fillHeight: true
             spacing: 20
 
-            //interactive: true
+            interactive: true
             clip: true
 
             model: objectModel

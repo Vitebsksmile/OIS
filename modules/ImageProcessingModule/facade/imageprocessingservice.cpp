@@ -32,6 +32,20 @@ bool ImageProcessingService::setDbService(IDatabaseService *dbService)
     return false;
 }
 
+bool ImageProcessingService::setCamService(ICameraManagerService *camService)
+{
+    m_camService = camService;
+    bool ok = false;
+    ok = connect(m_camService, &ICameraManagerService::rawCVFrameReady
+                 , this, &ImageProcessingService::onRawCVFrameReady);
+    if (!ok) {
+        qCritical()
+        << "WARNING! ImageProcessingService: Failed to subscribe to CameraManagerService signals";
+        return false;
+    }
+    return true;
+}
+
 //  Слот для получения пути из VisualizationModule
 //  Запуск обработки
 void ImageProcessingService::onImagePreProcessingRequested(const QString &filePath)
@@ -75,15 +89,16 @@ void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePa
 }
 
 //  CameraManagerService -> this
-void ImageProcessingService::onCVFrameReady(const cv::Mat &cvFrame)
+void ImageProcessingService::onRawCVFrameReady(const cv::Mat &cvFrame)
 {
     //  this -> ProcessManager
     emit processFrame(cvFrame);
 }
 
-void ImageProcessingService::onFrameReady(const QImage &frame)
+//  ProcessManager -> this
+void ImageProcessingService::onProcessedFrameReady(const QImage &frame)
 {
-    emit frameReady(frame);
+    emit processedFrameReady(frame);
 }
 
 //  ProcessManager -> this

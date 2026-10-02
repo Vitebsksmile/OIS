@@ -33,11 +33,26 @@ void VideoProvider::setVideoSink(QVideoSink* sink)
     }
 }
 
-void VideoProvider::onFrameReady(const QImage img)
+void VideoProvider::onRawImageFrameReady(const QImage &frame)
 {
-    if (!img.isNull())
+    if (!frame.isNull())
     {
-        this->processFrame(img);
+        qDebug()
+            << "*************VisualizationService: !frame.isNull(): "
+            << frame;
+        this->processFrame(frame);
+    } else {
+        qCritical()
+            << "*************VisualizationService: Frame received: "
+            << frame;
+    }
+}
+
+void VideoProvider::onProcessedFrameReady(const QImage &frame)
+{
+    if (!frame.isNull())
+    {
+        this->processFrame(frame);
     }
 }
 
@@ -94,7 +109,7 @@ void VideoProvider::onFrameWithBoxesReady(const QImage &frame
     this->processFrame(editableFrame);
 }
 
-void VideoProvider::processFrame(const QImage img)
+void VideoProvider::processFrame(const QImage &img)
 {
     if (!m_videoSink)
     {
@@ -120,5 +135,7 @@ void VideoProvider::processFrame(const QImage img)
 
         //  Send frame directly to QML VideoOutput
         m_videoSink->setVideoFrame(frame);
+    } else {
+        qCritical() << "VideoProvider: NOT frame.map(QVideoFrame::WriteOnly)";
     }
 }

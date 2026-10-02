@@ -12,6 +12,7 @@ set(MODULE_PRIVATE_CONTROLLERS
     controllers/videostreamcontroller.h
     controllers/dbmodelcontroller.h
     controllers/authController.h
+    controllers/sessioncontroller.h
 )
 
 set(models
@@ -29,6 +30,7 @@ set(MODULE_PRIVATE_HEADERS
 set(MODULE_SOURCE_FILES
     facade/visualizationservice.cpp
     controllers/authController.cpp
+    controllers/sessioncontroller.cpp
     controllers/filehandlerController.cpp
     controllers/videostreamcontroller.cpp
     controllers/dbmodelcontroller.cpp
@@ -57,12 +59,6 @@ set(PLAIN_QML_FILES
     qml/settings/NormalText.qml
     qml/settings/MutedText.qml
 
-    qml/model/InspectionStatisticsModel.qml
-    qml/model/InspectionSummaryModel.qml
-    qml/model/MetricsModel.qml
-    qml/model/DetectionStatisticsModel.qml
-    qml/model/StatisticsResultTableModel.qml
-
     qml/DetectionOverlay.qml
     qml/SideBarButton.qml
     qml/ImagePickerDialog.qml
@@ -74,7 +70,7 @@ set(PLAIN_QML_FILES
     qml/view/InformationView.qml
     qml/view/ImageView.qml
     qml/view/LifeView.qml
-    qml/view/ProcessingView.qml
+
 
     qml/view/CameraSettingsView.qml
     qml/view/ImageProcessingSettingsView.qml
@@ -82,7 +78,15 @@ set(PLAIN_QML_FILES
     qml/view/DatabaseSettingsView.qml
     qml/view/ButtonSettingsView.qml
 
-    qml/popups/ErrorDetails.qml
+    qml/view/InspectionStatisticsView.qml
+    qml/view/InspectionSummaryView.qml
+    qml/view/MetricsView.qml
+    qml/view/DetectionStatisticsView.qml
+    qml/view/StatisticsResultTableView.qml
+
+    qml/popups/CameraSettingsPopup.qml
+    qml/popups/ErrorDetailsPopup.qml
+    qml/popups/ErrorTitlePopup.qml
 )
 
 set(qml_model_singleton
@@ -133,6 +137,7 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     DEPENDENCIES
         QtMultimedia
         QML_FILES config.json
+        QML_FILES qml/components/UsbCamera.qml
 )
 
 

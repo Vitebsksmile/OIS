@@ -3,7 +3,7 @@
 
 FileHandlerController* FileHandlerController::s_instance = nullptr;
 
-FileHandlerController::FileHandlerController(IVisualizationService* visualization,
+FileHandlerController::FileHandlerController(VisualizationService* visualization,
                                        QObject *parent)
     : QObject(parent)
     , m_visualization(visualization)
@@ -38,20 +38,20 @@ void FileHandlerController::registerFileHandler(FileHandler *fileHandler)
 
         //  Связь: fileHandler -> visualizationService
         connect(fileHandler, &FileHandler::imagePreProcessingRequested,
-                m_visualization, &IVisualizationService::onImagePreProcessingRequested);
+                m_visualization, &VisualizationService::onImagePreProcessingRequested);
 
         //  Связь: visualizationService -> fileHandler
-        connect(m_visualization, &IVisualizationService::imagePreProcessingFinished,
+        connect(m_visualization, &VisualizationService::imagePreProcessingFinished,
                 fileHandler, &FileHandler::onImagePreProcessingFinished);
 
         /*if (fileHandler->directionOut())
         {
             //  Связь: fileHandler -> visualizationService
             connect(fileHandler, &FileHandler::imagePreProcessingRequested,
-                    m_visualizationService, &IVisualizationService::onImagePreProcessingRequested);
+                    m_visualizationService, &VisualizationService::onImagePreProcessingRequested);
         } else {
             //  Связь: visualizationService -> fileHandler
-            connect(m_visualizationService, &IVisualizationService::imagePreProcessingFinished,
+            connect(m_visualizationService, &VisualizationService::imagePreProcessingFinished,
                     fileHandler, &FileHandler::onImagePreProcessingFinished);
         }*/
     }

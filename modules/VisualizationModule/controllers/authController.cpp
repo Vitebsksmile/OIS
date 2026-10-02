@@ -29,7 +29,8 @@ void AuthController::setDbController(DbModelController *dbController)
 
 bool AuthController::existsByLogin(const QString &username)
 {
-    QAbstractTableModel *model = m_dbController->abstractTableModel("operators");
+    //QAbstractTableModel *model = m_visualization->dbController()
+    QAbstractTableModel *model = m_visualization->dbController()->abstractTableModel("operators");
     int columnCount = model->columnCount();
     while(columnCount) {
         QVariant header = model->headerData(columnCount, Qt::Horizontal);
@@ -47,31 +48,28 @@ bool AuthController::existsByLogin(const QString &username)
         }
         columnCount--;
     }
-    emit authFailed("Invalid username!");
+    emit authFailed("Incorrect username!");
     return false;
 }
 
-bool AuthController::authenticate(const QString &username, const QString &password)
+bool AuthController::login(const QString &username, const QString &password)
 {
-    QAbstractTableModel *model = m_dbController->abstractTableModel("operators");
-    int columnCount = model->columnCount();
-    if (columnCount == -1) { return false; }
-    if (!this->existsByLogin(username)) { return false; }
-    while(columnCount) {
-        QVariant header = model->headerData(columnCount, Qt::Horizontal);
-        if (header.toString() == "password") {
-            QModelIndex index = model->index(m_identificationRow, columnCount);
-            QVariant value = model->data(index);
-            if (value.toString() == password) {
-                emit authenticationSuccess();
-                m_isAuthorizated = true;
-                return true;
-            }
-        }
-        columnCount--;
+    m_authResult = m_visualization->dbService()->authenticate(username, password);
+    if (m_authResult.success) {
+        // Делаем что-то с данными, например, выводим в консоль
+        // qDebug()
+        //     << m_authResult.operatorId
+        //     << m_authResult.username
+        //     << m_authResult.fullName;
+
+        this->creatSession();
+        emit authenticationSuccess();
+        return true;
+    } else {
+        emit authFailed("Incorrect password!", m_authResult.error);
+        //"Registration failed!"
+        return false;
     }
-    emit authFailed("Invalid password!");
-    return false;
 }
 
 bool AuthController::isUsernameUnique(const QString &username)
@@ -101,14 +99,11 @@ bool AuthController::registerUser(const QString &username,
                                   const QString &fullName,
                                   const QString &password)
 {
-    Core::DbRecord record;
-
-    record.setValue("username", username);
-    record.setValue("full_name", fullName);
-    record.setValue("password", password);
-
-    Core::DbOperationResult result = m_visualization->dbService()->insertRecord("operators", record, "New user registration");
-
+    Core::DbOperationResult result = m_visualization->dbService()->creatUser(username,
+                                                                             password,
+                                                                             fullName,
+                                                                             "operator",
+                                                                             "New user registration");
     if (!result.success) {
         authFailed("Registration failed!", result.error);
         qCritical() << "AuthController: Registration failed!" + result.error;
@@ -119,56 +114,18 @@ bool AuthController::registerUser(const QString &username,
     }
 }
 
-bool AuthController::isAuthorizated()
+QString AuthController::operatorName() const
 {
-    return m_isAuthorizated;
+    return m_authResult.fullName;
 }
 
-QStandardItemModel *AuthController::registrationModel()
+bool AuthController::creatSession()
 {
-    QAbstractTableModel *model = m_dbController->abstractTableModel("operators");
-    int columnCount = model->columnCount();
-    QStringList headers;
-    QStandardItemModel *userRegistrationModel = new QStandardItemModel(this);
-    userRegistrationModel->setRowCount(columnCount - 1);
-    if (columnCount == -1) { return nullptr; }
-    for (int col = 1; col < columnCount; col++) {
-        QVariant header = model->headerData(col, Qt::Horizontal);
-        userRegistrationModel->setHeaderData(col - 1, Qt::Vertical, header, Qt::DisplayRole);
-        headers << header.toString();
-    }
-    userRegistrationModel->setColumnCount(1);
+    m_sessionContext = m_visualization->dbService()->creatSession(m_authResult);
 
-    // Заполняем модель тестовыми данными
-    for (int row = 0; row < headers.count(); row++) {
-        QModelIndex index = userRegistrationModel->index(row, 0);
-        if (headers[row].contains("username")) {
-            userRegistrationModel->setData(index, "Come up with a username", Qt::DisplayRole);
-        }
-        if (headers[row].contains("full_name")) {
-            userRegistrationModel->setData(index, "Enter your full name", Qt::DisplayRole);
-        }
-        if (headers[row].contains("password")) {
-            userRegistrationModel->setData(index, "Create a password", Qt::DisplayRole);
-        }
-    }
+    m_sessionContext.sessionId = m_authResult.operatorId;
+    m_sessionContext.username = m_authResult.username;
+    m_sessionContext.fullName = m_authResult.fullName;
 
-    return userRegistrationModel;
-}
-
-ListModel* AuthController::userRegistrationModel()
-{
-    QAbstractTableModel *model = m_dbController->abstractTableModel("operators");
-    int columnCount = model->columnCount();
-
-    if (columnCount == -1) { return nullptr; }
-
-    ListModel *userRegistrationModel = new ListModel(this);
-
-    for (int col = 1; col < columnCount; col++) {
-        QVariant header = model->headerData(columnCount, Qt::Horizontal);
-        userRegistrationModel->appendRow(header.toString());
-    }
-
-    return userRegistrationModel;
+    return true;
 }

@@ -23,9 +23,9 @@ public slots:
     void stopCapture();
 
 signals:
-    void imageFrameReady(const QImage imageFrame);
-    void cvFrameReady(const cv::Mat &cvFrame);
-    void frameReady(const CVFrameBuffer &frame);
+    void rawCVFrameReady(const cv::Mat &cvFrame);
+    void rawImageFrameReady(const QImage imageFrame);
+    void customFrameReady(const CVFrameBuffer &frame);
 
 private slots:
     void processFrame();

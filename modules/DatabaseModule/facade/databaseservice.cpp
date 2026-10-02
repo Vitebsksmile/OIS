@@ -8,6 +8,8 @@
 #include <QNetworkInterface>
 #include <QFile>
 #include <QTextStream>
+#include <QRandomGenerator>
+#include <QCryptographicHash>
 
 DatabaseService::DatabaseService(QObject *parent)
     : IDatabaseService(parent)
@@ -84,7 +86,7 @@ bool DatabaseService::logNewDefect(int boardId,
     // Защитная проверка: существует ли вообще такой typeId в справочнике ГОСТ?
     // Это предотвратит падение базы, если алгоритм обработки изображений пришлет некорректный ID дефекта.
     QSqlQuery checkQuery(db);
-    checkQuery.prepare("SELECT 1 FROM defect_types WHERE defect_type_id = :id");
+    checkQuery.prepare("SELECT 1 FROM defect_types WHERE defect_type_id = :id LIMIT 1");
     checkQuery.bindValue(":id", typeId);
     if (!checkQuery.exec() || !checkQuery.next()) {
         qCritical()
@@ -161,36 +163,18 @@ bool DatabaseService::logNewDefect(int boardId,
 //     return true;
 // }
 
-Core::DbOperationResult DatabaseService::insertRecord(const QString &tableName,
-                                                      const Core::DbRecord &record,
-                                                      const QString &message)
+const Core::AuthResult DatabaseService::authenticate(const QString &username,
+                                                     const QString &password,
+                                                     const QString &message)
 {
-    Core::DbOperationResult result;
-
-    if (tableName.isEmpty() || record.isEmpty()) {
-        result.error = "Invalid database operation";
-        result.success = false;
-        return result;
-    }
-
-    //  проверить существование такой таблицы
-    //  проверить FK, если требуется
-
-    //  Реализовать метод keys() в Core::DbRecord!!!!!!!
-    //  чтобы избавиться от следующей строки: QVariantMap << QVariantMap
-    const QVariantMap &values = record.values();
-    QStringList fields = values.keys();
-    QStringList placeholders;
-
-    for (const QString &field : fields) { placeholders << ":" + field; }
+    Core::AuthResult result;
+    QString tableName = "operators";
 
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
-
-    const QString sql = QString("INSERT INTO %1 (%2) VALUES (%3)")
-                            .arg(tableName,
-                                 fields.join(", "),
-                                 placeholders.join(", "));
+    QString sql = QString("SELECT * FROM %1 WHERE username = %2 LIMIT 1")
+                      .arg(tableName,
+                           ":username");
 
     if (!query.prepare(sql)) {
         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
@@ -199,14 +183,11 @@ Core::DbOperationResult DatabaseService::insertRecord(const QString &tableName,
             << "DatabaseService: prepare INSERT failed:"
             << result.error;
         result.success = false;
-        //emit dbExecutionError(error);
 
         return result;
     }
 
-    for (const QString &field : fields) {
-        query.bindValue(":" + field, values.value(field));
-    }
+    query.bindValue(":username", username);
 
     if (!query.exec()) {
         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
@@ -215,15 +196,176 @@ Core::DbOperationResult DatabaseService::insertRecord(const QString &tableName,
             << "DatabaseService: INSERT failed:"
             << result.error;
         result.success = false;
-        //emit dbExecutionError(error);
 
         return result;
     }
 
-    //  emit apdateModel(tableName);
-    result.success = true;
+    // Читаем результаты
+    while (query.next()) {
+        QString storedHash = query.value("password_hash").toString();
+        QString salt = query.value("salt").toString();
+
+        // 2. Хэшируем введенный пароль с солью из БД (используем SHA-256)
+        QByteArray inputData = (password + salt).toUtf8();
+        QByteArray calculatedHash = QCryptographicHash::hash(inputData, QCryptographicHash::Sha256).toHex();
+
+        if (!(storedHash == calculatedHash)) {
+            result.success = false;
+            result.error = "Incorrect password";
+            qWarning()
+                << "DatabaseService: Log in to the app:"
+                << result.error;
+
+            return result;
+        }
+
+        result.operatorId = query.value("operator_id").toInt();
+        result.username = query.value("username").toString();
+        result.fullName = query.value("full_name").toString();
+        result.success = true;
+    }
+
     return result;
 }
+
+const Core::DbOperationResult DatabaseService::creatUser(const QString &username,
+                                                         const QString &password,
+                                                         const QString &fullName,
+                                                         const QString &jobTitle,
+                                                         const QString &message)
+{
+    if (password.isEmpty()) {
+        QString userMessage = QString("Не удалось выполнить операцию: %1.\n\n").arg(message);
+        Core::DbOperationResult result;
+        result.error = "Password is empty!";
+        return result;
+    }
+    // Генерация случайной соли (например, 16 символов)
+    QString salt = QString::number(QRandomGenerator::global()->generate64(), 36);
+    // Создание хэша
+    QByteArray hashPassword = QCryptographicHash::hash((password + salt).toUtf8(),
+                                                       QCryptographicHash::Sha256).toHex();
+
+    Core::DbRecord record;
+    record.insert("username", username);
+    record.insert("full_name", fullName);
+    record.insert("password_hash", hashPassword);
+    record.insert("salt", salt);
+
+    Core::DbOperationResult result = this->insertRecord("operators", record, message);
+
+    return result;
+}
+
+const Core::DbOperationResult DatabaseService::creatCamera(const QString &address,
+                                                           const QString &message)
+{
+    Core::DbRecord record;
+
+    Core::DbOperationResult result = insertRecord("cameras", record, message);
+
+    return result;
+}
+
+const Core::SessionContext DatabaseService::creatSession(Core::AuthResult authResult)
+{
+    QString tableName = "sessions";
+    Core::SessionContext context;
+
+    // QList<QList<QString>> foreignList = findForeignTable(tableName);
+    // if (!foreignList.isEmpty()) {
+    //     qDebug()
+    //         << "DatabaseService: foreign keys found";
+    //     for (QList foreignTemp : foreignList) {
+    //         if (!foreignTemp.isEmpty())
+    //         for (QString temp : foreignTemp) {
+    //             qDebug() << temp;
+    //         }
+    //         qDebug() << "|||";
+    //     }
+    // } else {
+    //     qDebug() << "DatabaseService: foreign keys not found";
+    // }
+
+    QString macAddress = currentMacAddress();
+    int computerId = this->currentComputerId(macAddress);
+
+    Core::DbRecord record;
+    QDateTime startedAt = QDateTime::currentDateTime();
+    record.insert("operator_id", authResult.operatorId);
+    record.insert("computer_id", computerId);
+    record.insert("started_at", startedAt);
+
+    Core::DbOperationResult operationResult = insertRecord(tableName, record, "Creat session");
+    context.active = operationResult.success;
+    context.context = operationResult.error;
+    context.operatorId = authResult.operatorId;
+    context.username = authResult.username;
+    context.fullName = authResult.fullName;
+    context.sessionId = operationResult.insertedId;
+
+    return context;
+}
+
+// const Core::DbOperationResult DatabaseService::findRecord(const QString &tableName,
+//                                                           const Core::DbRecord &record,
+//                                                           const QString &message)
+// {
+//     Core::DbOperationResult result;
+
+//     if (tableName.isEmpty() || record.isEmpty()) {
+//         result.error = "Invalid database operation";
+//         result.success = false;
+//         return result;
+//     }
+
+//     //  проверить существование такой таблицы
+//     //  проверить FK, если требуется
+
+//     //  Реализовать метод keys() в Core::DbRecord!!!!!!!
+//     //  чтобы избавиться от следующей строки: QVariantMap << QVariantMap
+//     const QVariantMap &values = record.values();
+//     QStringList fields = values.keys();
+//     QStringList placeholders;
+
+//     for (const QString &field : fields) { placeholders << ":" + field; }
+
+//     QSqlDatabase db = QSqlDatabase::database();
+//     QSqlQuery query(db);
+
+//     const QString sql = QString("SELECT * FROM %1 WHERE %2 LIMIT 1")
+//                             .arg(placeholders.join(" AND "),
+//                                  tableName);
+
+//     if (!query.prepare(sql)) {
+//         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+//         result.error = errorDetails;
+//         qWarning()
+//             << "DatabaseService: prepare SELECT failed:"
+//             << result.error;
+//         result.success = false;
+
+//         return result;
+//     }
+
+//     for (const QString &field : fields) {
+//         query.bindValue(":" + field, values.value(field));
+//     }
+
+//     if (!query.exec()) {
+//         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+//         result.error = query.lastError().text();
+//         qWarning()
+//             << "DatabaseService: SELECT failed:"
+//             << result.error;
+//         result.success = false;
+
+//         return result;
+//     }
+
+//     result.success = true;
+//     return result;
+// }
 
 const QStringList DatabaseService::availableTables() const
 {
@@ -297,8 +439,10 @@ bool DatabaseService::creatTables()
     QString createOperators = "CREATE TABLE IF NOT EXISTS operators ("
                               "operator_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                               "username TEXT NOT NULL UNIQUE, "
-                              "full_name TEXT NOT NULL, "
-                              "password TEXT NOT NULL"
+                              "full_name TEXT NOT NULL UNIQUE, "
+                              //"password TEXT NOT NULL, "
+                              "password_hash TEXT NOT NULL, "
+                              "salt TEXT NOT NULL"
                               ");";
 
     if (!query.exec(createOperators))
@@ -332,8 +476,8 @@ bool DatabaseService::creatTables()
 
     //  Sessions tables
     QString createSession = "CREATE TABLE IF NOT EXISTS sessions ("
-                            "sessions_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                            "operator_id INTEGER NOT NULL, "
+                            "session_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                            "operator_id TEXT NOT NULL, "
                             "computer_id TEXT NOT NULL, "
                             "started_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
                             "finished_at DATETIME, "
@@ -456,12 +600,23 @@ bool DatabaseService::insertDefaultDataIfNeeded()
     //  Check for and add an default administrator if the table is empty
     query.exec("SELECT COUNT(*) FROM operators");
     if (query.next() && query.value(0).toInt() == 0) {
-        query.prepare("INSERT INTO operators (username, full_name, password)"
-                      "VALUES (:user, :name, :password)");
+        query.prepare("INSERT INTO operators (username, full_name, password_hash, salt)"
+                      "VALUES (:user, :name, :hash, :salt)");
 
-        query.bindValue(":user", "admin");
-        query.bindValue(":name", "default_full_name");
-        query.bindValue(":password", "admin");
+        QString defoltUsername = "admin";
+        QString defoltFullName = "default_full_name";
+        QString defoltPassword = "admin";
+        // Генерация случайной соли (например, 16 символов)
+        QString salt = QString::number(QRandomGenerator::global()->generate64(), 36);
+
+        // Создание хэша
+        QByteArray hashPassword = QCryptographicHash::hash((defoltPassword + salt).toUtf8(),
+                                                           QCryptographicHash::Sha256).toHex();
+
+        query.bindValue(":user", defoltUsername);
+        query.bindValue(":name", defoltFullName);
+        query.bindValue(":hash", hashPassword);
+        query.bindValue(":salt", salt);
 
         if (query.exec()) {
             qInfo() << "DatabaseService: Add default operators 'admin'";
@@ -508,21 +663,7 @@ bool DatabaseService::insertDefaultDataIfNeeded()
             QString osPrettyName = QSysInfo::prettyProductName();
 
             //  Получение физического (MAC) адреса активной сетевой карты
-            QString macAddress = "Not found";
-            const auto interfaces = QNetworkInterface::allInterfaces();
-            for (const QNetworkInterface &interface : interfaces) {
-                // Отсекаем петлевой интерфейс (localhost) и неактивные карты
-                if (interface.flags().testFlag(QNetworkInterface::IsLoopBack) ||
-                    !interface.flags().testFlag(QNetworkInterface::IsUp)) {
-                    continue;
-                }
-
-                QString hardwareAddress = interface.hardwareAddress();
-                if (!hardwareAddress.isEmpty()) {
-                    macAddress = hardwareAddress;
-                    break; // Берем первый попавшийся активный физический адрес
-                }
-            }
+            QString macAddress = currentMacAddress();
 
             QSqlQuery insertQuery;
             insertQuery.prepare("INSERT INTO computers (computer_name, os_info, mac_address)"
@@ -547,6 +688,71 @@ bool DatabaseService::insertDefaultDataIfNeeded()
     }
 
     return true;
+}
+
+const Core::DbOperationResult DatabaseService::insertRecord(const QString &tableName,
+                                                            const Core::DbRecord &record,
+                                                            const QString &message)
+{
+    Core::DbOperationResult result;
+
+    if (tableName.isEmpty() || record.isEmpty()) {
+        result.error = "Invalid database operation";
+        result.success = false;
+        return result;
+    }
+
+    //  проверить существование такой таблицы
+    //  проверить FK, если требуется
+
+    //  Реализовать метод keys() в Core::DbRecord!!!!!!!
+    //  чтобы избавиться от следующей строки: QVariantMap << QVariantMap
+    const QVariantMap &values = record.values();
+    QStringList fields = values.keys();
+    QStringList placeholders;
+
+    for (const QString &field : fields) { placeholders << ":" + field; }
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+
+    const QString sql = QString("INSERT INTO %1 (%2) VALUES (%3)")
+                            .arg(tableName,
+                                 fields.join(", "),
+                                 placeholders.join(", "));
+
+    if (!query.prepare(sql)) {
+        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        result.error = errorDetails;
+        qWarning()
+            << "DatabaseService: prepare INSERT failed:"
+            << result.error;
+        result.success = false;
+        //emit dbExecutionError(error);
+
+        return result;
+    }
+
+    for (const QString &field : fields) {
+        query.bindValue(":" + field, values.value(field));
+    }
+
+    if (!query.exec()) {
+        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        result.error = query.lastError().text();
+        qWarning()
+            << "DatabaseService: INSERT failed:"
+            << result.error;
+        result.success = false;
+        //emit dbExecutionError(error);
+
+        return result;
+    }
+
+    //  emit apdateModel(tableName);
+    result.success = true;
+    result.insertedId = query.lastInsertId().toInt();
+    return result;
 }
 
 bool DatabaseService::creatModel(const QString &nameTable)
@@ -611,6 +817,89 @@ bool DatabaseService::populateModelsMap()
     return true;
 }
 
+const QList<QList<QString>> DatabaseService::findForeignTable(const QString tableName)
+{
+    QList<QList<QString>> result;
+    QMap<QString, QMap<QString, QVariant>> resultMap;
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+    QString sql = QString("PRAGMA foreign_key_list(%1);").arg(tableName);
+    query.prepare(sql);
+    if (!query.exec()) {
+        qCritical()
+            << "DatabaseService: prepare PRAGMA foreign_key_list failed:"
+            << query.lastError().text();
+    }
+
+    while (query.next()) {
+        QList<QString> temp;
+        temp << query.value("table").toString();
+        temp << query.value("from").toString();
+        temp << query.value("to").toString();
+
+        result.append(temp);
+    }
+
+    return result;
+}
+
+int DatabaseService::findId(const QString &tableName,
+                            const QString &field)
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+    QString sql = QString("SELECT %1 FROM %2 LIMIT 1")
+                      .arg(field, tableName);
+    query.prepare(sql);
+
+    if (!query.exec()) {
+        qCritical()
+            << "DatabaseService: prepare SELECT failed:"
+            << query.lastError().text();
+    }
+    int result = -1;
+    while (query.next()) {
+        result = query.value(field).toInt();
+    }
+    return result;
+}
+
+int DatabaseService::currentComputerId(const QString &macAddress)
+{
+    int computerId = -1;
+
+    QSqlDatabase db;
+    QSqlQuery query(db);
+
+    QString sql = "SELECT computer_id FROM computers WHERE mac_address = :mac_address LIMIT 1";
+
+    if (!query.prepare(sql)) {
+        qCritical()
+            << "DatabaseService: prepare SELECT failed:"
+            << query.lastError().text();
+    }
+
+    query.bindValue(":mac_address", macAddress);
+
+    if (!query.exec()) {
+        qCritical()
+            << "DatabaseService: prepare SELECT failed:"
+            << query.lastError().text();
+        return computerId;
+    }
+
+    if (!query.next()) {
+        qCritical()
+            << "DatabaseService: SELECT failed:"
+            << query.lastError().text();
+        return computerId;
+    }
+
+    computerId = query.value(0).toInt();
+    return computerId;
+}
+
 QString DatabaseService::handleDatabaseError(const QSqlError &error,
                                              const QString &contextAction)
 {
@@ -639,6 +928,27 @@ QString DatabaseService::handleDatabaseError(const QSqlError &error,
     }
 
     return userMessage;
+}
+
+const QString DatabaseService::currentMacAddress() const
+{
+    //  Получение физического (MAC) адреса активной сетевой карты
+    QString macAddress = "Not found";
+    const auto interfaces = QNetworkInterface::allInterfaces();
+    for (const QNetworkInterface &interface : interfaces) {
+        // Отсекаем петлевой интерфейс (localhost) и неактивные карты
+        if (interface.flags().testFlag(QNetworkInterface::IsLoopBack) ||
+            !interface.flags().testFlag(QNetworkInterface::IsUp)) {
+            continue;
+        }
+
+        QString hardwareAddress = interface.hardwareAddress();
+        if (!hardwareAddress.isEmpty()) {
+            macAddress = hardwareAddress;
+            break; // Берем первый попавшийся активный физический адрес
+        }
+    }
+    return macAddress;
 }
 
 QDir DatabaseService::dir()

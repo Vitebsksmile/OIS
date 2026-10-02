@@ -16,14 +16,14 @@ CameraManagerService::CameraManagerService(QObject* parent)
     connect(&m_workerThread, &QThread::finished
             , m_worker, &QObject::deleteLater);
 
-    connect(m_worker, &VideoCaptureWorker::imageFrameReady
-            , this, &CameraManagerService::onImageFrameReady);
+    connect(m_worker, &VideoCaptureWorker::rawCVFrameReady
+            , this, &CameraManagerService::onRawCVFrameReady);
 
-    connect(m_worker, &VideoCaptureWorker::cvFrameReady
-            , this, &CameraManagerService::onCVFrameReady);
+    connect(m_worker, &VideoCaptureWorker::rawImageFrameReady
+            , this, &CameraManagerService::onRawImageFrameReady);
 
-    connect (m_worker, &VideoCaptureWorker::frameReady
-            , this, &CameraManagerService::onFrameReady);
+    connect (m_worker, &VideoCaptureWorker::customFrameReady
+            , this, &CameraManagerService::onCustomFrameReady);
 
     m_workerThread.start();
 
@@ -54,22 +54,23 @@ CameraManagerService::~CameraManagerService()
 // }
 
 //  SLOT VideoCaptureWorker -> this
-void CameraManagerService::onImageFrameReady(const QImage imageFrame)
+void CameraManagerService::onRawCVFrameReady(const cv::Mat &cvFrame)
 {
-    //  this -> VisualizationService
-    emit imageFrameReady(imageFrame);
+    //  this -> ImageProcessingService
+    //emit rawCVFrameReady(cvFrame.clone());
+    emit rawCVFrameReady(cvFrame);
 }
 
 //  VideoCaptureWorker -> this
-void CameraManagerService::onCVFrameReady(const cv::Mat &cvFrame)
+void CameraManagerService::onRawImageFrameReady(const QImage &frame)
 {
-    //  this -> ImageProcessingService
-    emit cvFrameReady(cvFrame.clone());
+    //  this -> VisualizationService
+    emit rawImageFrameReady(frame);
 }
 
-void CameraManagerService::onFrameReady(const CVFrameBuffer &frame)
+void CameraManagerService::onCustomFrameReady(const CVFrameBuffer &frame)
 {
-
+    //----------------------
 }
 
 void CameraManagerService::startStream()

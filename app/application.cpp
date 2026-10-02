@@ -95,6 +95,14 @@ bool Application::modulesIntegration()
         flag = false;
     }
 
+    if (m_imageProcessingService->setCamService(m_cameraManagerService.get())) {
+        qDebug() << "Application: DatabaseService object has been successfuly passed to ImageProcessingService";
+        flag = true;
+    } else {
+        qCritical() << "WARNING! Application: Passing the DatabaseService object to ImageProcessingService failed!";
+        flag = false;
+    }
+
     if (flag) {
         return true;
     } else {
@@ -126,14 +134,9 @@ void Application::setupConnections()
     if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
     //  Связь: CameraManagerModule -> VisualizationModule
-    ok = connect(m_cameraManagerService.get(), &ICameraManagerService::imageFrameReady,
-                 m_visualizationService.get(), &IVisualizationService::onImageFrameReady);
-    if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between CameraManagerModule -> VisualizationModule";
-
-    //  CameraManagerModule -> ImageProcessingModule
-    ok = connect(m_cameraManagerService.get(), &ICameraManagerService::cvFrameReady
-                 , m_imageProcessingService.get(), &IImageProcessingService::onCVFrameReady);
-    if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between CameraManagerModule -> ImageProcessingModule";
+    // ok = connect(m_cameraManagerService.get(), &ICameraManagerService::imageFrameReady,
+    //              m_visualizationService.get(), &IVisualizationService::onImageFrameReady);
+    // if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between CameraManagerModule -> VisualizationModule";
 }
 
 

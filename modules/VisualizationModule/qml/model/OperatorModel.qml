@@ -10,7 +10,7 @@ QtObject {
 
     //  --- Данные статуса оператора ---
     property string currentStatus: "РАБОТА"
-    property string operatorName: "Иванов И.И."
+    property string operatorName: AuthController.operatorName
 
     //Метрики эффективности (KPI) ---
     property string fpyValue: "98.4 %"

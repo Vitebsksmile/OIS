@@ -1,12 +1,10 @@
 #include "processmanager.h"
 #include <QDebug>
-#include "IImageProcessingService.h"
+#include "ImageProcessingService.h"
 #include "imagepreprocessing.h"
 
 
-ProcessManager::ProcessManager(
-    IImageProcessingService *imageProcessingService
-    , QObject *parent)
+ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, QObject *parent)
     : QObject(parent)
     , m_imageProcessingService(imageProcessingService)
 {
@@ -21,28 +19,28 @@ ProcessManager::ProcessManager(
         << parent;
 
     //  Слушает фасад для старта предобработки
-    connect(m_imageProcessingService, &IImageProcessingService::imagePreProcessingRequested,
+    connect(m_imageProcessingService, &ImageProcessingService::imagePreProcessingRequested,
             this, &ProcessManager::onImagePreProcessingRequested);
 
     //  To Facade for QML about Start
     connect(this, &ProcessManager::preProcessingStartNotification,
-            m_imageProcessingService, &IImageProcessingService::onPreProcessingStartNotification);
+            m_imageProcessingService, &ImageProcessingService::onPreProcessingStartNotification);
 
     //  To Facade fot QML about Finished
     connect(this, &ProcessManager::preProcessingFinished,
-            m_imageProcessingService, &IImageProcessingService::onPreProcessingFinished);
+            m_imageProcessingService, &ImageProcessingService::onPreProcessingFinished);
 
     //  The facade listens for the appearance of a frame
-    connect(m_imageProcessingService, &IImageProcessingService::processFrame
+    connect(m_imageProcessingService, &ImageProcessingService::processFrame
             , this, &ProcessManager::onProcessFrame);
 
     //  this -> ImageProcessingService
-    connect(this, &ProcessManager::frameReady
-            , m_imageProcessingService, &IImageProcessingService::onFrameReady);
+    connect(this, &ProcessManager::processedFrameReady
+            , m_imageProcessingService, &ImageProcessingService::onProcessedFrameReady);
 
     //  this -> ImageProcessingService
     connect(this, &ProcessManager::frameWithBoxesReady
-            , m_imageProcessingService, &IImageProcessingService::onFrameWithBoxesReady);
+            , m_imageProcessingService, &ImageProcessingService::onFrameWithBoxesReady);
 }
 
 
@@ -77,7 +75,7 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
 
     m_processing = std::make_unique<FrameProcessing>(localFrame);
     m_processing->toGray().gaussianBlur(1).toBinary();
-    emit frameReady(this->matToQImage(m_processing->cvFrame()));
+    emit processedFrameReady(this->matToQImage(m_processing->cvFrame()));
 
     m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
     m_finder->findObjects();

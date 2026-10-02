@@ -30,13 +30,13 @@ public slots:
 signals:
     //void frameReady(const OIS::Core::Frame &frame);
 
-    //  this -> VisualizationService
-    void imageFrameReady(const QImage frame);
-
     //  this -> ImageProcessingService
-    void cvFrameReady(const cv::Mat &frame);
+    void rawCVFrameReady(const cv::Mat &frame);
 
-    void frameReady(const IFrameBuffer &frame);
+    //  this -> VisualizationService
+    void rawImageFrameReady(const QImage &frame);
+
+    void customFrameReady(const IFrameBuffer &frame);
 };
 
 //  Factory method

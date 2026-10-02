@@ -248,16 +248,19 @@ Page {
 
                             Layout.minimumWidth: 200
                             Layout.minimumHeight: 200
+
+                            frameSource: "camera"
                         }
 
-                        //  Предобработанные кадры
-                        ProcessingView {
+                        LifeView {
                             id: processingView
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
                             Layout.minimumWidth: 200
                             Layout.minimumHeight: 200
+
+                            frameSource: "object"
                         }
                     }
 
