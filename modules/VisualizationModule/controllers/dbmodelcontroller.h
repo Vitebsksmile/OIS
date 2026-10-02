@@ -21,7 +21,7 @@ class DbModelController : public QObject
     static DbModelController *s_instance;
 
 public:
-    explicit DbModelController(VisualizationService *visualization,
+    explicit DbModelController(VisualizationService *service,
                                QObject *parent = nullptr);
 
     static DbModelController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
@@ -33,7 +33,7 @@ public:
     QAbstractTableModel* getAbstractTableModel(const QString &tableName);
 
 private:
-    VisualizationService *m_visualization = nullptr;
+    VisualizationService *m_service = nullptr;
     IDatabaseService *m_dbService = nullptr;
 
     QHash<QString, QPointer<QAbstractTableModel>> m_abstractModelsMap{};

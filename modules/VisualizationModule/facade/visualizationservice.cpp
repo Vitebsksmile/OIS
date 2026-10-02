@@ -11,18 +11,20 @@
 #include <QtQml/qqml.h>
 #include <QImage>
 #include "authController.h"
+#include "sessioncontroller.h"
 #include "filehandlerController.h"
 #include "dbmodelcontroller.h"
 #include "videostreamcontroller.h"
 
 VisualizationService::VisualizationService(QObject *parent)
     : IVisualizationService(parent)
-    , m_auth(new AuthController(this, this))
-    , m_fileHandlerManager(new FileHandlerController(this, this))
+    , m_authController(new AuthController(this, this))
+    , m_sessController(new SessionController(this, this))
+    , m_fileHandlerController(new FileHandlerController(this, this))
     , m_dbController(new DbModelController(this, this))
     , m_videoController(new VideoStreamController(this, this))
 {
-    m_auth->setDbController(m_dbController);
+    m_authController->setDbController(m_dbController);
     qDebug()
         << "VisualizationService: VisualizationService object created. Parent: "
         << parent;

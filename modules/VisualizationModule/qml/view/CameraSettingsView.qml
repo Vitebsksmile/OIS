@@ -41,7 +41,7 @@ Rectangle {
         Label {
             Layout.preferredHeight: implicitHeight
             Layout.alignment: Qt.AlignVCenter
-            text: "Camera Settings"
+            text: qsTr("Camera Settings")
             font.pixelSize: 22
             font.bold: true
         }
@@ -55,7 +55,7 @@ Rectangle {
                 id: connectButton
                 Layout.preferredWidth: 180
                 Layout.alignment: Qt.AlignVCenter
-                text: "Connect the camera"
+                text: qsTr("Connect a new camera")
                 onClicked: {
                     mainLoader.active = true
                 }

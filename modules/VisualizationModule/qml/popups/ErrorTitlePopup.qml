@@ -8,6 +8,9 @@ Popup {
     property string errorDetails: ""
     property string message: "" //  Свое свойство для текста ошибки или успеха
 
+    //  Закроется, если нажать Esc (нужен focus: true) или кликнуть мимо
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
     //  Центрируем по горизонтали и поднимаем на 100 пикселей от низа
     x: (parent.width - width) / 2
     y: parent.height - 100
@@ -29,9 +32,6 @@ Popup {
         id: errorDetails
         errorDetails: root.errorDetails
     }
-
-    //  Закроется, если нажать Esc (нужен focus: true) или кликнуть мимо
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     contentItem: Column {
         anchors.centerIn: parent

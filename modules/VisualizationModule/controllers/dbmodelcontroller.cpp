@@ -2,9 +2,9 @@
 
 DbModelController* DbModelController::s_instance = nullptr;
 
-DbModelController::DbModelController(VisualizationService *visualization,
+DbModelController::DbModelController(VisualizationService *service,
                                      QObject *parent)
-    : m_visualization(visualization)
+    : m_service(service)
     , QObject(parent)
 {
     s_instance = this;
@@ -15,7 +15,7 @@ DbModelController::DbModelController(VisualizationService *visualization,
         << "DbModelController: DbModelController object created. Parent: "
         << parent;
 
-    if (!m_visualization) {
+    if (!m_service) {
         qWarning()
             << "WARNING! DbModelController: DbModelController object created without reference to facade";
     }
@@ -29,7 +29,7 @@ QAbstractTableModel* DbModelController::abstractTableModel(const QString &tableN
     }
     qDebug() << "DbModelController: The model does not yet exists";
     //QAbstractTableModel *abstractModelsMap = m_dbService->abstractTableModel(tableName);    //  ---
-    QAbstractTableModel *abstractModel = m_visualization->dbService()->abstractTableModel(tableName);
+    QAbstractTableModel *abstractModel = m_service->dbService()->abstractTableModel(tableName);
     //m_abstractModelsMap.insert(tableName, abstractModelsMap);   //  ---
     m_abstractModelsMap.insert(tableName, abstractModel);
     return m_abstractModelsMap.value(tableName);
@@ -108,7 +108,7 @@ QAbstractTableModel *DbModelController::getAbstractTableModel(const QString &tab
     }
     qDebug() << "DbModelController: The model does not yet exists";
     //QAbstractTableModel *abstractModelsMap = m_dbService->abstractTableModel(tableName);    //  ---
-    QAbstractTableModel *abstractModel = m_visualization->dbService()->abstractTableModel(tableName);
+    QAbstractTableModel *abstractModel = m_service->dbService()->abstractTableModel(tableName);
     //m_abstractModelsMap.insert(tableName, abstractModelsMap);   //  ---
     m_abstractModelsMap.insert(tableName, abstractModel);
     return m_abstractModelsMap.value(tableName);

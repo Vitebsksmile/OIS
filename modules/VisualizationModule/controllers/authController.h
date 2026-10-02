@@ -25,7 +25,7 @@ class AuthController : public QObject
     static AuthController *s_instance;
 
 public:
-    explicit AuthController(VisualizationService *visualization,
+    explicit AuthController(VisualizationService *service,
                             QObject *parent = nullptr);
 
     static AuthController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
@@ -35,7 +35,7 @@ public:
     Q_INVOKABLE bool existsByLogin(const QString &username);
 
     Q_INVOKABLE bool login(const QString &username,
-               const QString &password);
+                           const QString &password);
 
 
 
@@ -51,7 +51,8 @@ signals:
     void identificationSuccess();
     void authenticationSuccess();
     void authorization();
-    void authFailed(const QString &errorTitle, const QString &errorDetails = "");
+    void authFailed(const QString &errorTitle,
+                    const QString &errorDetails = "");
     //void registrationModelReady();
     void statusChanged();
 
@@ -60,7 +61,7 @@ private slots:
 
 private:
     bool creatSession();
-    VisualizationService *m_visualization = nullptr;
+    VisualizationService *m_service = nullptr;
 
     DbModelController *m_dbController = nullptr;
     int m_identificationRow = -1;

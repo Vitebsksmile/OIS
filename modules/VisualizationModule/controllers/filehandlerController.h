@@ -24,7 +24,7 @@ class FileHandlerController : public QObject
     static FileHandlerController* s_instance;
 
 public:
-    explicit FileHandlerController(VisualizationService* visualization,
+    explicit FileHandlerController(VisualizationService* service,
                                 QObject* parent = nullptr);
 
     static FileHandlerController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
@@ -35,7 +35,7 @@ signals:
     void operatorsModelChanged();
 
 private:
-    VisualizationService* m_visualization = nullptr;
+    VisualizationService* m_service = nullptr;
 
     QList<QPointer<FileHandler>> m_fileHandlers;
 

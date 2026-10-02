@@ -3,10 +3,10 @@
 
 FileHandlerController* FileHandlerController::s_instance = nullptr;
 
-FileHandlerController::FileHandlerController(VisualizationService* visualization,
+FileHandlerController::FileHandlerController(VisualizationService* service,
                                        QObject *parent)
     : QObject(parent)
-    , m_visualization(visualization)
+    , m_service(service)
 {
     s_instance = this;
 
@@ -16,7 +16,7 @@ FileHandlerController::FileHandlerController(VisualizationService* visualization
         << "FileHandlerManager: FileHandlerManager object created. Parent: "
         << parent;
 
-    if (!m_visualization) {
+    if (!m_service) {
         qWarning()
             << "WARNING! FileHandlerManager: FileHandlerManager object created without reference to facade";
     }
@@ -38,10 +38,10 @@ void FileHandlerController::registerFileHandler(FileHandler *fileHandler)
 
         //  Связь: fileHandler -> visualizationService
         connect(fileHandler, &FileHandler::imagePreProcessingRequested,
-                m_visualization, &VisualizationService::onImagePreProcessingRequested);
+                m_service, &VisualizationService::onImagePreProcessingRequested);
 
         //  Связь: visualizationService -> fileHandler
-        connect(m_visualization, &VisualizationService::imagePreProcessingFinished,
+        connect(m_service, &VisualizationService::imagePreProcessingFinished,
                 fileHandler, &FileHandler::onImagePreProcessingFinished);
 
         /*if (fileHandler->directionOut())

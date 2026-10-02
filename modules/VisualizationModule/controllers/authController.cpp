@@ -3,9 +3,9 @@
 
 AuthController* AuthController::s_instance = nullptr;
 
-AuthController::AuthController(VisualizationService *visualization,
+AuthController::AuthController(VisualizationService *service,
                                QObject *parent)
-    : m_visualization(visualization)
+    : m_service(service)
     , QObject(parent)
 {
     s_instance = this;
@@ -16,7 +16,7 @@ AuthController::AuthController(VisualizationService *visualization,
         << "AuthController: AuthController object created. Parent: "
         << parent;
 
-    if (!m_visualization) {
+    if (!m_service) {
         qWarning()
             << "WARNING! AuthController: AuthController object created without reference to facade";
     }
@@ -29,8 +29,8 @@ void AuthController::setDbController(DbModelController *dbController)
 
 bool AuthController::existsByLogin(const QString &username)
 {
-    //QAbstractTableModel *model = m_visualization->dbController()
-    QAbstractTableModel *model = m_visualization->dbController()->abstractTableModel("operators");
+    //QAbstractTableModel *model = m_serviceModule->dbController()
+    QAbstractTableModel *model = m_service->dbController()->abstractTableModel("operators");
     int columnCount = model->columnCount();
     while(columnCount) {
         QVariant header = model->headerData(columnCount, Qt::Horizontal);
@@ -54,20 +54,13 @@ bool AuthController::existsByLogin(const QString &username)
 
 bool AuthController::login(const QString &username, const QString &password)
 {
-    m_authResult = m_visualization->dbService()->authenticate(username, password);
+    m_authResult = m_service->dbService()->authenticate(username, password);
     if (m_authResult.success) {
-        // Делаем что-то с данными, например, выводим в консоль
-        // qDebug()
-        //     << m_authResult.operatorId
-        //     << m_authResult.username
-        //     << m_authResult.fullName;
-
         this->creatSession();
         emit authenticationSuccess();
         return true;
     } else {
         emit authFailed("Incorrect password!", m_authResult.error);
-        //"Registration failed!"
         return false;
     }
 }
@@ -99,11 +92,11 @@ bool AuthController::registerUser(const QString &username,
                                   const QString &fullName,
                                   const QString &password)
 {
-    Core::DbOperationResult result = m_visualization->dbService()->creatUser(username,
-                                                                             password,
-                                                                             fullName,
-                                                                             "operator",
-                                                                             "New user registration");
+    Core::DbOperationResult result = m_service->dbService()->creatUser(username,
+                                                                       password,
+                                                                       fullName,
+                                                                       "operator",
+                                                                       "New user registration");
     if (!result.success) {
         authFailed("Registration failed!", result.error);
         qCritical() << "AuthController: Registration failed!" + result.error;
@@ -121,7 +114,7 @@ QString AuthController::operatorName() const
 
 bool AuthController::creatSession()
 {
-    m_sessionContext = m_visualization->dbService()->creatSession(m_authResult);
+    m_sessionContext = m_service->dbService()->creatSession(m_authResult);
 
     m_sessionContext.sessionId = m_authResult.operatorId;
     m_sessionContext.username = m_authResult.username;

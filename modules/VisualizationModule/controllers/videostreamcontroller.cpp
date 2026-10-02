@@ -4,9 +4,9 @@ VideoStreamController* VideoStreamController::s_instance = nullptr;
 
 
 
-VideoStreamController::VideoStreamController(VisualizationService *visualization,
+VideoStreamController::VideoStreamController(VisualizationService *service,
                                              QObject *parent)
-    : m_visualization(visualization)
+    : m_service(service)
     , QObject(parent)
 {
     s_instance = this;
@@ -17,7 +17,7 @@ VideoStreamController::VideoStreamController(VisualizationService *visualization
         << "VideoStreamController: VideoStreamController object created. Parent: "
         << parent;
 
-    if (!m_visualization) {
+    if (!m_service) {
         qWarning()
             << "WARNING! VideoStreamController: VideoStreamController object created without reference to facade";
     }
@@ -34,15 +34,15 @@ void VideoStreamController::registerProvider(VideoProvider *provider)
 
         QString frameSource = provider->frameSource();
         if (frameSource == "camera") {
-            connect(m_visualization, &VisualizationService::rawImageFrameReady
+            connect(m_service, &VisualizationService::rawImageFrameReady
                     , provider, &VideoProvider::onRawImageFrameReady);
         }
         if (frameSource == "processor") {
-            connect(m_visualization, &VisualizationService::processedFrameReady
+            connect(m_service, &VisualizationService::processedFrameReady
                     , provider, &VideoProvider::onProcessedFrameReady);
         }
         if (frameSource == "object") {
-            connect(m_visualization, &VisualizationService::frameWithBoxesReady
+            connect(m_service, &VisualizationService::frameWithBoxesReady
                     , provider, &VideoProvider::onFrameWithBoxesReady);
         }
     }

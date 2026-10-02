@@ -3,15 +3,27 @@ import QtQuick.Controls
 
 Popup {
     id: root
-    parent: Overlay.overlay
-    padding: 10
-    x: Math.round((parent.width - width) / 2)
-    y: Math.round((parent.height - height) / 2)
 
     property string errorTitle: ""
     property string errorDetails: ""
 
     closePolicy: Popup.CloseOnEscape | Popup.NoAutoClose
+
+    parent: Overlay.overlay
+    padding: 10
+    x: Math.round((parent.width - width) / 2)
+    y: Math.round((parent.height - height) / 2)
+
+    modal: false //  Не блокирует взаимодействие с основным окном
+    focus: false //  Не перехватывает ввод (Escape не сработает при false)
+
+    visible: root.errorDetails !== ""
+
+    // При закрытии окна автоматически очищаем текст ошибки в родителе
+    onClosed: {
+        root.errorTitle = ""
+        root.errorDetails = ""
+    }
 
     contentItem: Column {
         spacing: 10

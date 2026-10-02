@@ -18,7 +18,7 @@ class VideoStreamController : public QObject
     static VideoStreamController *s_instance;
 
 public:
-    explicit VideoStreamController(VisualizationService *visualization,
+    explicit VideoStreamController(VisualizationService *service,
                                 QObject *parent = nullptr);
 
     static VideoStreamController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
@@ -26,7 +26,7 @@ public:
     Q_INVOKABLE void registerProvider(VideoProvider *provider = nullptr);
 
 private:
-    VisualizationService *m_visualization = nullptr;
+    VisualizationService *m_service = nullptr;
     QList<QPointer<VideoProvider>> m_providers;
 };
 

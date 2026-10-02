@@ -138,6 +138,7 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
         QtMultimedia
         QML_FILES config.json
         QML_FILES qml/components/UsbCamera.qml
+        QML_FILES qml/settings/NumberField.qml
 )
 
 

@@ -19,6 +19,7 @@
 #include "IImageProcessingService.h"
 
 class AuthController;
+class SessionController;
 class FileHandlerController;
 class DbModelController;
 class VideoStreamController;
@@ -92,9 +93,10 @@ private:
     ICameraManagerService *m_camService = nullptr;
     IImageProcessingService *m_procService = nullptr;
 
-    AuthController *m_auth = nullptr;
+    AuthController *m_authController = nullptr;
+    SessionController *m_sessController = nullptr;
     DbModelController *m_dbController = nullptr;
-    FileHandlerController *m_fileHandlerManager = nullptr;
+    FileHandlerController *m_fileHandlerController = nullptr;
     VideoStreamController *m_videoController = nullptr;
 };
 

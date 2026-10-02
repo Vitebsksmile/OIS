@@ -6,17 +6,17 @@ QtObject {
     //  =====================================
     //  Colors palette
     //  =====================================
-    property color cBg: "transparent"   //  "#F0F0F0"
-    property color cPanel: "#FFFFFF"
-    property color cBorder: "#D1D5DB"
-    property color cText: "#1F2937"
-    property color cTextMuted: "#6B7280"
-    property color cTextDanger: "#991B1B"
-    property color cPrimary: "#2563EB"
-    property color cSuccess: "#10B981"
-    property color cDanger: "#FEE2E2"
-    property color cBorderDanger: "#EF4444"
-    property color cWarning: "#F59E0B"
+    property color cBg: "transparent"           //  "#F0F0F0" // светло-серый
+    property color cPanel: "#FFFFFF"            //  белый
+    property color cBorder: "#D1D5DB"           //  серый
+    property color cText: "#1F2937"             //  темно-синий
+    property color cTextMuted: "#6B7280"        //  темно-серый
+    property color cTextDanger: "#991B1B"       //  грязно-красный
+    property color cPrimary: "#2563EB"          //  синий
+    property color cSuccess: "#10B981"          //  мятный
+    property color cDanger: "#FEE2E2"           //  бледно-розовый
+    property color cBorderDanger: "#EF4444"     //  красный
+    property color cWarning: "#F59E0B"          //  желтый
 
     //  =====================================
     //  Font and text display settings
