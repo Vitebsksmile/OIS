@@ -82,6 +82,17 @@ IDatabaseService *VisualizationService::dbService()
     return m_dbService;
 }
 
+bool VisualizationService::creatCamera(const QString &url)
+{
+    qDebug()
+        << "VisualizationService: creatCamera with URL address:"
+        << url;
+
+    if (m_camService->creatCamera(url)) {
+        return true;
+    } else { return false; }
+}
+
 //  Слушает сигнал из FileHandler о старте предобработки
 void VisualizationService::onImagePreProcessingRequested(const QString &filePath)
 {

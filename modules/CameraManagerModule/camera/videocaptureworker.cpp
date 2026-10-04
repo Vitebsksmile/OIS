@@ -33,19 +33,19 @@ void VideoCaptureWorker::startCapture(int cameraIndex)
     qDebug() << "Successfully connected to the local camera";
 }
 
-// void VideoCaptureWorker::startCaptureUrl(const QString &url)
-// {
-//     stopCapture();
+void VideoCaptureWorker::startCaptureUrl(const QString &url)
+{
+    stopCapture();
 
-//     if (!m_cap.open(url.toStdString())) {
-//         qWarning()
-//             << "Не удалось открыть сетевой поток DroidCam:"
-//             << url;
-//         return;
-//     }
-//     m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
-//     qDebug() << "Successfully connected to DroidCam via Wi-Fi";
-// }
+    if (!m_cap.open(url.toStdString())) {
+        qWarning()
+            << "Не удалось открыть сетевой поток DroidCam:"
+            << url;
+        return;
+    }
+    m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
+    qDebug() << "Successfully connected to DroidCam via Wi-Fi";
+}
 
 void VideoCaptureWorker::startCaptureUrl()
 {
@@ -88,7 +88,7 @@ void VideoCaptureWorker::processFrame()
         if (customFrame.data() != nullptr) {
             emit customFrameReady(customFrame);
         } else {
-            qDebug()
+            qCritical()
                 << "VideoCaptureWorker: Не удалось создать кадр. Возможно, неподдерживаемый формат матрицы:"
                 << mat.type();
         }

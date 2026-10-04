@@ -17,7 +17,7 @@ public:
 
 public slots:
     void startCapture(int cameraIndex = 0);
-    //void startCaptureUrl(const QString &url);
+    void startCaptureUrl(const QString &url);
     void startCaptureUrl();
 
     void stopCapture();

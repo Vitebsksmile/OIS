@@ -20,6 +20,8 @@ public:
 
     ~CameraManagerService() override;
 
+    bool creatCamera(const QString &url) override;
+
     void checkAndConnectCamera();
 
 private slots:
@@ -32,6 +34,7 @@ signals:
 
 private:
     void startStream();
+    void startStream(const QString &url);
     //std::unique_ptr<ICameraDriver> m_cameraDriver;
 
     //QString m_streamUrl;

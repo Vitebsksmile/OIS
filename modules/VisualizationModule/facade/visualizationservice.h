@@ -41,6 +41,8 @@ public:
 
     //IDbModel* dbModel()
 
+    bool creatCamera(const QString &url);
+
 //  Реализация интерфейса IVisualizationService
 public slots:
     //  FileHandler -> this : Слушает сигнал из FileHandler о старте предобработки

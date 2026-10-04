@@ -10,6 +10,19 @@ CameraManagerService::CameraManagerService(QObject* parent)
 {
     qDebug() << "CameraManagerService: creat new object";
     //m_cameraDriver.reset(new BaslerDriver());
+}
+
+CameraManagerService::~CameraManagerService()
+{
+    m_workerThread.quit();
+    m_workerThread.wait();
+}
+
+bool CameraManagerService::creatCamera(const QString &url)
+{
+    qDebug()
+        << "CameraManagerService: creatCamera with URL address:"
+        << url;
 
     m_worker->moveToThread(&m_workerThread);
 
@@ -27,13 +40,9 @@ CameraManagerService::CameraManagerService(QObject* parent)
 
     m_workerThread.start();
 
-    this->startStream();
-}
+    this->startStream(url);
 
-CameraManagerService::~CameraManagerService()
-{
-    m_workerThread.quit();
-    m_workerThread.wait();
+    return true;
 }
 
 // void CameraManagerService::checkAndConnectCamera()
@@ -77,6 +86,13 @@ void CameraManagerService::startStream()
 {
     QMetaObject::invokeMethod(m_worker, [this] () {
         m_worker->startCaptureUrl();
+    }, Qt::QueuedConnection );
+}
+
+void CameraManagerService::startStream(const QString &url)
+{
+    QMetaObject::invokeMethod(m_worker, [this, url] () {
+        m_worker->startCaptureUrl(url);
     }, Qt::QueuedConnection );
 }
 

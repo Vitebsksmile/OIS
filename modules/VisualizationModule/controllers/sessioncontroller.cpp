@@ -31,6 +31,12 @@ bool SessionController::creatCamera(const QString &url)
         emit errorOccurred("URL is empty");
         return false;
     }
-    qDebug() << "SessionController: url" << url;
-    return true;
+    QString urlVideo = "http://" + url + "/video";
+    qDebug() << "SessionController: url" << urlVideo;
+
+    if (m_service->creatCamera(urlVideo)) {
+        return true;
+    } else {
+        return false;
+    }
 }
