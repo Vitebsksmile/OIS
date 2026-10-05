@@ -9,6 +9,7 @@ Popup {
     property string titlePopup: qsTr("USB device")
     property string errorTitle: ""
     property string errorDetails: ""
+    property int componentSpacing: 10
 
     signal popupClosed()
 
@@ -27,10 +28,7 @@ Popup {
     }
 
     //  Main background layer
-    background: Rectangle {
-        color: "lightgreen"
-        radius: 16
-    }
+    background: Rectangle { color: Theme.cBg; radius: 12 }
 
     contentItem: ColumnLayout {
         //anchors.fill: parent
@@ -54,39 +52,68 @@ Popup {
         // Отступ после разделителя
         Item { implicitHeight: 5 }
 
-        // NormalText {
-        //     Layout.fillWidth: true
-        //     //text: root.errorDetails
-        // }
-
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: 20
             spacing: 10
 
-            StackView {
-                id: mainStack
-                Layout.preferredWidth: 400
-                Layout.preferredHeight: 200
+            ColumnLayout {
+                Layout.preferredWidth: implicitWidth
+                Layout.fillHeight: true
                 Layout.alignment: Qt.AlignHCenter
-                Layout.margins: 20
+                spacing: 0
 
-                clip: true
+                TabBar {
+                    id: tabBar
+                    Layout.preferredWidth: 400
+                    Layout.preferredHeight: implicitHeight
+                    Layout.alignment: Qt.AlignHCenter
 
-                background: Rectangle {
-                    color: "black"
+                    TabButton {
+                        text: qsTr("USB camera")
+
+                        onClicked: {
+                            root.titlePopup = text
+                        }
+                    }
+                    TabButton {
+                        text: qsTr("URL camera")
+
+                        onClicked: {
+                            root.titlePopup = text
+                        }
+                    }
                 }
 
-                initialItem: usbCamera
+                StackLayout {
+                    id: stackLayout
+                    Layout.preferredWidth: 400
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignHCenter
+
+                    currentIndex: tabBar.currentIndex
+                    Loader {
+                        id: usbCameraLoader
+                        active: tabBar.currentIndex === 0
+                        sourceComponent: usbCamera
+                    }
+                    Loader {
+                        id: urlCameraLoader
+                        active: tabBar.currentIndex === 1
+                        sourceComponent: urlCamera
+                    }
+                }
             }
 
             LifeView {
-                id: processingView
+                id: cameraView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Layout.minimumWidth: 200
                 Layout.minimumHeight: 200
+
+                radius: 12
 
                 frameSource: "camera"
             }
@@ -112,30 +139,101 @@ Popup {
         Page {
             //width: 200
             //height: 200
-            background: Rectangle { color: "blue"; radius: 16 }
+            padding: 10
+            background: Rectangle { color: "white"; border.color: Theme.cBorder; bottomLeftRadius: 12; bottomRightRadius: 12 }
 
             ColumnLayout {
                 anchors.centerIn: parent
                 anchors.margins: 20
                 spacing: 10
 
-                Label {
-                    text: qsTr("Input URL address and Port number")
-                    color: "#ECF0F1" // Светло-серый, в стиле вашего Midnight Blue
-                    font.pixelSize: 12
-                    leftPadding: 2
+                OISNormalLabel {
+                    text: qsTr("Input camera index:")
+                    color: Theme.cText
                 }
 
                 Row {
-                    //  URL input field
-                    NumberField {
+                    spacing: root.componentSpacing
+
+                    //  Port input field
+                    OISNumberField {
+                        id: indexField
+
+                        width: 120
+                        placeholderText: "00"
+
+                        inputMethodHints: Qt.ImhDigitsOnly
+                        validator: RegularExpressionValidator {
+                            // Разрешает только одну или две цифры (0-99)
+                            regularExpression: /^\d{1,2}$/
+                        }
+                    }
+
+                    Button {
+                        id: buttonIn
+                        text: qsTr("Connection")
+                        //Layout.preferredWidth: 100
+
+                        // Используем встроенную системную иконку стрелки назад
+                        //icon.name: "go-previous"
+                        icon.height: 15
+                        // Отображаем и иконку, и текст рядом
+                        //display: AbstractButton.TextBesideIcon
+
+                        property int cameraIndex: Number(indexField.text)
+                        //highlighted: true
+                        onClicked: {
+                            if (!SessionController.creatCamera(cameraIndex)) {
+                                console.log(root.errorTitle)
+                            } else {
+                                console.log(root.errorTitle)
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    Component {
+        id: urlCamera
+
+        Page {
+            //width: 200
+            //height: 200
+            padding: 10
+            background: Rectangle { color: "white"; border.color: Theme.cBorder; bottomLeftRadius: 12; bottomRightRadius: 12 }
+
+            ColumnLayout {
+                anchors.centerIn: parent
+                anchors.margins: 20
+                spacing: 10
+
+                OISNormalLabel {
+                    text: qsTr("Input IP address and Port number:")
+                    color: Theme.cText
+                }
+
+                Row {
+                    spacing: 0
+
+                    OISNumberField {
                         id: urlField
 
-                        //color: activeFocus ? "black" : AuthController.existsByLogin(text) ? "black" : "red"
-                        placeholderText: qsTr("Enter name")
-                        inputMask: "000.000.000.00;_"
+                        width: 120
+                        placeholderText: "000.000.000.000"
+
                         inputMethodHints: Qt.ImhDigitsOnly
-                        validator: IntValidator { bottom: 1; top: 256 }
+                        validator: RegularExpressionValidator {
+                            // 1. Шаблон для одного октета IP (0-255)
+                            readonly property string octet: "(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)"
+
+                            // Собираем регулярное выражение динамически для читаемости
+                            regularExpression: new RegExp("^" + octet + "(\\." + octet + "){0,3}")
+                        }
+                        onAccepted: portField.forceActiveFocus()
                     }
 
                     Label {
@@ -146,24 +244,30 @@ Popup {
                         horizontalAlignment: TextInput.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
 
-                        background: Rectangle{
-                            color: "white"
-                        }
+                        // background: Rectangle{
+                        //     color: "white"
+                        // }
 
                         text: ":"
                         font.family: Theme.fFamily
                         font.pixelSize: Theme.fSizeNormal
                         font.bold: Theme.fBoldNormal
+
+                        color: portField.activeFocus ? palette.highlight : palette.text
+                        Behavior on color { ColorAnimation { duration: 150 } }
                     }
 
                     //  Port input field
-                    NumberField {
+                    OISNumberField {
                         id: portField
 
-                        //color: activeFocus ? "black" : AuthController.existsByLogin(text) ? "black" : "red"
-                        inputMask: "0000;_"
+                        width: 120
+                        placeholderText: "from 0 to 65535"
+
                         inputMethodHints: Qt.ImhDigitsOnly
-                        validator: IntValidator { bottom: 1; top: 256 }
+                        validator: RegularExpressionValidator {
+                            regularExpression: /^([0-5]?\d{1,4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/
+                        }
                     }
                 }
 
@@ -206,3 +310,5 @@ Popup {
         errorDetails: root.errorDetails
     }
 }
+
+

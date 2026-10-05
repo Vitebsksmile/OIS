@@ -6,11 +6,11 @@ pragma ComponentBehavior: Bound
 Page {
     id: root
 
-    //property alias copyErrorTitle: errorTitle
-
     property string errorTitle: ""
     property string errorDetails: ""
     property string titlePage: qsTr("Login")
+    property int textFieldWidth: 300
+    property int componentSpacing: 10
 
     //  Signals for navigation
     signal closeRequested()
@@ -19,15 +19,12 @@ Page {
     title: titlePage
 
     //  Main background layer
-    background: Rectangle {
-        color: Theme.cBg
-        radius: 16
-    }
+    background: Rectangle { color: Theme.cBg; radius: 12 }
 
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
-        spacing: 15
+        spacing: root.componentSpacing
 
         //  Title page
         TitleText {
@@ -70,49 +67,60 @@ Page {
         id: logIn
 
         Page {
-            background: Rectangle { color: "blue"; radius: 16 }
+            background: Rectangle { color: Theme.cBg; radius: 16 }
             //padding: 20
 
             ColumnLayout {
                 //Layout.preferredWidth: implicitWidth
                 anchors.centerIn: parent
                 anchors.margins: 20
-                spacing: 10
+                spacing: root.componentSpacing
 
                 //  Поле ввода логина
-                TextField {
+                OISTextField {
                     id: usernameField
-                    Layout.preferredWidth: 200
+                    Layout.preferredWidth: root.textFieldWidth
                     Layout.alignment: Qt.AlignHCenter
 
                     color: activeFocus ? "black" : AuthController.existsByLogin(text) ? "black" : "red"
+                    font.family: Theme.fFamily
+                    font.pixelSize: Theme.fSizeNormal
+                    font.bold: Theme.fBoldNormal
+
                     placeholderText: qsTr("Enter login")
                 }
 
                 //  Поле ввода пароля
-                TextField {
+                OISTextField {
                     id: passwordField
-                    Layout.preferredWidth: 200
+                    Layout.preferredWidth: root.textFieldWidth
                     Layout.alignment: Qt.AlignHCenter
 
                     property bool error: false
 
                     color: activeFocus ? "black" : buttonIn.authenticationError ? "black" : "red"
+                    font.family: Theme.fFamily
+                    font.pixelSize: Theme.fSizeNormal
+                    font.bold: Theme.fBoldNormal
 
                     placeholderText: qsTr("Enter password")
                     echoMode: TextField.Password    //  Скрывает вводимые символы точками
                 }
 
                 RowLayout {
-                    Layout.preferredWidth: implicitWidth
+                    //Layout.preferredWidth: implicitWidth
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
+                    spacing: root.componentSpacing
 
                     Button {
                         id: buttonIn
+                        Layout.preferredWidth: (root.textFieldWidth - root.spacing) / 2
                         property bool authenticationError: false
+
                         text: qsTr("Log in")
-                        Layout.preferredWidth: 100
-                        highlighted: true
+                        //highlighted: true
+
                         onClicked: {
                             // Вызываем C++ функцию проверки
                             if (AuthController.login(usernameField.text, passwordField.text)) {
@@ -122,10 +130,11 @@ Page {
                     }
 
                     Button {
+                        Layout.preferredWidth: (root.textFieldWidth - root.spacing) / 2
+
                         text: qsTr("Registration")
-                        Layout.preferredWidth: 100
-                        highlighted: true
-                        //
+                        //highlighted: true
+
                         // Используем встроенную системную иконку стрелки назад
                         icon.name: "go-next"
                         icon.height: 15
@@ -146,41 +155,52 @@ Page {
         id: registration
 
         Page {
-            background: Rectangle { color: "green"; radius: 16 }
+            background: Rectangle { color: Theme.cBg; radius: 16 }
             //padding: 20
 
             ColumnLayout {
-                //Layout.preferredWidth: implicitWidth
                 anchors.centerIn: parent
                 anchors.margins: 20
-                spacing: 10
+                spacing: root.componentSpacing
 
                 //  Поле ввода логина
-                TextField {
+                OISTextField {
                     id: usernameField
-                    Layout.preferredWidth: 200
+                    Layout.preferredWidth: root.textFieldWidth
                     Layout.alignment: Qt.AlignHCenter
 
                     color: activeFocus ? "black" : AuthController.isUsernameUnique(text) ? "black" : "red"
+                    font.family: Theme.fFamily
+                    font.pixelSize: Theme.fSizeNormal
+                    font.bold: Theme.fBoldNormal
+
                     placeholderText: qsTr("Come up with a username")
                 }
 
                 //  Поле ввода полного имени
-                TextField {
+                OISTextField {
                     id: fullNameField
-                    Layout.preferredWidth: 200
+                    Layout.preferredWidth: root.textFieldWidth
                     Layout.alignment: Qt.AlignHCenter
                     color: "black"
+                    font.family: Theme.fFamily
+                    font.pixelSize: Theme.fSizeNormal
+                    font.bold: Theme.fBoldNormal
+
                     placeholderText: qsTr("Enter your full name")
                 }
 
                 //  Поле ввода пароля
-                TextField {
+                OISTextField {
                     id: passwordField
-                    Layout.preferredWidth: 200
+                    Layout.preferredWidth: root.textFieldWidth
                     Layout.alignment: Qt.AlignHCenter
 
                     property bool error: false
+
+                    font.family: Theme.fFamily
+                    font.pixelSize: Theme.fSizeNormal
+                    font.bold: Theme.fBoldNormal
 
                     placeholderText: qsTr("Create a password")
                     echoMode: TextField.Password    //  Скрывает вводимые символы точками
@@ -189,11 +209,14 @@ Page {
                 RowLayout {
                     Layout.preferredWidth: implicitWidth
                     Layout.alignment: Qt.AlignHCenter
+                    spacing: root.componentSpacing
 
                     Button {
                         id: buttonIn
+                        Layout.preferredWidth: (root.textFieldWidth - root.spacing) / 2
+
                         text: qsTr("Back")
-                        Layout.preferredWidth: 100
+                        //highlighted: true
 
                         // Используем встроенную системную иконку стрелки назад
                         icon.name: "go-previous"
@@ -201,7 +224,6 @@ Page {
                         // Отображаем и иконку, и текст рядом
                         display: AbstractButton.TextBesideIcon
 
-                        //highlighted: true
                         onClicked: {
                             mainStack.pop()
                             root.title = qsTr("LogIn")
@@ -209,9 +231,11 @@ Page {
                     }
 
                     Button {
+                        Layout.preferredWidth: (root.textFieldWidth - root.spacing) / 2
+
                         text: qsTr("Sign up")
-                        Layout.preferredWidth: 100
-                        highlighted: true
+                        //highlighted: true
+
                         onClicked: {
                             //  вызов ф-ции регистрации
                             if (AuthController.registerUser(usernameField.text,

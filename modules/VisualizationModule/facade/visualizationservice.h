@@ -42,6 +42,8 @@ public:
     //IDbModel* dbModel()
 
     bool creatCamera(const QString &url);
+    bool creatCamera(int cameraIndex);
+    void disconnectCamera();
 
 //  Реализация интерфейса IVisualizationService
 public slots:

@@ -7,12 +7,12 @@ import QtQuick.Layouts
 // =====================================================
 
 Rectangle {
-    width: ListView.view ? ListView.view.width : 0
+    width: ListView.view ? (ListView.view.width - ListView.view.rightMargin) : 0
     implicitHeight: rootLayout.implicitHeight + 32
     radius: 12
 
     color: "white"
-    border.color: "#dcdcdc"
+    border.color: Theme.cBorder
 
     Loader {
         id: mainLoader
@@ -28,7 +28,7 @@ Rectangle {
         }
     }
 
-    ColumnLayout {
+    RowLayout {
         id: rootLayout
         anchors.left: parent.left
         anchors.right: parent.right
@@ -36,105 +36,131 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         anchors.topMargin: 16
-        spacing: 14
+        spacing: 10
 
-        Label {
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Camera Settings")
-            font.pixelSize: 22
-            font.bold: true
-        }
-
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            spacing: 10
 
-            Button {
-                id: connectButton
-                Layout.preferredWidth: 180
+            OISTitleLabel {
+                Layout.preferredHeight: implicitHeight
                 Layout.alignment: Qt.AlignVCenter
-                text: qsTr("Connect a new camera")
-                onClicked: {
-                    mainLoader.active = true
+                text: qsTr("Camera Settings")
+                font.pixelSize: 22
+                font.bold: true
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+
+                Button {
+                    id: connectButton
+                    Layout.preferredWidth: 180
+                    Layout.alignment: Qt.AlignVCenter
+                    text: qsTr("Connect a new camera")
+                    onClicked: {
+                        mainLoader.active = true
+                    }
+                }
+
+                Button {
+                    id: disconnectButton
+                    Layout.preferredWidth: 180
+                    Layout.alignment: Qt.AlignVCenter
+                    text: qsTr("Disconnect the camera")
+                    onClicked: {
+                        SessionController.disconnectCamera()
+                    }
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+
+                OISNormalLabel {
+                    Layout.preferredWidth: 180
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Camera Device:"
+                }
+
+                ComboBox {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+
+                    model: [
+                        "Default Camera",
+                        "USB Camera #1",
+                        "IP-camera",
+                        "Industrial Camera"
+                    ]
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+
+                OISNormalLabel {
+                    Layout.preferredWidth: 180
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Resolution:"
+                }
+
+                ComboBox {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+
+                    model: [
+                        "640x480",
+                        "1280x720",
+                        "1920x1080"
+                    ]
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+
+                OISNormalLabel {
+                    Layout.preferredWidth: 180
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Frame Rate:"
+                }
+
+                Slider {
+                    id: fpsSlider
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+
+                    from: 1
+                    to: 120
+                    value: 30
+                }
+
+                OISNormalLabel {
+                    Layout.preferredWidth: 70
+                    Layout.alignment: Qt.AlignVCenter
+                    text: Math.round(fpsSlider.value) + " FPS"
                 }
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
+        LifeView {
+            id: cameraView
+            Layout.preferredWidth: 200
+            Layout.fillHeight: true
 
-            Label {
-                Layout.preferredWidth: 180
-                Layout.alignment: Qt.AlignVCenter
-                text: "Camera Device:"
-            }
+            radius: 12
 
-            ComboBox {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
-
-                model: [
-                    "Default Camera",
-                    "USB Camera #1",
-                    "IP-camera",
-                    "Industrial Camera"
-                ]
-            }
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-
-            Label {
-                Layout.preferredWidth: 180
-                Layout.alignment: Qt.AlignVCenter
-                text: "Resolution:"
-            }
-
-            ComboBox {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
-
-                model: [
-                    "640x480",
-                    "1280x720",
-                    "1920x1080"
-                ]
-            }
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-
-            Label {
-                Layout.preferredWidth: 180
-                Layout.alignment: Qt.AlignVCenter
-                text: "Frame Rate:"
-            }
-
-            Slider {
-                id: fpsSlider
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
-
-                from: 1
-                to: 120
-                value: 30
-            }
-
-            Label {
-                Layout.preferredWidth: 70
-                Layout.alignment: Qt.AlignVCenter
-                text: Math.round(fpsSlider.value) + " FPS"
-            }
+            frameSource: "camera"
         }
     }
 }

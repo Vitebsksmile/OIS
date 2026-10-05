@@ -19,9 +19,10 @@ public:
 
     //virtual bool initialize() = 0;
 
-    //virtual void shutdown() = 0;
+    virtual void shutdown() = 0;
 
     virtual bool creatCamera(const QString &url) = 0;
+    virtual bool creatCamera(int cameraIndex) = 0;
     //virtual void startCamera(CameraId id) = 0;
     //virtual void stopCamera(CameraId id) = 0;
 

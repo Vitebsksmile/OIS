@@ -7,7 +7,8 @@ import QtQuick.Layouts
 // =====================================================
 
 Rectangle {
-    anchors.fill: parent
+    width: ListView.view ? (ListView.view.width - ListView.view.rightMargin) : 0
+    implicitHeight: rootLayout.implicitHeight + 32
     radius: 12
 
     color: "white"

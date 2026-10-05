@@ -58,6 +58,11 @@ set(PLAIN_QML_FILES
     qml/settings/KpiText.qml
     qml/settings/NormalText.qml
     qml/settings/MutedText.qml
+    qml/settings/OISNumberField.qml
+    qml/settings/OISNormalLabel.qml
+    qml/settings/OISTextField.qml
+    qml/settings/OISTitleLabel.qml
+    qml/settings/OISHeadingLabel.qml
 
     qml/DetectionOverlay.qml
     qml/SideBarButton.qml
@@ -137,8 +142,6 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     DEPENDENCIES
         QtMultimedia
         QML_FILES config.json
-        QML_FILES qml/components/UsbCamera.qml
-        QML_FILES qml/settings/NumberField.qml
 )
 
 

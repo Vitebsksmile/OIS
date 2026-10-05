@@ -22,6 +22,8 @@ public:
     static SessionController* create(QQmlEngine *, QJSEngine *) { return s_instance; }
 
     Q_INVOKABLE bool creatCamera(const QString &url);
+    Q_INVOKABLE bool creatCamera(int cameraIndex);
+    Q_INVOKABLE void disconnectCamera();
 
 signals:
     void errorOccurred(const QString &errorTitle,

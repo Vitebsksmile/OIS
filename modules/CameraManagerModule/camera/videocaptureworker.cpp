@@ -19,34 +19,6 @@ VideoCaptureWorker::~VideoCaptureWorker()
     stopCapture();
 }
 
-void VideoCaptureWorker::startCapture(int cameraIndex)
-{
-    stopCapture();  //  Останавливаем предыдущий захват перед стартом нового
-
-    if (!m_cap.open(cameraIndex)) {
-        qWarning()
-            << "Не удалось открыть локальную камеру с индексом:"
-            << cameraIndex;
-        return;
-    }
-    m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
-    qDebug() << "Successfully connected to the local camera";
-}
-
-void VideoCaptureWorker::startCaptureUrl(const QString &url)
-{
-    stopCapture();
-
-    if (!m_cap.open(url.toStdString())) {
-        qWarning()
-            << "Не удалось открыть сетевой поток DroidCam:"
-            << url;
-        return;
-    }
-    m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
-    qDebug() << "Successfully connected to DroidCam via Wi-Fi";
-}
-
 void VideoCaptureWorker::startCaptureUrl()
 {
     stopCapture();
@@ -62,13 +34,43 @@ void VideoCaptureWorker::startCaptureUrl()
     qDebug() << "VideoCaptureWorker: Successfully connected to DroidCam via Wi-Fi";
 }
 
+void VideoCaptureWorker::startCaptureUrl(const QString &url)
+{
+    stopCapture();
+
+    if (!m_cap.open(url.toStdString())) {
+        qWarning()
+            << "Не удалось открыть сетевой поток DroidCam:"
+            << url;
+        return;
+    }
+    m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
+    qDebug() << "VideoCaptureWorker: Successfully connected to DroidCam via Wi-Fi";
+}
+
+void VideoCaptureWorker::startCapture(int cameraIndex)
+{
+    stopCapture();  //  Останавливаем предыдущий захват перед стартом нового
+
+    if (!m_cap.open(cameraIndex)) {
+        qWarning()
+            << "VideoCaptureWorker: Не удалось открыть локальную камеру с индексом:"
+            << cameraIndex;
+        return;
+    }
+    m_timer->start(33); //  1000 мс / 33 мс = 30.3 FPS
+    qDebug() << "VideoCaptureWorker: Successfully connected to the local camera";
+}
+
 void VideoCaptureWorker::stopCapture()
 {
     if (m_timer && m_timer->isActive()) {
         m_timer->stop();
+        qDebug() << "VideoCaptureWorker: Successfully stoped timer";
     }
     if (m_cap.isOpened()) {
         m_cap.release();
+        qDebug() << "VideoCaptureWorker: Ресурсы успешно освобождены, камера выключена";
     }
 }
 

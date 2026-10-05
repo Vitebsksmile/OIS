@@ -1,0 +1,13 @@
+import QtQuick
+import QtQuick.Controls
+
+Label {
+    id: root
+    font.family: Theme.fFamily
+    font.pixelSize: Theme.fSizeTitle
+    font.bold: Theme.fBoldTitle
+
+    // Центрируем текст по горизонтали и вертикали
+    horizontalAlignment: TextInput.AlignHCenter
+    verticalAlignment: TextInput.AlignVCenter
+}

@@ -10,19 +10,6 @@ CameraManagerService::CameraManagerService(QObject* parent)
 {
     qDebug() << "CameraManagerService: creat new object";
     //m_cameraDriver.reset(new BaslerDriver());
-}
-
-CameraManagerService::~CameraManagerService()
-{
-    m_workerThread.quit();
-    m_workerThread.wait();
-}
-
-bool CameraManagerService::creatCamera(const QString &url)
-{
-    qDebug()
-        << "CameraManagerService: creatCamera with URL address:"
-        << url;
 
     m_worker->moveToThread(&m_workerThread);
 
@@ -37,10 +24,41 @@ bool CameraManagerService::creatCamera(const QString &url)
 
     connect (m_worker, &VideoCaptureWorker::customFrameReady
             , this, &CameraManagerService::onCustomFrameReady);
+}
+
+CameraManagerService::~CameraManagerService()
+{
+    m_workerThread.quit();
+    m_workerThread.wait();
+}
+
+void CameraManagerService::shutdown()
+{
+    this->stopStream();
+}
+
+bool CameraManagerService::creatCamera(const QString &url)
+{
+    qDebug()
+        << "CameraManagerService: creatCamera with URL address:"
+        << url;
 
     m_workerThread.start();
 
     this->startStream(url);
+
+    return true;
+}
+
+bool CameraManagerService::creatCamera(int cameraIndex)
+{
+    qDebug()
+    << "CameraManagerService: creatCamera with cameraIndex:"
+    << cameraIndex;
+
+    m_workerThread.start();
+
+    this->startStream(cameraIndex);
 
     return true;
 }
@@ -62,11 +80,10 @@ bool CameraManagerService::creatCamera(const QString &url)
 //     }
 // }
 
-//  SLOT VideoCaptureWorker -> this
+//  VideoCaptureWorker -> this
 void CameraManagerService::onRawCVFrameReady(const cv::Mat &cvFrame)
 {
     //  this -> ImageProcessingService
-    //emit rawCVFrameReady(cvFrame.clone());
     emit rawCVFrameReady(cvFrame);
 }
 
@@ -93,6 +110,20 @@ void CameraManagerService::startStream(const QString &url)
 {
     QMetaObject::invokeMethod(m_worker, [this, url] () {
         m_worker->startCaptureUrl(url);
+    }, Qt::QueuedConnection );
+}
+
+void CameraManagerService::startStream(int cameraIndex)
+{
+    QMetaObject::invokeMethod(m_worker, [this, cameraIndex] () {
+        m_worker->startCapture(cameraIndex);
+    }, Qt::QueuedConnection );
+}
+
+void CameraManagerService::stopStream()
+{
+    QMetaObject::invokeMethod(m_worker, [this] () {
+        m_worker->stopCapture();
     }, Qt::QueuedConnection );
 }
 

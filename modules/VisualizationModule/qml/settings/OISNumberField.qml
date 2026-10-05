@@ -4,6 +4,8 @@ import QtQuick.Controls
 TextField {
     id: root
 
+    topPadding: 5
+    bottomPadding: 5
     leftPadding: 5
     rightPadding: 5
     width: contentWidth + leftPadding + rightPadding
@@ -15,7 +17,4 @@ TextField {
     font.family: Theme.fFamily
     font.pixelSize: Theme.fSizeNormal
     font.bold: Theme.fBoldNormal
-
-    // Маска ввода (только цифры и точки)
-    //inputMask: "000.000.0.000;_"
 }

@@ -54,6 +54,7 @@ Page {
             Layout.minimumWidth: 300
             Layout.fillWidth: true
             Layout.fillHeight: true
+            rightMargin: 25
             spacing: 20
 
             interactive: true
@@ -64,8 +65,21 @@ Page {
             ScrollBar.vertical: ScrollBar {
                 id: verticalScrollBar
                 policy: settingsList.contentHeight > settingsList.height ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
-                anchors.right: settingsList.right
-                anchors.rightMargin: -10 // Слегка отодвигаем к краю окна
+
+                size: settingsList.visibleArea.heightRatio
+                position: settingsList.visibleArea.yPosition
+                active: settingsList.moving || settingsList.flicking || hovered
+
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                anchors.rightMargin: -2
+
+                onPositionChanged: {
+                    if (pressed) {
+                        settingsList.contentY = position * settingsList.contentHeight
+                    }
+                }
             }
         }
     }

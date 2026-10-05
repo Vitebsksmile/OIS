@@ -40,3 +40,17 @@ bool SessionController::creatCamera(const QString &url)
         return false;
     }
 }
+
+bool SessionController::creatCamera(int cameraIndex)
+{
+    if (m_service->creatCamera(cameraIndex)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void SessionController::disconnectCamera()
+{
+    m_service->disconnectCamera();
+}

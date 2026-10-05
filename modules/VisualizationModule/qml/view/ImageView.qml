@@ -24,7 +24,7 @@ Rectangle {
 
         Component.onCompleted: {
             //      Передаем объект в C++
-            FileHandlerManager.registerFileHandler(fileHandler)
+            FileHandlerController.registerFileHandler(fileHandler)
         }
     }
 

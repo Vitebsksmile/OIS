@@ -21,6 +21,9 @@ public:
     ~CameraManagerService() override;
 
     bool creatCamera(const QString &url) override;
+    bool creatCamera(int cameraIndex) override;
+
+    void shutdown() override;
 
     void checkAndConnectCamera();
 
@@ -33,8 +36,10 @@ signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
+    void stopStream();
     void startStream();
     void startStream(const QString &url);
+    void startStream(int cameraIndex);
     //std::unique_ptr<ICameraDriver> m_cameraDriver;
 
     //QString m_streamUrl;

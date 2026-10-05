@@ -16,6 +16,16 @@ Rectangle {
         fillMode: VideoOutput.PreserveAspectFit
     }
 
+    //  Текст виден только если в Image ничего не загружено (Null)
+    NormalText {
+        id: statusText
+        visible: videoOutput.videoSink.videoSize.width === 0 || videoOutput.videoSink.videoSize.height === 0
+        anchors.centerIn: parent //      Центрируем надпись
+        //Layout.alignment: Qt.AlignHCenter
+        text: qsTr("No signal")
+        //color: "gray"
+    }
+
     VideoProvider {
         id: videoProvider
         videoSink: videoOutput.videoSink

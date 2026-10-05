@@ -93,6 +93,22 @@ bool VisualizationService::creatCamera(const QString &url)
     } else { return false; }
 }
 
+bool VisualizationService::creatCamera(int cameraIndex)
+{
+    qDebug()
+        << "VisualizationService: creatCamera with camera index:"
+        << cameraIndex;
+
+    if (m_camService->creatCamera(cameraIndex)) {
+        return true;
+    } else { return false; }
+}
+
+void VisualizationService::disconnectCamera()
+{
+    m_camService->shutdown();
+}
+
 //  Слушает сигнал из FileHandler о старте предобработки
 void VisualizationService::onImagePreProcessingRequested(const QString &filePath)
 {
