@@ -10,7 +10,6 @@
 
 #include <QObject>
 #include <QImage>
-//#include <vector>
 //#include <QtQml/qqmlregistration.h> //  Макрос для автоматической регистрации класса в системе QML
 
 #include "IVisualizationService.h"
@@ -20,7 +19,7 @@
 
 class AuthController;
 class SessionController;
-class FileHandlerController;
+class FileHandlerController;  //???
 class DbModelController;
 class VideoStreamController;
 
@@ -48,49 +47,55 @@ public:
 //  Реализация интерфейса IVisualizationService
 public slots:
     //  FileHandler -> this : Слушает сигнал из FileHandler о старте предобработки
-    void onImagePreProcessingRequested(const QString &filePath);
+    void onImagePreProcessingRequested(const QString &filePath);  //???
 
     //  From IMageProcessingModule for QML about Start
-    void onPreProcessingStartNotification(bool success) override;
+    void onPreProcessingStartNotification(bool success) override;  //???
 
     //  в случае успеха обработки
-    void onImagePreProcessingFinished(const QString &filePath, bool success) override;
+    void onImagePreProcessingFinished(const QString &filePath, bool success) override;  //???
 
     //  в случае ошибки обработки
-    void onPreProcessingError(const QString &filePath, const QString &error) override;
+    void onPreProcessingError(const QString &filePath, const QString &error) override;  //???
 
     //  CameraManagerModule -> this
     void onRawImageFrameReady(const QImage &frame) override;
 
-    //  IImageProcessingModule -> this
+    //  ImageProcessingModule -> this
     void onProcessedFrameReady(const QImage &frame) override;
 
     //  ImageProcessingModule -> this
-    void onFrameWithBoxesReady(const QImage &frame
-                               , const std::vector<std::vector<int>> &rectanglePoints) override;
+    void onFrameWithBoxesReady(const QImage &frame,
+                               const std::vector<std::vector<int>> &rectanglePoints) override;
+
+    void onMLResult(const Core::Detection &detect) override;  //???
+
+
 
     //  DatabaseModule -> this
-    void onDefectAdded() override;
+    void onDefectAdded() override;  //???
 
-    //void onDbExecutionError(const QString &error) override;
+    //void onDbExecutionError(const QString &error) override;  //???
 
 //  Мы не пишем их реализации, Qt сделает это за нас
 signals:
     //  To FileHandler about started PreProcessing
-    void preProcessingStartNotification(bool success);
+    void preProcessingStartNotification(bool success);  //???
 
     //  To FileHandler about finished
-    void imagePreProcessingFinished(const QString &filePath);
+    void imagePreProcessingFinished(const QString &filePath);  //???
 
     //  this -> VideoStreamController
     void rawImageFrameReady(const QImage &frame);
 
-    //  this -> VideoStreamService
+    //  this -> VideoStreamController
     void processedFrameReady(const QImage &frame);
 
-    //  this -> VideoStreamService
+    //  this -> VideoStreamController
     void frameWithBoxesReady(const QImage &frame,
                              const std::vector<std::vector<int>> &rectanglePoints);
+
+
 
 private:
     IDatabaseService *m_dbService = nullptr;
@@ -100,7 +105,7 @@ private:
     AuthController *m_authController = nullptr;
     SessionController *m_sessController = nullptr;
     DbModelController *m_dbController = nullptr;
-    FileHandlerController *m_fileHandlerController = nullptr;
+    FileHandlerController *m_fileHandlerController = nullptr;  //???
     VideoStreamController *m_videoController = nullptr;
 };
 

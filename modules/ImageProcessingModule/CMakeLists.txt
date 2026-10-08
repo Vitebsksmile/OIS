@@ -9,6 +9,7 @@ set(MODULE_PUBLIC_FACADES
 
 #   Добавляем приватные заголовки (не экспортируются)
 set(MODULE_PRIVATE_HEADERS
+    private/onnxdefectdetector.h
     private/processmanager.h
     private/imagepreprocessing.h
     private/objectfinder.h
@@ -22,6 +23,7 @@ set(MODULE_SOURCE_FILES
     private/imagepreprocessing.cpp
     private/objectfinder.cpp
     private/frameprocessing.cpp
+    private/onnxdefectdetector.cpp
 )
 
 #   Создает статическую библиотеку (STATIC), адаптированную под механизмы Qt

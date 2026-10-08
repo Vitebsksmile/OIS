@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QAbstractTableModel>
 #include "dbrecord.h"
-#include "Authenticate.h"
+#include "Core.h"
 
 class IDbModel;
 

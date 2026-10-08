@@ -1,15 +1,14 @@
 #include "processmanager.h"
 #include <QDebug>
 #include "ImageProcessingService.h"
-#include "imagepreprocessing.h"
-
+#include "imagepreprocessing.h"  //???
 
 ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, QObject *parent)
     : QObject(parent)
     , m_imageProcessingService(imageProcessingService)
+    , m_detector(std::make_unique<OnnxDefectDetector>("D:/QtProjects/OIS/models/best.onnx"))
 {
-    if (!m_imageProcessingService)
-    {
+    if (!m_imageProcessingService) {
         qWarning()
             << "ProcessManager: processManager created without reference to facade";
     }
@@ -18,17 +17,28 @@ ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, Q
         << "ProcessManager: ProcessManager object created; parent: "
         << parent;
 
+    if (!m_detector->isReady())
+    {
+        qWarning()
+        << "ProcessManager: ONNX defect detector is not ready";
+    }
+    else
+    {
+        qDebug()
+        << "ProcessManager: ONNX defect detector is ready";
+    }
+
     //  Слушает фасад для старта предобработки
     connect(m_imageProcessingService, &ImageProcessingService::imagePreProcessingRequested,
-            this, &ProcessManager::onImagePreProcessingRequested);
+            this, &ProcessManager::onImagePreProcessingRequested);  //???
 
     //  To Facade for QML about Start
     connect(this, &ProcessManager::preProcessingStartNotification,
-            m_imageProcessingService, &ImageProcessingService::onPreProcessingStartNotification);
+            m_imageProcessingService, &ImageProcessingService::onPreProcessingStartNotification);  //???
 
     //  To Facade fot QML about Finished
     connect(this, &ProcessManager::preProcessingFinished,
-            m_imageProcessingService, &ImageProcessingService::onPreProcessingFinished);
+            m_imageProcessingService, &ImageProcessingService::onPreProcessingFinished);  //???
 
     //  The facade listens for the appearance of a frame
     connect(m_imageProcessingService, &ImageProcessingService::processFrame
@@ -46,14 +56,13 @@ ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, Q
 
 //  --- PUBLIC SLOTS ---
 //  Слушает фасад для старта предобработки
-void ProcessManager::onImagePreProcessingRequested(const QString &filePath)
+void ProcessManager::onImagePreProcessingRequested(const QString &filePath)  //???
 {
     //  Создание объекта ImagePreProcessing
     createPreProcessingObject();
 
     // Установка изображения в обработчик
-    if (imagePreProcessing()->loadImage(filePath))
-    {
+    if (imagePreProcessing()->loadImage(filePath)) {
         qDebug()
         << "ProcessManager: The file path is valid and contains an image. "
            "The image has been installed in the ImagePreProcessing handler! "
@@ -69,23 +78,49 @@ void ProcessManager::onImagePreProcessingRequested(const QString &filePath)
 }
 
 //  ImageProcessingService -> this
-void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
+void ProcessManager::onProcessFrame(const cv::Mat &cvFrame, const QString &detectionMethod)
 {
-    cv::Mat localFrame = cvFrame;
+    qDebug() << "ProcessManager: rows x cols = " << cvFrame.rows << "x" << cvFrame.cols;
+    if (detectionMethod == "classic") {
+        cv::Mat localFrame = cvFrame;
 
-    m_processing = std::make_unique<FrameProcessing>(localFrame);
-    m_processing->toGray().gaussianBlur(1).toBinary();
-    emit processedFrameReady(this->matToQImage(m_processing->cvFrame()));
+        m_processing = std::make_unique<FrameProcessing>(localFrame);
+        m_processing->toGray().gaussianBlur(1).toBinary();
+        emit processedFrameReady(this->matToQImage(m_processing->cvFrame()));
 
-    m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
-    m_finder->findObjects();
-    emit frameWithBoxesReady(this->matToQImage(cvFrame)
-                             , m_finder->rectanglePoints());
+        m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
+        m_finder->findObjects();
+
+        emit frameWithBoxesReady(this->matToQImage(cvFrame)
+                                 , m_finder->rectanglePoints());
+
+    } else if (detectionMethod == "yolo11") {
+        if (m_detector && m_detector->isReady()) {
+
+            const QVector<Core::Detection> detections = m_detector->detect(cvFrame);
+
+            qDebug()
+                << "ProcessManager: neural network detections:"
+                << detections.size();
+
+            for (const Core::Detection &detection : detections) {
+                qDebug()
+                    << "  class:"       << detection.className
+                    << "confidence:"    << detection.confidence
+                    << "box:"           << detection.boundingBox;
+            }
+
+            emit detectionsReady(detections);
+        }
+    }
+
+
+
 }
 //  --- END PUBLIC SLOTS ---
 
 //  Создает объект ImagePreprocessing
-void ProcessManager::createPreProcessingObject()
+void ProcessManager::createPreProcessingObject()  //???
 {
     //  Старый объект удалиться сам при вызове reset()
     m_imagePreProcessing = std::make_unique<ImagePreProcessing>();
@@ -95,7 +130,7 @@ void ProcessManager::createPreProcessingObject()
         << m_imagePreProcessing.get();
 }
 
-void ProcessManager::deletePreProcessingObject()
+void ProcessManager::deletePreProcessingObject()  //???
 {
     // Просто сбрасываем указатель.
     // Деструктор ~ImagePreProcessing() вызовется немедленно.
@@ -107,7 +142,7 @@ void ProcessManager::deletePreProcessingObject()
         << m_imagePreProcessing.get();
 }
 
-void ProcessManager::usePreProcessing(ImagePreProcessing *preProcessing)
+void ProcessManager::usePreProcessing(ImagePreProcessing *preProcessing)  //???
 {
     //  To Facade for QML
     emit preProcessingStartNotification(true);
@@ -121,8 +156,7 @@ void ProcessManager::usePreProcessing(ImagePreProcessing *preProcessing)
         << (preProcessing->getResult()).channels();
 
     //  Сохранение результатов на диск
-    if (preProcessing->save())
-    {
+    if (preProcessing->save()) {
         emit preProcessingFinished(preProcessing->finalFilePath());
     }
 }

@@ -17,6 +17,7 @@
 #include <QObject>
 #include <QString>
 #include <QImage>
+#include "Core.h"
 
 class IDatabaseService;
 class ICameraManagerService;
@@ -66,7 +67,7 @@ public slots:
     virtual void onFrameWithBoxesReady(const QImage &frame,
                                        const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
-    //virtual void onMLResult(MLResult result) = 0;
+    virtual void onMLResult(const Core::Detection &detect) = 0;
 
     //  DatabaseModule -> this
     virtual void onDefectAdded() = 0;

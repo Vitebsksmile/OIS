@@ -6,53 +6,33 @@
 #include <QObject>
 #include <QString>
 #include <QUrl>
+#include "Core.h"
 
 namespace cv { class Mat; }
 
 class IDatabaseService;
 class ICameraManagerService;
 
-//  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IImageProcessingService : public QObject
 {
     Q_OBJECT
 
 public:
-    //  explicit — запрещает неявное приведение типов
     explicit IImageProcessingService(QObject* parent = nullptr) : QObject(parent) {}
 
-    //  Виртуальный деструктор
-    //  Критически важен для интерфейсов: он гарантирует,
-    //  что при удалении объекта через указатель на интерфейс
-    //  будет вызван деструктор именно дочернего (реального) класса
     virtual ~IImageProcessingService() = default;
 
     virtual bool setDbService(IDatabaseService *dbService) = 0;
     virtual bool setCamService(ICameraManagerService *camService) = 0;
 
-//  Логика обработки (слоты)
-//  public slots: Методы, которые можно вызывать из других потоков или через connect
+    virtual void changesDetectionMethod(const QString &method) = 0;
+
 public slots:
     //  VisualizationModule -> this
     virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
 
-    //  ProcessManager -> this
-    //  для уведомления User о начале предобработки (for QML about Start)
-    //virtual void onPreProcessingStartNotification(bool success) = 0;
-
-    //  ProcessManager -> this
-    //  для уведомления о завершении предобработки (for QML about Finished)
-    //virtual void onPreProcessingFinished(const QString &resultFilePath) = 0;
-
     //  CameraManagerModule -> this
     virtual void onRawCVFrameReady(const cv::Mat &frame) = 0;
-
-    //  ProcessManager -> this
-    //virtual void onFrameReady(const QImage &frame) = 0;
-
-    //  ProcessManager -> this
-    //virtual void onFrameWithBoxesReady(const QImage &frame,
-    //                                   const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
 signals:
     //  For VisualizationService about Start
@@ -79,6 +59,8 @@ signals:
     //  this -> VisualizationModule
     void frameWithBoxesReady(const QImage &frame,
                              const std::vector<std::vector<int>> &rectanglePoints);
+
+    void detectionsReady(const QVector<Core::Detection> &detections);
 };
 
 //  Factory method

@@ -20,7 +20,7 @@ VisualizationService::VisualizationService(QObject *parent)
     : IVisualizationService(parent)
     , m_authController(new AuthController(this, this))
     , m_sessController(new SessionController(this, this))
-    , m_fileHandlerController(new FileHandlerController(this, this))
+    , m_fileHandlerController(new FileHandlerController(this, this))  //???
     , m_dbController(new DbModelController(this, this))
     , m_videoController(new VideoStreamController(this, this))
 {
@@ -110,7 +110,7 @@ void VisualizationService::disconnectCamera()
 }
 
 //  Слушает сигнал из FileHandler о старте предобработки
-void VisualizationService::onImagePreProcessingRequested(const QString &filePath)
+void VisualizationService::onImagePreProcessingRequested(const QString &filePath)  //???
 {
     if (!filePath.isEmpty())
     {
@@ -126,7 +126,7 @@ void VisualizationService::onImagePreProcessingRequested(const QString &filePath
 }
 
 //  From IMageProcessingModule for QML about Start
-void VisualizationService::onPreProcessingStartNotification(bool success)
+void VisualizationService::onPreProcessingStartNotification(bool success)  //???
 {
     if (success)
     {
@@ -139,7 +139,7 @@ void VisualizationService::onPreProcessingStartNotification(bool success)
 }
 
 //  Слот onImageProcessed (успех обработки)
-void VisualizationService::onImagePreProcessingFinished(const QString &filePath, bool success)
+void VisualizationService::onImagePreProcessingFinished(const QString &filePath, bool success)  //???
 {
     qDebug()
         << "VisualizationService: Image preprocessing result for: "
@@ -160,7 +160,7 @@ void VisualizationService::onImagePreProcessingFinished(const QString &filePath,
 }
 
 //  Слот onPreProcessingError (ошибка)
-void VisualizationService::onPreProcessingError(const QString &filePath, const QString &error)
+void VisualizationService::onPreProcessingError(const QString &filePath, const QString &error)  //???
 {
     qDebug()
         << "VisualizationService: Processing error: "
@@ -173,7 +173,7 @@ void VisualizationService::onPreProcessingError(const QString &filePath, const Q
     //emit showNotification("Error " , error);
 }
 
-/*void VisualizationService::onFrameReady(const OIS::Core::Frame &frame)
+/*void VisualizationService::onFrameReady(const OIS::Core::Frame &frame)  //???
 {
     qDebug()
     << "VisualizationService: Camera manager module result for: "
@@ -196,8 +196,8 @@ void VisualizationService::onProcessedFrameReady(const QImage &frame)
     emit processedFrameReady(frame);
 }
 
-void VisualizationService::onFrameWithBoxesReady(const QImage &frame
-                                                 , const std::vector<std::vector<int>> &rectanglePoints)
+void VisualizationService::onFrameWithBoxesReady(const QImage &frame,
+                                                 const std::vector<std::vector<int>> &rectanglePoints)
 {
     // qDebug()
     //     << "VisualizationService: object received:"
@@ -206,7 +206,12 @@ void VisualizationService::onFrameWithBoxesReady(const QImage &frame
                              , rectanglePoints);
 }
 
-void VisualizationService::onDefectAdded()
+void VisualizationService::onMLResult(const Core::Detection &detect)  //???
+{
+    //  ------------
+}
+
+void VisualizationService::onDefectAdded()  //???
 {
 ////////////////////////////
 }

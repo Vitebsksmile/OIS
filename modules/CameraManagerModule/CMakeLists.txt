@@ -66,10 +66,10 @@ target_include_directories(${CAMERA_MANAGER_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/frame
 )
 
-target_include_directories(${CAMERA_MANAGER_TARGET}
-    PUBLIC
-        "D:/Program Files/Basler/pylon 7/Development/include"
-)
+#target_include_directories(${CAMERA_MANAGER_TARGET}
+#    PUBLIC
+#        "D:/Program Files/Basler/pylon 7/Development/include"
+#)
 
 # target_link_directories(${CAMERA_MANAGER_TARGET} PRIVATE
 #     ${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib
@@ -82,5 +82,5 @@ target_link_libraries(${CAMERA_MANAGER_TARGET}
         CoreModule
 
         #PylonC_v8_0
-        ${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib/libPylonC_v8_0.a
+        #${CMAKE_SOURCE_DIR}/modules/CameraManagerModule/lib/libPylonC_v8_0.a
 )

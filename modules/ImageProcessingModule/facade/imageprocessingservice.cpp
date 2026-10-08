@@ -10,19 +10,17 @@
  * Инкапсуляция: Сложная математика (performProcessing) отделена от логики загрузки и потоков.
 */
 
-
+#include "imageprocessingservice.h"
 #include <QDebug>
 #include <QThread>
-
-#include "imageprocessingservice.h"
 #include "processmanager.h"
-
 
 ImageProcessingService::ImageProcessingService(QObject *parent)
     : IImageProcessingService(parent),
     m_processManager(new ProcessManager (this, this))
 {
-
+    connect(m_processManager, &ProcessManager::detectionsReady,
+        this, &ImageProcessingService::detectionsReady);
 }
 
 bool ImageProcessingService::setDbService(IDatabaseService *dbService)
@@ -46,9 +44,18 @@ bool ImageProcessingService::setCamService(ICameraManagerService *camService)
     return true;
 }
 
+void ImageProcessingService::changesDetectionMethod(const QString &detectionMethod)
+{
+    if (detectionMethod.isEmpty()) {
+        return;
+    } else {
+        m_detectionMethod = detectionMethod;
+    }
+}
+
 //  Слот для получения пути из VisualizationModule
 //  Запуск обработки
-void ImageProcessingService::onImagePreProcessingRequested(const QString &filePath)
+void ImageProcessingService::onImagePreProcessingRequested(const QString &filePath)  //???
 {
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
     if (filePath.isEmpty())
@@ -75,11 +82,11 @@ void ImageProcessingService::onImagePreProcessingRequested(const QString &filePa
 
 //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
 //  для уведомления User о начале предобработки (for QML about Start)
-void ImageProcessingService::onPreProcessingStartNotification(bool success) {}
+void ImageProcessingService::onPreProcessingStartNotification(bool success) {}  //???
 
 //  Слушает ProcessManager для дальнейшей отправки в VisualizationModule
 //  для уведомления о завершении предобработки (for QML about Finished)
-void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePath)
+void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePath)  //???
 {
     imagePreProcessingFinished("file:///" + resultFilePath, true);
     qDebug() << "ImageProcessingService: "
@@ -92,7 +99,7 @@ void ImageProcessingService::onPreProcessingFinished(const QString &resultFilePa
 void ImageProcessingService::onRawCVFrameReady(const cv::Mat &cvFrame)
 {
     //  this -> ProcessManager
-    emit processFrame(cvFrame);
+    emit processFrame(cvFrame, m_detectionMethod);
 }
 
 //  ProcessManager -> this
