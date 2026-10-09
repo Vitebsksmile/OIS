@@ -30,11 +30,13 @@ class ImageProcessingService : public IImageProcessingService
 
 public:
     explicit ImageProcessingService(QObject* parent = nullptr);
+    //~ImageProcessingService() override;
 
     bool setDbService(IDatabaseService *dbService) override;
     bool setCamService(ICameraManagerService *camService) override;
 
     void changesDetectionMethod(const QString &detectionMethod) override;
+    void enableDetection(bool detection) override;
 
 //  Реализация интерфейса IImageProcessingService
 public slots:
@@ -59,26 +61,40 @@ public slots:
     void onFrameWithBoxesReady(const QImage &frame,
                                const std::vector<std::vector<int>> &rectanglePoints);
 
+    void onDetectionsReady(const QImage &frame,
+                           const QVector<Core::Detection> &detections);
+
 signals:
     //  Сигнал для ProcessManager -> создай imagePreProcessing
     void imagePreProcessingRequested(const QString &filePath);  //???
 
-    //  this -> ProcessManager -> for creat onnxDefectDetector
-    void defectDetectionRequested();
-
     //  this -> ProcessManager
     void processFrame(const cv::Mat &cvFrame, const QString &detectionMethod);
-    //void processedFrameReady(ProcessedFrame frame);  //???
+
+    //  this -> VisualizationModule
+    void objectFound(const size_t &objectCount,
+                     const std::vector<std::vector<int>> &rectanglePoints);
+
+    //  ProcessManager -> VisualizationModule
+    //void processedFrameReady(const QImage &frame);
+
+    //  ProcessManager -> VisualizationModule
+    // void frameWithBoxesReady(const QImage &frame,
+    //                          const std::vector<std::vector<int>> &rectanglePoints);
+
+    // ProcessManager -> VisualizationService
+    // void detectionsReady(const QImage &frame,
+    //                      const QVector<Core::Detection> &detections);
 
 private:
-    ProcessManager* m_processManager;
+    ProcessManager* m_procManager;
 
     //  Хранит путь к файлу, который обрабатывается в данный момент,
     //  чтобы знать, какой путь отправить обратно в сигнале imageProcessed
     QUrl m_currentFilePath;  //???
     IDatabaseService *m_dbService = nullptr;
     ICameraManagerService *m_camService = nullptr;
-    QString m_detectionMethod  = "yolo11";
+    QString m_detectionMethod  = "classic";    //  yolo11
 };
 
 #endif // IMAGEPROCESSINGSERVICE_H

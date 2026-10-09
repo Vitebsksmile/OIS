@@ -25,29 +25,27 @@ Rectangle {
         anchors.topMargin: 16
         spacing: 14
 
-        Label {
+        OISTitleLabel {
             Layout.preferredHeight: implicitHeight
             Layout.alignment: Qt.AlignVCenter
             text: "Image Processing"
-            font.pixelSize: 22
-            font.bold: true
         }
 
-        CheckBox {
+        OISNormalCheckBox {
             Layout.preferredHeight: implicitHeight
             Layout.alignment: Qt.AlignVCenter
             text: "Enable Noise Reduction"
             checked: true
         }
 
-        CheckBox {
+        OISNormalCheckBox {
             Layout.preferredHeight: implicitHeight
             Layout.alignment: Qt.AlignVCenter
             text: "Enable Contrast Enhancement"
             checked: true
         }
 
-        CheckBox {
+        OISNormalCheckBox {
             Layout.preferredHeight: implicitHeight
             Layout.alignment: Qt.AlignVCenter
             text: "Enable Edge Detection"
@@ -57,7 +55,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: implicitHeight
 
-            Label {
+            OISNormalLabel {
                 Layout.preferredWidth: 180
                 Layout.preferredHeight: implicitHeight
                 Layout.alignment: Qt.AlignVCenter
@@ -75,7 +73,7 @@ Rectangle {
                 value: 5
             }
 
-            Label {
+            OISNormalLabel {
                 Layout.preferredWidth: 40
                 Layout.preferredHeight: implicitHeight
                 Layout.alignment: Qt.AlignVCenter

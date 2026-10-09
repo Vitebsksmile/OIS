@@ -53,7 +53,7 @@ void VideoProvider::onFrameWithBoxesReady(const QImage &frame
                                           , const std::vector<std::vector<int>> &rectanglePoints)
 {
     QImage editableFrame = frame;
-    if (editableFrame.isNull()) return;
+    if (editableFrame.isNull()) { return; }
 
     QPainter painter(&editableFrame);
 
@@ -100,6 +100,43 @@ void VideoProvider::onFrameWithBoxesReady(const QImage &frame
     painter.end();
 
     this->processFrame(editableFrame);
+}
+
+void VideoProvider::onDetectionsReady(const QImage &frame,
+                                      const QVector<Core::Detection> &detections)
+{
+    if (frame.isNull()) { return; }
+
+    QImage editableFrame = frame;
+    QPainter painter(&editableFrame);
+
+    QPen pen(Qt::white
+             , 6
+             , Qt::SolidLine
+             , Qt::RoundCap
+             , Qt::RoundJoin);
+
+    painter.setPen(pen);
+
+    for (const Core::Detection &detection : detections) {
+
+        const QRect &box = detection.boundingBox;
+
+        painter.drawRect(box);
+
+        QString label = QString("%1 %2%")
+                            .arg(detection.className)
+                            .arg(detection.confidence * 100.0,
+                                 0,
+                                 'f',
+                                 1);
+
+        painter.drawText(box.topLeft() + QPoint(0, -5),
+                         label);
+    }
+
+    painter.end();
+    processFrame(editableFrame);
 }
 
 void VideoProvider::processFrame(const QImage &img)

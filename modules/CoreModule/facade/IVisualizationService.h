@@ -42,6 +42,8 @@ public:
     virtual bool setCamService(ICameraManagerService *camService) = 0;
     virtual bool setProcService(IImageProcessingService *procService) = 0;
 
+    virtual void changesDetectionMethod(const QString &detectionMethod) = 0;
+
 public slots:
     //  IImageProcessingModule -> this
     virtual void onPreProcessingStartNotification(bool success) = 0;
@@ -54,9 +56,6 @@ public slots:
     virtual void onPreProcessingError(const QString &filePath,
                                       const QString &error) = 0;
 
-    //  ????????????? 02.10.26
-    //virtual void onFrameReady(const OIS::Core::Frame &frame) = 0;
-
     //  CameraManagerModule -> this
     virtual void onRawImageFrameReady(const QImage &frame) = 0;
 
@@ -67,10 +66,9 @@ public slots:
     virtual void onFrameWithBoxesReady(const QImage &frame,
                                        const std::vector<std::vector<int>> &rectanglePoints) = 0;
 
-    virtual void onMLResult(const Core::Detection &detect) = 0;
-
-    //  DatabaseModule -> this
-    virtual void onDefectAdded() = 0;
+    // ProcessManager -> VisualizationService
+    virtual void onDetectionsReady(const QImage &frame,
+                                   const QVector<Core::Detection> &detections) = 0;
 
     //virtual void onDbExecutionError(const QString &error) = 0;
 

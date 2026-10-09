@@ -17,9 +17,9 @@
 
 ImageProcessingService::ImageProcessingService(QObject *parent)
     : IImageProcessingService(parent),
-    m_processManager(new ProcessManager (this, this))
+    m_procManager(new ProcessManager (this, this))
 {
-    connect(m_processManager, &ProcessManager::detectionsReady,
+    connect(m_procManager, &ProcessManager::detectionsReady,
         this, &ImageProcessingService::detectionsReady);
 }
 
@@ -34,8 +34,8 @@ bool ImageProcessingService::setCamService(ICameraManagerService *camService)
 {
     m_camService = camService;
     bool ok = false;
-    ok = connect(m_camService, &ICameraManagerService::rawCVFrameReady
-                 , this, &ImageProcessingService::onRawCVFrameReady);
+    ok = connect(m_camService, &ICameraManagerService::rawCVFrameReady,
+                 this, &ImageProcessingService::onRawCVFrameReady);
     if (!ok) {
         qCritical()
         << "WARNING! ImageProcessingService: Failed to subscribe to CameraManagerService signals";
@@ -47,10 +47,19 @@ bool ImageProcessingService::setCamService(ICameraManagerService *camService)
 void ImageProcessingService::changesDetectionMethod(const QString &detectionMethod)
 {
     if (detectionMethod.isEmpty()) {
+        qCritical() << "ImageProcessingService: It is not possible to change the detection method."
+                    << "The passed detection method value is empty()";
         return;
     } else {
         m_detectionMethod = detectionMethod;
+        qDebug() << "ImageProcessingService: changes the detection method. New method ="
+                 << detectionMethod;
     }
+}
+
+void ImageProcessingService::enableDetection(bool detection)
+{
+    m_procManager->startDetection(detection);
 }
 
 //  Слот для получения пути из VisualizationModule
@@ -102,13 +111,13 @@ void ImageProcessingService::onRawCVFrameReady(const cv::Mat &cvFrame)
     emit processFrame(cvFrame, m_detectionMethod);
 }
 
-//  ProcessManager -> this
+//  ProcessManager -> this -------delete
 void ImageProcessingService::onProcessedFrameReady(const QImage &frame)
 {
     emit processedFrameReady(frame);
 }
 
-//  ProcessManager -> this
+//  ProcessManager -> this -------delete
 void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame,
                                                    const std::vector<std::vector<int>> &rectanglePoints)
 {
@@ -117,6 +126,11 @@ void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame,
                              rectanglePoints);
 
     m_dbService -> logNewDefect(777, 1, "R105", 20, 45);
+}
+
+void ImageProcessingService::onDetectionsReady(const QImage &frame, const QVector<Core::Detection> &detections)
+{
+    emit detectionsReady(frame, detections);
 }
 
 //  Factory method

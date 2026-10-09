@@ -24,6 +24,8 @@ public:
     Q_INVOKABLE bool creatCamera(const QString &url);
     Q_INVOKABLE bool creatCamera(int cameraIndex);
     Q_INVOKABLE void disconnectCamera();
+    Q_INVOKABLE void changesDetectionMethod(const QString &detectionMethod);
+    Q_INVOKABLE void enableDetection(bool detection);
 
 signals:
     void errorOccurred(const QString &errorTitle,

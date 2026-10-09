@@ -42,6 +42,11 @@ struct Detection
     QRect boundingBox;
 };
 
+enum class DetectionMethod {
+    classic,
+    yolo11
+};
+
 }
 
 #endif // CORE_H

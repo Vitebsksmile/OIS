@@ -8,6 +8,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QtQml/qqmlregistration.h>
+#include "Core.h"
 
 
 class VideoProvider : public QObject
@@ -37,6 +38,9 @@ public slots:
     void onFrameWithBoxesReady(const QImage &frame,
                                const std::vector<std::vector<int>> &rectanglePoints);
 
+    void onDetectionsReady(const QImage &frame,
+                           const QVector<Core::Detection> &detections);
+
 signals:
     void videoSinkChanged();
 
@@ -47,6 +51,7 @@ private:
     QVideoSink* m_videoSink;
 
     std::vector<std::vector<int>> m_smoothedBoxes;
+    //std::vector<Core::Detection> m_smoothedDetections;
 
     QString m_frameSource;
 };

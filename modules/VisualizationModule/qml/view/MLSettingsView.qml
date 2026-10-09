@@ -14,71 +14,117 @@ Rectangle {
     color: "white"
     border.color: "#dcdcdc"
 
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 16
-        spacing: 14
+    RowLayout {
+        id: rootLayout
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.leftMargin: 16
+        anchors.rightMargin: 16
+        anchors.topMargin: 16
+        spacing: 10
 
-        Label {
-            text: "Machine Learning Settings"
-            font.pixelSize: 22
-            font.bold: true
-        }
-
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 30
+            Layout.fillHeight: true
+            spacing: 10
 
-            Label {
-                Layout.preferredWidth: 180
-                text: "Detection Threshold:"
+            RowLayout {
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: implicitHeight
+
+                OISTitleLabel {
+                    Layout.preferredHeight: implicitHeight
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Machine Learning Settings"
+                }
+
+                Switch {
+                    Layout.preferredHeight: implicitHeight
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                    text: qsTr("Enable detection")
+                    LayoutMirroring.enabled: true
+                    checked: false
+                    onCheckedChanged: {
+                        if (checked) {
+                            SessionController.changesDetectionMethod("yolo11")
+                            console.log("Переключатель ВКЛЮЧЕН")
+                        } else {
+                            console.log("Переключатель ВЫКЛЮЧЕН")
+                        }
+                    }
+                }
             }
 
-            Slider {
-                id: thresholdSlider
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 30
+                Layout.alignment: Qt.AlignVCenter
 
+                OISNormalLabel {
+                    Layout.preferredWidth: 180
+                    text: "Detection Threshold:"
+                }
+
+                Slider {
+                    id: thresholdSlider
+
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+
+                    from: 0
+                    to: 1
+                    stepSize: 0.01
+                    value: 0.75
+                }
+
+                OISNormalLabel {
+                    Layout.preferredWidth: 50
+                    Layout.alignment: Qt.AlignVCenter
+                    text: thresholdSlider.value.toFixed(2)
+                }
+            }
+
+            OISNormalCheckBox {
+                text: "Enable GPU Acceleration"
+                checked: true
+            }
+
+            OISNormalCheckBox {
+                text: "Save Detection Results"
+                checked: true
+            }
+
+            RowLayout {
                 Layout.fillWidth: true
 
-                from: 0
-                to: 1
-                stepSize: 0.01
-                value: 0.75
-            }
+                OISNormalLabel {
+                    Layout.preferredWidth: 180
 
-            Label {
-                Layout.preferredWidth: 50
-                text: thresholdSlider.value.toFixed(2)
+                    text: "Model:"
+                }
+
+                ComboBox {
+                    Layout.fillWidth: true
+
+                    model: [
+                        "U-Net",
+                        "ResNet",
+                        "MobileNet",
+                        "YOLO"
+                    ]
+                }
             }
         }
 
-        CheckBox {
-            text: "Enable GPU Acceleration"
-            checked: true
-        }
+        LifeView {
+            id: cameraView
+            Layout.preferredWidth: 200
+            Layout.fillHeight: true
 
-        CheckBox {
-            text: "Save Detection Results"
-            checked: true
-        }
+            radius: 12
 
-        RowLayout {
-            Layout.fillWidth: true
-
-            Label {
-                text: "Model:"
-                Layout.preferredWidth: 180
-            }
-
-            ComboBox {
-                Layout.fillWidth: true
-
-                model: [
-                    "U-Net",
-                    "ResNet",
-                    "MobileNet",
-                    "YOLO"
-                ]
-            }
+            frameSource: "yolo11"
         }
     }
 }

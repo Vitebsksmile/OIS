@@ -142,6 +142,7 @@ qt_add_qml_module(${VISUALIZATION_TARGET}
     DEPENDENCIES
         QtMultimedia
         QML_FILES config.json
+        QML_FILES qml/settings/OISNormalCheckBox.qml
 )
 
 

@@ -89,7 +89,7 @@ Page {
 
         CameraSettingsView {}
         ImageProcessingSettingsView {}
-        //MLSettingsView {}
+        MLSettingsView {}
         DatabaseSettingsView {}
     }
 }

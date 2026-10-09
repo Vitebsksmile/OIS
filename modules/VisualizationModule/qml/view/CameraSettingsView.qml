@@ -47,8 +47,6 @@ Rectangle {
                 Layout.preferredHeight: implicitHeight
                 Layout.alignment: Qt.AlignVCenter
                 text: qsTr("Camera Settings")
-                font.pixelSize: 22
-                font.bold: true
             }
 
             RowLayout {

@@ -2,6 +2,7 @@
 #define PROCESSMANAGER_H
 
 #include <QObject>
+#include <QThread>
 #include <QString>
 #include <QImage>
 #include <memory>
@@ -9,6 +10,7 @@
 #include "frameprocessing.h"
 #include "objectfinder.h"
 #include "Frame.h"
+#include "yolodetectionworker.h"
 #include "onnxdefectdetector.h"
 
 class ImageProcessingService;
@@ -21,10 +23,14 @@ public:
     explicit ProcessManager(ImageProcessingService *imageProcessingService,
                             QObject *parent = nullptr);
 
+    ~ProcessManager() = default;
+
     //void setImagePreProcessing(ImagePreProcessing *preProcessing);  //???
 
     //  Geter
     ImagePreProcessing* imagePreProcessing() const { return m_imagePreProcessing.get(); }  //???
+
+    void startDetection(bool detection);
 
 public slots:
     //  Слушает фасад для старта предобработки
@@ -44,10 +50,15 @@ signals:
     void processedFrameReady(const QImage &frame);
 
     //  this -> ImageProcessingService
-    void frameWithBoxesReady(const QImage &frame
-                             , const std::vector<std::vector<int>> &rectanglePoints);
+    void frameWithBoxesReady(const QImage &frame,
+                             const std::vector<std::vector<int>> &rectanglePoints);
 
-    void detectionsReady(const QVector<Core::Detection> &detections);
+    // this -> VisualizationService
+    void detectionsReady(const QImage &frame,
+                         const QVector<Core::Detection> &detections);
+
+    //  Внутренний сигнал для перехвата
+    void frameCaptured(const cv::Mat &cvFrame);
 
 private:
     //  Создает объект ImagePreProcessing и управляет его жизненным циклом
@@ -60,15 +71,14 @@ private:
     //  (по возможности сделать принимающим разное к-во аргументов)
     void usePreProcessing(ImagePreProcessing *imagePreProcessing);  //???
 
-    //void useFrameProcessing(FrameProcessing *processing);
-    //void useFinder(ObjectFinder *finder);
-
     QImage matToQImage(const cv::Mat &mat);
     QImage matToGrayQImage(const cv::Mat &mat);
     OIS::Core::Frame matToFrame(const cv::Mat &mat) const;  //???
 
+    void startDetection();
+
 private:
-    ImageProcessingService *m_imageProcessingService = nullptr;
+    ImageProcessingService *m_service = nullptr;
 
     // Умный указатель 'unique_ptr': сам удалит объект в деструкторе или при замене
     // std::make_unique — самый безопасный способ создания объекта в куче.
@@ -78,6 +88,9 @@ private:
     std::unique_ptr<FrameProcessing> m_processing;
     std::unique_ptr<ObjectFinder> m_finder {};
     std::unique_ptr<OnnxDefectDetector> m_detector;
+
+    QThread m_workerThread;
+    YoloDetectionWorker *m_worker;
 };
 
 #endif // PROCESSMANAGER_H

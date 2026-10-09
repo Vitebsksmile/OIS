@@ -5,54 +5,68 @@
 
 ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, QObject *parent)
     : QObject(parent)
-    , m_imageProcessingService(imageProcessingService)
+    , m_service(imageProcessingService)
     , m_detector(std::make_unique<OnnxDefectDetector>("D:/QtProjects/OIS/models/best.onnx"))
 {
-    if (!m_imageProcessingService) {
+    if (!m_service) {
         qWarning()
             << "ProcessManager: processManager created without reference to facade";
+    } else {
+        qDebug()
+            << "ProcessManager: ProcessManager object created; parent:"
+            << parent;
     }
-
-    qDebug()
-        << "ProcessManager: ProcessManager object created; parent: "
-        << parent;
 
     if (!m_detector->isReady())
     {
-        qWarning()
-        << "ProcessManager: ONNX defect detector is not ready";
+        qWarning() << "ProcessManager: ONNX defect detector is not ready";
     }
     else
     {
-        qDebug()
-        << "ProcessManager: ONNX defect detector is ready";
+        qDebug() << "ProcessManager: ONNX defect detector is ready";
     }
 
     //  Слушает фасад для старта предобработки
-    connect(m_imageProcessingService, &ImageProcessingService::imagePreProcessingRequested,
+    connect(m_service, &ImageProcessingService::imagePreProcessingRequested,
             this, &ProcessManager::onImagePreProcessingRequested);  //???
 
     //  To Facade for QML about Start
     connect(this, &ProcessManager::preProcessingStartNotification,
-            m_imageProcessingService, &ImageProcessingService::onPreProcessingStartNotification);  //???
+            m_service, &ImageProcessingService::onPreProcessingStartNotification);  //???
 
     //  To Facade fot QML about Finished
     connect(this, &ProcessManager::preProcessingFinished,
-            m_imageProcessingService, &ImageProcessingService::onPreProcessingFinished);  //???
+            m_service, &ImageProcessingService::onPreProcessingFinished);  //???
 
     //  The facade listens for the appearance of a frame
-    connect(m_imageProcessingService, &ImageProcessingService::processFrame
-            , this, &ProcessManager::onProcessFrame);
+    connect(m_service, &ImageProcessingService::processFrame,
+            this, &ProcessManager::onProcessFrame);
 
     //  this -> ImageProcessingService
-    connect(this, &ProcessManager::processedFrameReady
-            , m_imageProcessingService, &ImageProcessingService::onProcessedFrameReady);
+    connect(this, &ProcessManager::processedFrameReady,
+            m_service, &ImageProcessingService::onProcessedFrameReady);
 
     //  this -> ImageProcessingService
-    connect(this, &ProcessManager::frameWithBoxesReady
-            , m_imageProcessingService, &ImageProcessingService::onFrameWithBoxesReady);
+    connect(this, &ProcessManager::frameWithBoxesReady,
+            m_service, &ImageProcessingService::onFrameWithBoxesReady);
 }
 
+void ProcessManager::startDetection(bool detection)
+{
+    m_worker = new YoloDetectionWorker("D:/QtProjects/OIS/models/best.onnx", this);
+    m_worker->moveToThread(&m_workerThread);
+
+    // connect(this, &ProcessManager::frameCaptured,
+    //         this, [this, cvFrame](const cv::Mat &cvFrame) {
+    //     // Здесь вы перехватили num внутри метода start()
+    //     qDebug() << "Перехвачено в start():" << cvFrame;
+
+    //     // Тут можно вызвать локальную логику обработки
+    //     //this->doLocalProcessing(num);
+    // });
+
+    m_workerThread.start();
+}
 
 //  --- PUBLIC SLOTS ---
 //  Слушает фасад для старта предобработки
@@ -80,24 +94,28 @@ void ProcessManager::onImagePreProcessingRequested(const QString &filePath)  //?
 //  ImageProcessingService -> this
 void ProcessManager::onProcessFrame(const cv::Mat &cvFrame, const QString &detectionMethod)
 {
-    qDebug() << "ProcessManager: rows x cols = " << cvFrame.rows << "x" << cvFrame.cols;
+    emit frameCaptured(cvFrame);
+
+    //qDebug() << "ProcessManager: rows x cols = " << cvFrame.rows << "x" << cvFrame.cols;
     if (detectionMethod == "classic") {
         cv::Mat localFrame = cvFrame;
 
         m_processing = std::make_unique<FrameProcessing>(localFrame);
         m_processing->toGray().gaussianBlur(1).toBinary();
+
         emit processedFrameReady(this->matToQImage(m_processing->cvFrame()));
 
         m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
         m_finder->findObjects();
 
-        emit frameWithBoxesReady(this->matToQImage(cvFrame)
-                                 , m_finder->rectanglePoints());
+        emit frameWithBoxesReady(this->matToQImage(cvFrame),
+                                 m_finder->rectanglePoints());
 
     } else if (detectionMethod == "yolo11") {
+        cv::Mat localFrame = cvFrame;
         if (m_detector && m_detector->isReady()) {
 
-            const QVector<Core::Detection> detections = m_detector->detect(cvFrame);
+            const QVector<Core::Detection> detections = m_detector->detect(localFrame);
 
             qDebug()
                 << "ProcessManager: neural network detections:"
@@ -105,12 +123,12 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame, const QString &detec
 
             for (const Core::Detection &detection : detections) {
                 qDebug()
-                    << "  class:"       << detection.className
+                    << "class:"         << detection.className
                     << "confidence:"    << detection.confidence
                     << "box:"           << detection.boundingBox;
             }
 
-            emit detectionsReady(detections);
+            emit detectionsReady(this->matToQImage(cvFrame), detections);
         }
     }
 

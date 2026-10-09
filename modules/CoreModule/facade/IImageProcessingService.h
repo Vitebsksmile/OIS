@@ -26,6 +26,7 @@ public:
     virtual bool setCamService(ICameraManagerService *camService) = 0;
 
     virtual void changesDetectionMethod(const QString &method) = 0;
+    virtual void enableDetection(bool detection) = 0;
 
 public slots:
     //  VisualizationModule -> this
@@ -60,7 +61,9 @@ signals:
     void frameWithBoxesReady(const QImage &frame,
                              const std::vector<std::vector<int>> &rectanglePoints);
 
-    void detectionsReady(const QVector<Core::Detection> &detections);
+    // ProcessManager -> VisualizationService
+    void detectionsReady(const QImage &frame,
+                         const QVector<Core::Detection> &detections);
 };
 
 //  Factory method

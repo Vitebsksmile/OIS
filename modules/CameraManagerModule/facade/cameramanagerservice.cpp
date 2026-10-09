@@ -13,17 +13,17 @@ CameraManagerService::CameraManagerService(QObject* parent)
 
     m_worker->moveToThread(&m_workerThread);
 
-    connect(&m_workerThread, &QThread::finished
-            , m_worker, &QObject::deleteLater);
+    connect(&m_workerThread, &QThread::finished,
+            m_worker, &QObject::deleteLater);
 
-    connect(m_worker, &VideoCaptureWorker::rawCVFrameReady
-            , this, &CameraManagerService::onRawCVFrameReady);
+    connect(m_worker, &VideoCaptureWorker::rawCVFrameReady,
+            this, &CameraManagerService::onRawCVFrameReady);
 
-    connect(m_worker, &VideoCaptureWorker::rawImageFrameReady
-            , this, &CameraManagerService::onRawImageFrameReady);
+    connect(m_worker, &VideoCaptureWorker::rawImageFrameReady,
+            this, &CameraManagerService::onRawImageFrameReady);
 
-    connect (m_worker, &VideoCaptureWorker::customFrameReady
-            , this, &CameraManagerService::onCustomFrameReady);
+    connect (m_worker, &VideoCaptureWorker::customFrameReady,
+            this, &CameraManagerService::onCustomFrameReady);
 }
 
 CameraManagerService::~CameraManagerService()
@@ -39,9 +39,8 @@ void CameraManagerService::shutdown()
 
 bool CameraManagerService::creatCamera(const QString &url)
 {
-    qDebug()
-        << "CameraManagerService: creatCamera with URL address:"
-        << url;
+    qDebug() << "CameraManagerService: creatCamera with URL address:"
+             << url;
 
     m_workerThread.start();
 
@@ -52,9 +51,8 @@ bool CameraManagerService::creatCamera(const QString &url)
 
 bool CameraManagerService::creatCamera(int cameraIndex)
 {
-    qDebug()
-    << "CameraManagerService: creatCamera with cameraIndex:"
-    << cameraIndex;
+    qDebug() << "CameraManagerService: creatCamera with cameraIndex:"
+             << cameraIndex;
 
     m_workerThread.start();
 

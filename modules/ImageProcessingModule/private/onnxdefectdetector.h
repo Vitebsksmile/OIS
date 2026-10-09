@@ -13,6 +13,7 @@ class OnnxDefectDetector : public QObject
 {
 public:
     explicit OnnxDefectDetector(const QString &modelPath, QObject *parent = nullptr);
+    ~OnnxDefectDetector() = default;
 
     bool isReady() const;
 

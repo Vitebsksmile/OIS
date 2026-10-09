@@ -44,7 +44,7 @@ bool VisualizationService::setCamService(ICameraManagerService *camService)
     ok = connect(m_camService, &ICameraManagerService::rawImageFrameReady,
                  this, &VisualizationService::onRawImageFrameReady);
     if (!ok) qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to CameraManagerModule signals";
+            << "WARNING! VisualizationService: Failed to subscribe to the rawImageFrameReady signal of the CameraManagerModule";
     return true;
 }
 
@@ -53,23 +53,36 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     m_procService = procService;
 
     bool ok = false;
-    ok = connect(m_procService, &IImageProcessingService::processedFrameReady
-            , this, &VisualizationService::onProcessedFrameReady);
+    ok = connect(m_procService, &IImageProcessingService::processedFrameReady,
+                 this, &VisualizationService::onProcessedFrameReady);
     if (!ok) {
         qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to ImageProcessingModule signals";
+            << "WARNING! VisualizationService: Failed to subscribe to the processedFrameReady signal of the ImageProcessingModule";
         return false;
     }
 
-    ok = connect(m_procService, &IImageProcessingService::frameWithBoxesReady
-            , this, &VisualizationService::onFrameWithBoxesReady);
+    ok = connect(m_procService, &IImageProcessingService::frameWithBoxesReady,
+                 this, &VisualizationService::onFrameWithBoxesReady);
     if (!ok) {
         qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to ImageProcessingModule signals";
+            << "WARNING! VisualizationService: Failed to subscribe to the frameWithBoxesReady signal of the ImageProcessingModule";
+        return false;
+    }
+
+    ok = connect(m_procService, &IImageProcessingService::detectionsReady,
+                 this, &VisualizationService::onDetectionsReady);
+    if (!ok) {
+        qCritical()
+            << "WARNING! VisualizationService: Failed to subscribe to the detectionsReady signal of the ImageProcessingModule";
         return false;
     }
 
     return true;
+}
+
+void VisualizationService::changesDetectionMethod(const QString &detectionMethod)
+{
+    m_procService->changesDetectionMethod(detectionMethod);
 }
 
 DbModelController* VisualizationService::dbController()
@@ -80,6 +93,11 @@ DbModelController* VisualizationService::dbController()
 IDatabaseService *VisualizationService::dbService()
 {
     return m_dbService;
+}
+
+IImageProcessingService *VisualizationService::procService()
+{
+    return m_procService;
 }
 
 bool VisualizationService::creatCamera(const QString &url)
@@ -202,18 +220,13 @@ void VisualizationService::onFrameWithBoxesReady(const QImage &frame,
     // qDebug()
     //     << "VisualizationService: object received:"
     //     << objectCount;
-    emit frameWithBoxesReady(frame
-                             , rectanglePoints);
+    emit frameWithBoxesReady(frame, rectanglePoints);
 }
 
-void VisualizationService::onMLResult(const Core::Detection &detect)  //???
+void VisualizationService::onDetectionsReady(const QImage &frame,
+                                             const QVector<Core::Detection> &detections)
 {
-    //  ------------
-}
-
-void VisualizationService::onDefectAdded()  //???
-{
-////////////////////////////
+    emit detectionsReady(frame, detections);
 }
 
 //  Factory method

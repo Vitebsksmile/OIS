@@ -34,9 +34,12 @@ public:
     bool setCamService(ICameraManagerService *camService) override;
     bool setProcService(IImageProcessingService *procService) override;
 
+    void changesDetectionMethod(const QString &detectionMethod) override;
+
     DbModelController* dbController();
 
     IDatabaseService* dbService();
+    IImageProcessingService* procService();
 
     //IDbModel* dbModel()
 
@@ -68,12 +71,9 @@ public slots:
     void onFrameWithBoxesReady(const QImage &frame,
                                const std::vector<std::vector<int>> &rectanglePoints) override;
 
-    void onMLResult(const Core::Detection &detect) override;  //???
-
-
-
-    //  DatabaseModule -> this
-    void onDefectAdded() override;  //???
+    // ProcessManager -> VisualizationService
+    void onDetectionsReady(const QImage &frame,
+                           const QVector<Core::Detection> &detections) override;
 
     //void onDbExecutionError(const QString &error) override;  //???
 
@@ -95,7 +95,9 @@ signals:
     void frameWithBoxesReady(const QImage &frame,
                              const std::vector<std::vector<int>> &rectanglePoints);
 
-
+    // this ->
+    void detectionsReady(const QImage &frame,
+                         const QVector<Core::Detection> &detections);
 
 private:
     IDatabaseService *m_dbService = nullptr;
