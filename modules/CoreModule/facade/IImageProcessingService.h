@@ -25,8 +25,7 @@ public:
     virtual bool setDbService(IDatabaseService *dbService) = 0;
     virtual bool setCamService(ICameraManagerService *camService) = 0;
 
-    virtual void changesDetectionMethod(const QString &method) = 0;
-    virtual void enableDetection(bool detection) = 0;
+    virtual void readFrame(bool isRead) = 0;
 
 public slots:
     //  VisualizationModule -> this

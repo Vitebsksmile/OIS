@@ -15,16 +15,23 @@ public:
     explicit YoloDetectionWorker(const QString &modelPath,
                                  QObject *parent = nullptr);
 
+    ~YoloDetectionWorker();
+
+    void startCapture(const cv::Mat &cvFrame);
+    void stopCapture();
+
 public slots:
-    void processFrame(const cv::Mat &frame);
+
 
 signals:
     void detectionsReady(const QImage &frame,
                          const QVector<Core::Detection> &detections);
 
-    void error(const QString &message);
+    //void error(const QString &message);
 
 private:
+    QImage matToQImage(const cv::Mat &mat);
+
     OnnxDefectDetector *m_detector = nullptr;
 };
 

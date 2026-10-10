@@ -16,6 +16,8 @@ public:
 
     FrameProcessing& toGray();
     FrameProcessing& gaussianBlur(int kernelSize = 3);
+    FrameProcessing& marksBoundaries();
+    FrameProcessing& closesGapsInLines();
     FrameProcessing& toBinary();
 
 private:

@@ -35,8 +35,7 @@ public:
     bool setDbService(IDatabaseService *dbService) override;
     bool setCamService(ICameraManagerService *camService) override;
 
-    void changesDetectionMethod(const QString &detectionMethod) override;
-    void enableDetection(bool detection) override;
+    void readFrame(bool isRead) override;
 
 //  Реализация интерфейса IImageProcessingService
 public slots:

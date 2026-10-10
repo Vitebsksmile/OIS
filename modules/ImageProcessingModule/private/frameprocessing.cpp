@@ -41,6 +41,29 @@ FrameProcessing& FrameProcessing::gaussianBlur(int kernelSize)
     return *this;
 }
 
+// FrameProcessing &FrameProcessing::marksBoundaries()
+// {
+//     if (!m_frame.empty())
+//     {
+//         cv::Canny(m_frame, m_frame, 50, 150);
+//     }
+//     return *this;
+// }
+
+FrameProcessing &FrameProcessing::closesGapsInLines()
+{
+    if (!m_frame.empty())
+    {
+        //cv::Mat cannyImg;
+        cv::Canny(m_frame, m_frame, 50, 150);
+
+        cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+
+        cv::morphologyEx(m_frame, m_frame, cv::MORPH_CLOSE, kernel);
+    }
+    return *this;
+}
+
 FrameProcessing& FrameProcessing::toBinary()
 {
     if (!m_frame.empty())

@@ -44,22 +44,9 @@ bool ImageProcessingService::setCamService(ICameraManagerService *camService)
     return true;
 }
 
-void ImageProcessingService::changesDetectionMethod(const QString &detectionMethod)
+void ImageProcessingService::readFrame(bool isRead)
 {
-    if (detectionMethod.isEmpty()) {
-        qCritical() << "ImageProcessingService: It is not possible to change the detection method."
-                    << "The passed detection method value is empty()";
-        return;
-    } else {
-        m_detectionMethod = detectionMethod;
-        qDebug() << "ImageProcessingService: changes the detection method. New method ="
-                 << detectionMethod;
-    }
-}
-
-void ImageProcessingService::enableDetection(bool detection)
-{
-    m_procManager->startDetection(detection);
+    m_procManager->setFlag_detections(isRead);
 }
 
 //  Слот для получения пути из VisualizationModule

@@ -34,8 +34,6 @@ public:
     bool setCamService(ICameraManagerService *camService) override;
     bool setProcService(IImageProcessingService *procService) override;
 
-    void changesDetectionMethod(const QString &detectionMethod) override;
-
     DbModelController* dbController();
 
     IDatabaseService* dbService();

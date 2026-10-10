@@ -1,6 +1,6 @@
 #include "videocaptureworker.h"
-
 #include <QDebug>
+#include <QThread>
 
 VideoCaptureWorker::VideoCaptureWorker(QObject *parent)
     : QObject(parent), m_timer(nullptr)

@@ -55,13 +55,13 @@ void SessionController::disconnectCamera()
     m_service->disconnectCamera();
 }
 
-void SessionController::changesDetectionMethod(const QString &detectionMethod)
+void SessionController::readFrame(bool isRead)
 {
-    m_service->procService()->changesDetectionMethod(detectionMethod);
-    qDebug() << "SessionController: changesDetectionMethod";
+    m_readFrame = isRead;
+    m_service->procService()->readFrame(m_readFrame);
 }
 
-void SessionController::enableDetection(bool detection)
+bool SessionController::isReadFrame()
 {
-    m_service->procService()->enableDetection(detection);
+    return m_readFrame;
 }

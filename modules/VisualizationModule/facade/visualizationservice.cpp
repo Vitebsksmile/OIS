@@ -80,11 +80,6 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     return true;
 }
 
-void VisualizationService::changesDetectionMethod(const QString &detectionMethod)
-{
-    m_procService->changesDetectionMethod(detectionMethod);
-}
-
 DbModelController* VisualizationService::dbController()
 {
     return m_dbController;

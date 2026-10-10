@@ -36,10 +36,10 @@ signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!
 
 private:
-    void stopStream();
     void startStream();
     void startStream(const QString &url);
     void startStream(int cameraIndex);
+    void stopStream();
     //std::unique_ptr<ICameraDriver> m_cameraDriver;
 
     //QString m_streamUrl;

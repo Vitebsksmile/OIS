@@ -44,12 +44,13 @@ Rectangle {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                     text: qsTr("Enable detection")
                     LayoutMirroring.enabled: true
-                    checked: false
+                    checked: SessionController.isReadFrame()
                     onCheckedChanged: {
                         if (checked) {
-                            SessionController.changesDetectionMethod("yolo11")
+                            SessionController.readFrame(true)
                             console.log("Переключатель ВКЛЮЧЕН")
                         } else {
+                            SessionController.readFrame(false)
                             console.log("Переключатель ВЫКЛЮЧЕН")
                         }
                     }

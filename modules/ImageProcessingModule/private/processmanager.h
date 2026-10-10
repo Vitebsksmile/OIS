@@ -11,9 +11,11 @@
 #include "objectfinder.h"
 #include "Frame.h"
 #include "yolodetectionworker.h"
-#include "onnxdefectdetector.h"
+#include "Core.h"
+#include <QVector>
 
 class ImageProcessingService;
+//class YoloDetectionWorker;
 
 class ProcessManager : public QObject
 {
@@ -23,21 +25,27 @@ public:
     explicit ProcessManager(ImageProcessingService *imageProcessingService,
                             QObject *parent = nullptr);
 
-    ~ProcessManager() = default;
+    ~ProcessManager();
 
     //void setImagePreProcessing(ImagePreProcessing *preProcessing);  //???
 
     //  Geter
     ImagePreProcessing* imagePreProcessing() const { return m_imagePreProcessing.get(); }  //???
 
-    void startDetection(bool detection);
+    void setFlag_detections(bool flag);
 
 public slots:
     //  Слушает фасад для старта предобработки
     void onImagePreProcessingRequested(const QString &filePath);  //???
 
     //  ImageProcessingServise -> this
-    void onProcessFrame(const cv::Mat &cvFrame, const QString &detectionMethod);
+    void onProcessFrame(const cv::Mat &cvFrame);
+
+private slots:
+    //  Внутренний слот для перехвата
+    //void onFrameCaptured(const cv::Mat &cvFrame);
+    void onDetectionsReady(const QImage &frame,
+                           const QVector<Core::Detection> &detections);
 
 signals:
     //  this -> ImageProcessingService
@@ -57,9 +65,6 @@ signals:
     void detectionsReady(const QImage &frame,
                          const QVector<Core::Detection> &detections);
 
-    //  Внутренний сигнал для перехвата
-    void frameCaptured(const cv::Mat &cvFrame);
-
 private:
     //  Создает объект ImagePreProcessing и управляет его жизненным циклом
     void createPreProcessingObject();  //???
@@ -75,7 +80,8 @@ private:
     QImage matToGrayQImage(const cv::Mat &mat);
     OIS::Core::Frame matToFrame(const cv::Mat &mat) const;  //???
 
-    void startDetection();
+    void startDetection(const cv::Mat &cvFrame);
+    void stopDetection();
 
 private:
     ImageProcessingService *m_service = nullptr;
@@ -87,10 +93,11 @@ private:
 
     std::unique_ptr<FrameProcessing> m_processing;
     std::unique_ptr<ObjectFinder> m_finder {};
-    std::unique_ptr<OnnxDefectDetector> m_detector;
 
     QThread m_workerThread;
     YoloDetectionWorker *m_worker;
+
+    bool m_flag_detections = false;
 };
 
 #endif // PROCESSMANAGER_H
