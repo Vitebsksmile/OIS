@@ -47,6 +47,9 @@ ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, Q
     //  this -> ImageProcessingService
     connect(this, &ProcessManager::frameWithBoxesReady,
             m_service, &ImageProcessingService::onFrameWithBoxesReady);
+
+    connect(this, &ProcessManager::cropPCBReady,
+            m_service, &ImageProcessingService::onCropPCBReady);
 }
 
 ProcessManager::~ProcessManager()
@@ -89,20 +92,24 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
     cv::Mat localFrame = cvFrame;
 
     m_processing = std::make_unique<FrameProcessing>(localFrame);
-    //m_processing->toGray().gaussianBlur(1).toBinary();
-    m_processing->toGray().gaussianBlur().closesGapsInLines();//.marksBoundaries()
+    m_processing->toGray().gaussianBlur().closesGapsInLines();
 
     emit processedFrameReady(this->matToQImage(m_processing->cvFrame()));
 
-    m_finder = std::make_unique<ObjectFinder>(m_processing->cvFrame());
-    m_finder->findObjects();
+    m_finder = std::make_unique<ObjectsFinder>(m_processing->cvFrame());
+    m_finder->findContours().detectRaggedRectangularObjects().makeBoundRect();
 
     emit frameWithBoxesReady(this->matToQImage(cvFrame),
                              m_finder->rectanglePoints());
 
-    if (m_flag_detections) {
-        m_workerThread.start();
-        this->startDetection(cvFrame);
+    if (m_finder->contours().size() == 1) {
+        cv::Mat cropPCB = m_processing->cropAndCorrectPCB(cvFrame, m_finder->contours()[0]);
+        emit cropPCBReady(this->matToQImage(cropPCB));
+
+        if (m_flag_detections) {
+            m_workerThread.start();
+            this->startDetection(cropPCB);
+        }
     }
 }
 

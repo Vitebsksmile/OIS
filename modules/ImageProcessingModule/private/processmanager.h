@@ -8,7 +8,7 @@
 #include <memory>
 #include "imagepreprocessing.h"
 #include "frameprocessing.h"
-#include "objectfinder.h"
+#include "objectsfinder.h"
 #include "Frame.h"
 #include "yolodetectionworker.h"
 #include "Core.h"
@@ -65,6 +65,8 @@ signals:
     void detectionsReady(const QImage &frame,
                          const QVector<Core::Detection> &detections);
 
+    void cropPCBReady(const QImage &cropPCB);
+
 private:
     //  Создает объект ImagePreProcessing и управляет его жизненным циклом
     void createPreProcessingObject();  //???
@@ -92,7 +94,7 @@ private:
     std::unique_ptr<ImagePreProcessing> m_imagePreProcessing;  //???
 
     std::unique_ptr<FrameProcessing> m_processing;
-    std::unique_ptr<ObjectFinder> m_finder {};
+    std::unique_ptr<ObjectsFinder> m_finder {};
 
     QThread m_workerThread;
     YoloDetectionWorker *m_worker;

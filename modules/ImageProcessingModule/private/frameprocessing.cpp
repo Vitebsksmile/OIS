@@ -41,20 +41,10 @@ FrameProcessing& FrameProcessing::gaussianBlur(int kernelSize)
     return *this;
 }
 
-// FrameProcessing &FrameProcessing::marksBoundaries()
-// {
-//     if (!m_frame.empty())
-//     {
-//         cv::Canny(m_frame, m_frame, 50, 150);
-//     }
-//     return *this;
-// }
-
 FrameProcessing &FrameProcessing::closesGapsInLines()
 {
     if (!m_frame.empty())
     {
-        //cv::Mat cannyImg;
         cv::Canny(m_frame, m_frame, 50, 150);
 
         cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
@@ -71,4 +61,39 @@ FrameProcessing& FrameProcessing::toBinary()
         cv::threshold(m_frame, m_frame, 100, 255, cv::THRESH_BINARY);
     }
     return *this;
+}
+
+cv::Mat FrameProcessing::cropAndCorrectPCB(const cv::Mat &src,
+                                           const std::vector<cv::Point> &pcbContour)
+{
+    //  Находим минимальный повернутый прямоугольник вокруг контура платы
+    cv::RotatedRect rotateRect = cv::minAreaRect(pcbContour);
+
+    //  Получаем угол, центр и размеры
+    float angle = rotateRect.angle;
+    cv::Size2f rectSize = rotateRect.size;
+    cv::Point2f center = rotateRect.center;
+
+    //  Корректируем угол (иногда угол требует нормализации в зависимости от соотношения сторон)
+    if (rectSize.width < rectSize.height) {
+        std::swap(rectSize.width, rectSize.height);
+        angle += 90.0;
+    }
+    // if (rectSize.width < rectSize.height) {
+    //     std::swap(rectSize.width, rectSize.height);
+    //     angle += 90.0f;
+    // }
+
+    //  Создаем матрицу поворота относительно центра платы
+    cv::Mat rotationMatrix = cv::getRotationMatrix2D(center, angle, 1.0);
+
+    //  Поворачиваем все исходное изображение, чтобы плата встала ровно
+    cv::Mat rotatedImage;
+    cv::warpAffine(src, rotatedImage, rotationMatrix, src.size(), cv::INTER_CUBIC);
+
+    //  Вырезаем (кропаем) плату из уже выровненного изображения
+    cv::Mat croppedPCB;
+    cv::getRectSubPix(rotatedImage, rectSize, center, croppedPCB);
+
+    return croppedPCB;
 }

@@ -77,6 +77,14 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
         return false;
     }
 
+    ok = connect(m_procService, &IImageProcessingService::cropPCBReady,
+                 this, &VisualizationService::onCropPCBReady);
+    if (!ok) {
+        qCritical()
+        << "WARNING! VisualizationService: Failed to subscribe to the cropPCBReady signal of the ImageProcessingModule";
+        return false;
+    }
+
     return true;
 }
 
@@ -222,6 +230,11 @@ void VisualizationService::onDetectionsReady(const QImage &frame,
                                              const QVector<Core::Detection> &detections)
 {
     emit detectionsReady(frame, detections);
+}
+
+void VisualizationService::onCropPCBReady(const QImage &cropPCB)
+{
+    // qDebug() << "VisualizationService::onCropPCBReady(). cropPCB =" << cropPCB;
 }
 
 //  Factory method

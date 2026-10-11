@@ -73,6 +73,8 @@ public slots:
     void onDetectionsReady(const QImage &frame,
                            const QVector<Core::Detection> &detections) override;
 
+    void onCropPCBReady(const QImage &cropPCB) override;
+
     //void onDbExecutionError(const QString &error) override;  //???
 
 //  Мы не пишем их реализации, Qt сделает это за нас

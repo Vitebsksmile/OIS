@@ -16,9 +16,10 @@ public:
 
     FrameProcessing& toGray();
     FrameProcessing& gaussianBlur(int kernelSize = 3);
-    FrameProcessing& marksBoundaries();
     FrameProcessing& closesGapsInLines();
     FrameProcessing& toBinary();
+
+    cv::Mat cropAndCorrectPCB(const cv::Mat &src, const std::vector<cv::Point> &pcbContour);
 
 private:
     //  Ручной сброс ресурсов

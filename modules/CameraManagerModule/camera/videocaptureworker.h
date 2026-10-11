@@ -24,7 +24,7 @@ public slots:
 
 signals:
     void rawCVFrameReady(const cv::Mat &cvFrame);
-    void rawImageFrameReady(const QImage imageFrame);
+    void rawImageFrameReady(const QImage &imageFrame);
     void customFrameReady(const CVFrameBuffer &frame);
 
 private slots:

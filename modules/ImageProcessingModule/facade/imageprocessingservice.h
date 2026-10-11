@@ -63,6 +63,8 @@ public slots:
     void onDetectionsReady(const QImage &frame,
                            const QVector<Core::Detection> &detections);
 
+    void onCropPCBReady(const QImage &cropPCB);
+
 signals:
     //  Сигнал для ProcessManager -> создай imagePreProcessing
     void imagePreProcessingRequested(const QString &filePath);  //???

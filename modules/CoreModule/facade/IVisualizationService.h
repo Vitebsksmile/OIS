@@ -68,6 +68,8 @@ public slots:
     virtual void onDetectionsReady(const QImage &frame,
                                    const QVector<Core::Detection> &detections) = 0;
 
+    virtual void onCropPCBReady(const QImage &cropPCB) = 0;
+
     //virtual void onDbExecutionError(const QString &error) = 0;
 
 signals:

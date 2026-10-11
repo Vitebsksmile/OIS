@@ -120,6 +120,11 @@ void ImageProcessingService::onDetectionsReady(const QImage &frame, const QVecto
     emit detectionsReady(frame, detections);
 }
 
+void ImageProcessingService::onCropPCBReady(const QImage &cropPCB)
+{
+    emit cropPCBReady(cropPCB);
+}
+
 //  Factory method
 QSharedPointer<IImageProcessingService> createImageProcessingService(QObject* parent)
 {

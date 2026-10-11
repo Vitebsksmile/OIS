@@ -63,6 +63,8 @@ signals:
     // ProcessManager -> VisualizationService
     void detectionsReady(const QImage &frame,
                          const QVector<Core::Detection> &detections);
+
+    void cropPCBReady(const QImage &cropPCB);
 };
 
 //  Factory method

@@ -12,7 +12,7 @@ set(MODULE_PRIVATE_HEADERS
     private/onnxdefectdetector.h
     private/processmanager.h
     private/imagepreprocessing.h
-    private/objectfinder.h
+    private/objectsfinder.h
     private/frameprocessing.h
 )
 
@@ -21,7 +21,7 @@ set(MODULE_SOURCE_FILES
     facade/imageprocessingservice.cpp
     private/processmanager.cpp
     private/imagepreprocessing.cpp
-    private/objectfinder.cpp
+    private/objectsfinder.cpp
     private/frameprocessing.cpp
     private/onnxdefectdetector.cpp
 )
