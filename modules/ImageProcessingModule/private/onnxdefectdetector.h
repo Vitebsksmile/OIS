@@ -19,7 +19,7 @@ public:
 
     bool isReady() const;
 
-    QVector<Core::Detection> detect(const cv::Mat &image);
+    QVector<Core::Detection> detect(const cv::Mat &srcMat);
 
 private:
     cv::dnn::Net m_net;

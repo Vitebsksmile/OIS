@@ -24,17 +24,16 @@ public:
     Q_INVOKABLE bool creatCamera(const QString &url);
     Q_INVOKABLE bool creatCamera(int cameraIndex);
     Q_INVOKABLE void disconnectCamera();
-    Q_INVOKABLE void readFrame(bool isRead);
-    Q_INVOKABLE bool isReadFrame();
+    Q_INVOKABLE void toggleTrigger();
 
 signals:
+    void triggered();
     void errorOccurred(const QString &errorTitle,
                        const QString &errorDetails = "");
 
 private:
     VisualizationService *m_service = nullptr;
 
-    bool m_readFrame = false;
 };
 
 #endif // SESSIONCONTROLLER_H

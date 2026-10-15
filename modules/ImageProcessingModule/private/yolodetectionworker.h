@@ -2,8 +2,8 @@
 #define YOLODETECTIONWORKER_H
 
 #include <QObject>
-#include <QImage>
-#include <QVector>
+//#include <QImage>
+//#include <QVector>
 #include <opencv2/core.hpp>
 #include "onnxdefectdetector.h"
 
@@ -17,22 +17,26 @@ public:
 
     ~YoloDetectionWorker();
 
-    void startCapture(const cv::Mat &cvFrame);
-    void stopCapture();
+    //void startCapture(const cv::Mat &cvFrame);
+    //void stopCapture();
+
+    void processFrame(const cv::Mat &cvFrame);
 
 public slots:
-
+    void initialize();
 
 signals:
-    void detectionsReady(const QImage &frame,
+    void detectionsReady(const cv::Mat &mat,
                          const QVector<Core::Detection> &detections);
 
-    //void error(const QString &message);
+    void detectionFinished();
+
+    void errorOccurred(const QString &message);
 
 private:
-    QImage matToQImage(const cv::Mat &mat);
-
+    QString m_modelPath;
     OnnxDefectDetector *m_detector = nullptr;
+    bool m_initialized = false;
 };
 
 #endif

@@ -12,14 +12,15 @@ SessionController::SessionController(VisualizationService *service,
 
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
-    qDebug()
-        << "SessionController: SessionController object created. Parent: "
-        << parent;
+    qDebug() << "SessionController: SessionController object created. Parent:"
+             << parent;
 
     if (!m_service) {
-        qWarning()
-            << "WARNING! SessionController: SessionController object created without reference to facade";
+        qWarning() << "WARNING! SessionController: SessionController object created without reference to facade";
     }
+
+    connect(this, &SessionController::triggered,
+            m_service, &VisualizationService::onTriggered);
 }
 
 bool SessionController::creatCamera(const QString &url)
@@ -55,13 +56,8 @@ void SessionController::disconnectCamera()
     m_service->disconnectCamera();
 }
 
-void SessionController::readFrame(bool isRead)
+void SessionController::toggleTrigger()
 {
-    m_readFrame = isRead;
-    m_service->procService()->readFrame(m_readFrame);
-}
-
-bool SessionController::isReadFrame()
-{
-    return m_readFrame;
+    //qDebug() << "SessionController::toggleTrigger()";
+    emit triggered();
 }

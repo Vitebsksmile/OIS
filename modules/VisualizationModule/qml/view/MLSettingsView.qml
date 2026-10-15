@@ -39,22 +39,22 @@ Rectangle {
                     text: "Machine Learning Settings"
                 }
 
-                Switch {
-                    Layout.preferredHeight: implicitHeight
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    text: qsTr("Enable detection")
-                    LayoutMirroring.enabled: true
-                    checked: SessionController.isReadFrame()
-                    onCheckedChanged: {
-                        if (checked) {
-                            SessionController.readFrame(true)
-                            console.log("Переключатель ВКЛЮЧЕН")
-                        } else {
-                            SessionController.readFrame(false)
-                            console.log("Переключатель ВЫКЛЮЧЕН")
-                        }
-                    }
-                }
+                // Switch {
+                //     Layout.preferredHeight: implicitHeight
+                //     Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                //     text: qsTr("Enable detection")
+                //     LayoutMirroring.enabled: true
+                //     checked: SessionController.isReadFrame()
+                //     onCheckedChanged: {
+                //         if (checked) {
+                //             SessionController.readFrame(true)
+                //             console.log("Переключатель ВКЛЮЧЕН")
+                //         } else {
+                //             SessionController.readFrame(false)
+                //             console.log("Переключатель ВЫКЛЮЧЕН")
+                //         }
+                //     }
+                // }
             }
 
             RowLayout {

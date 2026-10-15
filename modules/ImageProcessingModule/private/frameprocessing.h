@@ -20,6 +20,10 @@ public:
     FrameProcessing& toBinary();
 
     cv::Mat cropAndCorrectPCB(const cv::Mat &src, const std::vector<cv::Point> &pcbContour);
+    cv::Mat cropAndCorrectPCB_2(const cv::Mat &src, const std::vector<cv::Point> &pcbContour);
+    cv::Mat cropAndCorrectPCB_3(const cv::Mat &src, const std::vector<cv::Point> &pcbContour);
+    cv::Mat cropAndCorrectPCB_4(cv::Mat src, std::vector<cv::Point> pcbContour);
+    cv::Mat cropAndCorrectPCB_5(const cv::Mat &src, const std::vector<cv::Point> &pcbContour);
 
 private:
     //  Ручной сброс ресурсов

@@ -20,6 +20,7 @@
 #include "IImageProcessingService.h"
 #include "IDatabaseService.h"
 #include "ICameraManagerService.h"
+#include "IVisualizationService.h"
 
 class ProcessManager;
 class OnnxDefectDetector;
@@ -34,8 +35,7 @@ public:
 
     bool setDbService(IDatabaseService *dbService) override;
     bool setCamService(ICameraManagerService *camService) override;
-
-    void readFrame(bool isRead) override;
+    bool setVisService(IVisualizationService *camService) override;
 
 //  Реализация интерфейса IImageProcessingService
 public slots:
@@ -62,6 +62,8 @@ public slots:
 
     void onDetectionsReady(const QImage &frame,
                            const QVector<Core::Detection> &detections);
+
+    void onTriggered() override;
 
     void onCropPCBReady(const QImage &cropPCB);
 
@@ -95,6 +97,7 @@ private:
     QUrl m_currentFilePath;  //???
     IDatabaseService *m_dbService = nullptr;
     ICameraManagerService *m_camService = nullptr;
+    IVisualizationService *m_visService = nullptr;
     QString m_detectionMethod  = "classic";    //  yolo11
 };
 

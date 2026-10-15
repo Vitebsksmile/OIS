@@ -32,12 +32,12 @@ bool OnnxDefectDetector::isReady() const
     return !m_net.empty();
 }
 
-QVector<Core::Detection> OnnxDefectDetector::detect(const cv::Mat &image)
+QVector<Core::Detection> OnnxDefectDetector::detect(const cv::Mat &srcMat)
 {
     QVector<Core::Detection> detections;
 
-    if (image.empty()) {
-        qWarning() << "OnnxDefectDetector: input image is empty.";
+    if (srcMat.empty()) {
+        qWarning() << "OnnxDefectDetector: input srcMat is empty.";
 
         return detections;
     }
@@ -51,7 +51,7 @@ QVector<Core::Detection> OnnxDefectDetector::detect(const cv::Mat &image)
     //  -----------------------------------------------------------------------
     //  Preprocessing
     //  -----------------------------------------------------------------------
-    cv::Mat blob = cv::dnn::blobFromImage(image,
+    cv::Mat blob = cv::dnn::blobFromImage(srcMat,
                                           1.0 / 255.0,
                                           cv::Size(640, 640),
                                           cv::Scalar(),
@@ -112,8 +112,8 @@ QVector<Core::Detection> OnnxDefectDetector::detect(const cv::Mat &image)
     std::vector<float> confidences;
     std::vector<cv::Rect> boxes;
 
-    const float xScale = static_cast<float>(image.cols) / 640.0f;
-    const float yScale = static_cast<float>(image.rows) / 640.0f;
+    const float xScale = static_cast<float>(srcMat.cols) / 640.0f;
+    const float yScale = static_cast<float>(srcMat.rows) / 640.0f;
 
     for (int i = 0; i < predictions; i++) {
         const float cx = data.at<float>(0, i);
@@ -171,8 +171,8 @@ QVector<Core::Detection> OnnxDefectDetector::detect(const cv::Mat &image)
         // -----------------------------------------------------
         box &= cv::Rect(0,
                         0,
-                        image.cols,
-                        image.rows);
+                        srcMat.cols,
+                        srcMat.rows);
 
         if (box.width <= 0 || box.height <= 0) {
             continue;

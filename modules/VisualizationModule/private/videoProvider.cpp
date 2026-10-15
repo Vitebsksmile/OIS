@@ -110,8 +110,8 @@ void VideoProvider::onDetectionsReady(const QImage &frame,
     QImage editableFrame = frame;
     QPainter painter(&editableFrame);
 
-    QPen pen(Qt::white
-             , 6
+    QPen pen(Qt::red
+             , 3
              , Qt::SolidLine
              , Qt::RoundCap
              , Qt::RoundJoin);
@@ -126,10 +126,7 @@ void VideoProvider::onDetectionsReady(const QImage &frame,
 
         QString label = QString("%1 %2%")
                             .arg(detection.className)
-                            .arg(detection.confidence * 100.0,
-                                 0,
-                                 'f',
-                                 1);
+                            .arg(detection.confidence * 100.0, 0, 'f', 1);
 
         painter.drawText(box.topLeft() + QPoint(0, -5),
                          label);

@@ -7,22 +7,30 @@
 ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, QObject *parent)
     : QObject(parent)
     , m_service(imageProcessingService)
+    , m_workerThread(new QThread(this))
     , m_worker(new YoloDetectionWorker("D:/QtProjects/OIS/models/best.onnx"))
 {
     if (!m_service) {
-        qWarning()
-            << "ProcessManager: processManager created without reference to facade";
+        qWarning() << "ProcessManager: processManager created without reference to facade";
     } else {
-        qDebug()
-            << "ProcessManager: ProcessManager object created; parent:"
-            << parent;
+        qDebug() << "ProcessManager: ProcessManager object created; parent:"
+                 << parent;
     }
 
-    m_worker->moveToThread(&m_workerThread);
-    connect(&m_workerThread, &QThread::finished,
+    m_worker->moveToThread(m_workerThread);
+    connect(m_workerThread, &QThread::started,
+            m_worker, &YoloDetectionWorker::initialize);
+    connect(m_workerThread, &QThread::finished,
             m_worker, &QObject::deleteLater);
     connect(m_worker, &YoloDetectionWorker::detectionsReady,
             this, &ProcessManager::onDetectionsReady);
+
+    connect(m_worker, &YoloDetectionWorker::detectionFinished,
+            this, &ProcessManager::onDetectionFinished);
+    connect(m_worker, &YoloDetectionWorker::errorOccurred,
+            this, &ProcessManager::onWorkerError);
+
+    m_workerThread->start();
 
     //  Слушает фасад для старта предобработки
     connect(m_service, &ImageProcessingService::imagePreProcessingRequested,
@@ -54,13 +62,16 @@ ProcessManager::ProcessManager(ImageProcessingService *imageProcessingService, Q
 
 ProcessManager::~ProcessManager()
 {
-    m_workerThread.quit();
-    m_workerThread.wait();
+    if (m_workerThread && m_workerThread->isRunning()) {
+        m_workerThread->quit();
+        m_workerThread->wait();
+    }
 }
 
-void ProcessManager::setFlag_detections(bool flag)
+void ProcessManager::toggle()
 {
-    m_flag_detections = flag;
+    qDebug() << "ProcessManager::toggle()";
+    m_triggered.store(true);
 }
 
 //  --- PUBLIC SLOTS ---
@@ -72,11 +83,10 @@ void ProcessManager::onImagePreProcessingRequested(const QString &filePath)  //?
 
     // Установка изображения в обработчик
     if (imagePreProcessing()->loadImage(filePath)) {
-        qDebug()
-        << "ProcessManager: The file path is valid and contains an image. "
-           "The image has been installed in the ImagePreProcessing handler! "
-           "Path to image: "
-        << filePath;
+        qDebug() << "ProcessManager: The file path is valid and contains an image. "
+                    "The image has been installed in the ImagePreProcessing handler! "
+                    "Path to image: "
+                 << filePath;
     }
 
     //  Используем объект
@@ -89,9 +99,12 @@ void ProcessManager::onImagePreProcessingRequested(const QString &filePath)  //?
 //  ImageProcessingService -> this
 void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
 {
-    cv::Mat localFrame = cvFrame;
+    if (cvFrame.empty()) { return; }
 
-    m_processing = std::make_unique<FrameProcessing>(localFrame);
+    // Фиксируем изображение для текущей итерации.
+    const cv::Mat sourceFrame = cvFrame.clone();
+
+    m_processing = std::make_unique<FrameProcessing>(sourceFrame.clone());
     m_processing->toGray().gaussianBlur().closesGapsInLines();
 
     emit processedFrameReady(this->matToQImage(m_processing->cvFrame()));
@@ -99,23 +112,63 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
     m_finder = std::make_unique<ObjectsFinder>(m_processing->cvFrame());
     m_finder->findContours().detectRaggedRectangularObjects().makeBoundRect();
 
-    emit frameWithBoxesReady(this->matToQImage(cvFrame),
+    emit frameWithBoxesReady(this->matToQImage(sourceFrame),
                              m_finder->rectanglePoints());
 
-    if (m_finder->contours().size() == 1) {
-        cv::Mat cropPCB = m_processing->cropAndCorrectPCB(cvFrame, m_finder->contours()[0]);
-        emit cropPCBReady(this->matToQImage(cropPCB));
-
-        if (m_flag_detections) {
-            m_workerThread.start();
-            this->startDetection(cropPCB);
+    const auto contoursCopy = m_finder->contours();
+    if (contoursCopy.size() == 1 && m_triggered) {
+        if (!m_worker || !m_workerThread || !m_workerThread->isRunning()) {
+            qDebug() << "ProcessManager: exit from method ProcessManager::onProcessFrame()";
+            return;
         }
+
+        // Не накапливаем очередь кадров, если YOLO занят.
+        bool expected = false;
+        if (!m_yoloBusy.compare_exchange_strong(expected, true)) {
+            qDebug() << "ProcessManager: exit from method ProcessManager::onProcessFrame()"
+                        "m_yoloBusy == false";
+            return;
+        }
+
+        cv::Mat cvCropPCB = m_processing->cropAndCorrectPCB_5(sourceFrame, contoursCopy.front());
+        if (cvCropPCB.empty()) {
+            qWarning() << "ProcessManager: failed to crop PCB";
+            m_triggered = false;
+            return;
+        }
+
+        // qDebug() << "Crop size:" << cvCropPCB.cols << "x" << cvCropPCB.rows
+        //          << "aspect ratio:"
+        //          << static_cast<double>(cvCropPCB.cols) / cvCropPCB.rows;
+
+        YoloDetectionWorker *worker = m_worker;
+        const bool invoked = QMetaObject::invokeMethod(worker, [this, cvFrame = std::move(cvCropPCB)] () {
+            m_worker->processFrame(cvFrame);
+        }, Qt::QueuedConnection);
+
+        if (!invoked) {
+            m_yoloBusy.store(false);
+            qWarning() << "ProcessManager: failed to submit YOLO frame";
+        }
+
+        m_triggered = false;
     }
 }
 
-void ProcessManager::onDetectionsReady(const QImage &frame, const QVector<Core::Detection> &detections)
+void ProcessManager::onDetectionFinished()
 {
-    emit detectionsReady(frame, detections);
+    m_yoloBusy.store(false);
+}
+
+void ProcessManager::onWorkerError(const QString &message)
+{
+    qWarning() << "ProcessManager: YOLO worker ERROR:" << message;
+}
+
+void ProcessManager::onDetectionsReady(const cv::Mat &mat,
+                                       const QVector<Core::Detection> &detections)
+{
+    emit detectionsReady(this->matToQImage(mat), detections);
 }
 //  --- END PUBLIC SLOTS ---
 
@@ -180,10 +233,93 @@ QImage ProcessManager::matToQImage(const cv::Mat &mat)
         return QImage(rgb.data, //  сырой указатель на первый байт в памяти, где лежит матрица пикселей изображения
                       rgb.cols, //  количество столбцов матрицы
                       rgb.rows, //  количество строк матрицы
-                      rgb.step, // шаг строки (stride) - полное количество байт в одной строке матрицы, ключая техническое выравнивание памяти
+                      rgb.step, //  шаг строки (stride) - полное количество байт в одной строке матрицы, включая техническое выравнивание памяти
                       QImage::Format_RGBA8888).copy();    //  формат цвета
     }
     return QImage();
+}
+
+QImage ProcessManager::matToQImage_2(const cv::Mat &mat)
+{
+    switch (mat.type()) {
+
+    // 8-bit, 1 channel (Grayscale)
+    case CV_8UC1: {
+        QImage image(mat.data,
+                     mat.cols,
+                     mat.rows,
+                     static_cast<int>(mat.step), // ИСПРАВЛЕНИЕ ТУТ
+                     QImage::Format_Grayscale8);
+        return image.copy();
+    }
+
+    // 8-bit, 3 channel (RGB / BGR)
+    case CV_8UC3: {
+        QImage image(mat.data,
+                     mat.cols,
+                     mat.rows,
+                     static_cast<int>(mat.step), // ИСПРАВЛЕНИЕ ТУТ: явно задаем шаг строки
+                     QImage::Format_RGBA8888);
+        return image.rgbSwapped(); // OpenCV хранит BGR, а Qt нужен RGB
+    }
+
+    // 8-bit, 4 channel (RGBA)
+    case CV_8UC4: {
+        QImage image(mat.data,
+                     mat.cols,
+                     mat.rows,
+                     static_cast<int>(mat.step), // ОБЯЗАТЕЛЬНО передаем inMat.step!
+                     QImage::Format_ARGB32);
+        return image.copy(); // .copy() делает глубокое копирование данных
+    }
+
+    default:
+        break;
+    }
+    return QImage();
+}
+
+QImage ProcessManager::cvMatToQImagePerfect(const cv::Mat& inMat) {
+    if (inMat.empty()) return QImage();
+
+    // 1. Переводим исходную матрицу в 4-канальный RGBA (или BGRA) формат
+    cv::Mat rgbaMat;
+    if (inMat.channels() == 3) {
+        // Если на входе BGR (3 канала), переводим в RGBA (4 канала)
+        cv::cvtColor(inMat, rgbaMat, cv::COLOR_BGR2RGBA);
+    } else if (inMat.channels() == 1) {
+        // Если на входе черно-белое, переводим в RGBA
+        cv::cvtColor(inMat, rgbaMat, cv::COLOR_GRAY2RGBA);
+    } else if (inMat.channels() == 4) {
+        // Если уже 4 канала, проверяем порядок (OpenCV обычно хранит BGRA)
+        cv::cvtColor(inMat, rgbaMat, cv::COLOR_BGRA2RGBA);
+    } else {
+        return QImage();
+    }
+
+    // 2. ЖЕСТКАЯ СТРУКТУРИЗАЦИЯ ПАМЯТИ (Защита от диагонального сдвига)
+    // Вычисляем идеальный шаг строки для RGBA: Ширина * 4 байта (на пиксель)
+    int idealStep = rgbaMat.cols * 4;
+
+    // Создаем гарантированно "плотную" матрицу без скрытых байтов отступа OpenCV
+    cv::Mat forcedMat(rgbaMat.rows, rgbaMat.cols, CV_8UC4);
+
+    // Построчно копируем пиксели из rgbaMat в forcedMat
+    for (int i = 0; i < rgbaMat.rows; ++i) {
+        std::memcpy(forcedMat.ptr(i), rgbaMat.ptr(i), idealStep);
+    }
+
+    // 3. Создаем QImage на основе нашей выровненной forcedMat.
+    // Для RGBA в Qt используется формат Format_ARGB32 или Format_RGBA8888.
+    QImage image(forcedMat.data,
+                 forcedMat.cols, forcedMat.rows,
+                 static_cast<int>(forcedMat.step),
+                 QImage::Format_ARGB32);
+
+    // 4. Делаем глубокое копирование .copy().
+    // Это изолирует память QImage от временного объекта forcedMat,
+    // предотвращая появление мусора при уничтожении переменной forcedMat.
+    return image.copy();
 }
 
 QImage ProcessManager::matToGrayQImage(const cv::Mat &mat)
@@ -219,19 +355,14 @@ QImage ProcessManager::matToGrayQImage(const cv::Mat &mat)
     return QImage();
 }
 
-void ProcessManager::startDetection(const cv::Mat &cvFrame)
-{
-    QMetaObject::invokeMethod(m_worker, [this, cvFrame] () {
-        m_worker->startCapture(cvFrame);
-    }, Qt::QueuedConnection);
-}
 
-void ProcessManager::stopDetection()
-{
-    QMetaObject::invokeMethod(m_worker, [this] () {
-        m_worker->stopCapture();
-    }, Qt::QueuedConnection );
-}
+
+// void ProcessManager::startDetection(const cv::Mat &cvFrame)
+// {
+//     QMetaObject::invokeMethod(m_worker, [this, cvFrame] () {
+//         m_worker->startCapture(cvFrame);
+//     }, Qt::QueuedConnection);
+// }
 
 // OIS::Core::Frame ProcessManager::matToFrame(const cv::Mat &mat) const
 // {

@@ -43,8 +43,7 @@ bool VisualizationService::setCamService(ICameraManagerService *camService)
     bool ok = false;
     ok = connect(m_camService, &ICameraManagerService::rawImageFrameReady,
                  this, &VisualizationService::onRawImageFrameReady);
-    if (!ok) qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to the rawImageFrameReady signal of the CameraManagerModule";
+    if (!ok) qCritical() << "WARNING! VisualizationService: Failed to subscribe to the rawImageFrameReady signal of the CameraManagerModule";
     return true;
 }
 
@@ -56,32 +55,28 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     ok = connect(m_procService, &IImageProcessingService::processedFrameReady,
                  this, &VisualizationService::onProcessedFrameReady);
     if (!ok) {
-        qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to the processedFrameReady signal of the ImageProcessingModule";
+        qCritical() << "WARNING! VisualizationService: Failed to subscribe to the processedFrameReady signal of the ImageProcessingModule";
         return false;
     }
 
     ok = connect(m_procService, &IImageProcessingService::frameWithBoxesReady,
                  this, &VisualizationService::onFrameWithBoxesReady);
     if (!ok) {
-        qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to the frameWithBoxesReady signal of the ImageProcessingModule";
+        qCritical() << "WARNING! VisualizationService: Failed to subscribe to the frameWithBoxesReady signal of the ImageProcessingModule";
         return false;
     }
 
     ok = connect(m_procService, &IImageProcessingService::detectionsReady,
                  this, &VisualizationService::onDetectionsReady);
     if (!ok) {
-        qCritical()
-            << "WARNING! VisualizationService: Failed to subscribe to the detectionsReady signal of the ImageProcessingModule";
+        qCritical() << "WARNING! VisualizationService: Failed to subscribe to the detectionsReady signal of the ImageProcessingModule";
         return false;
     }
 
     ok = connect(m_procService, &IImageProcessingService::cropPCBReady,
                  this, &VisualizationService::onCropPCBReady);
     if (!ok) {
-        qCritical()
-        << "WARNING! VisualizationService: Failed to subscribe to the cropPCBReady signal of the ImageProcessingModule";
+        qCritical() << "WARNING! VisualizationService: Failed to subscribe to the cropPCBReady signal of the ImageProcessingModule";
         return false;
     }
 
@@ -105,9 +100,8 @@ IImageProcessingService *VisualizationService::procService()
 
 bool VisualizationService::creatCamera(const QString &url)
 {
-    qDebug()
-        << "VisualizationService: creatCamera with URL address:"
-        << url;
+    qDebug() << "VisualizationService: creatCamera with URL address:"
+             << url;
 
     if (m_camService->creatCamera(url)) {
         return true;
@@ -116,9 +110,8 @@ bool VisualizationService::creatCamera(const QString &url)
 
 bool VisualizationService::creatCamera(int cameraIndex)
 {
-    qDebug()
-        << "VisualizationService: creatCamera with camera index:"
-        << cameraIndex;
+    qDebug() << "VisualizationService: creatCamera with camera index:"
+             << cameraIndex;
 
     if (m_camService->creatCamera(cameraIndex)) {
         return true;
@@ -135,9 +128,8 @@ void VisualizationService::onImagePreProcessingRequested(const QString &filePath
 {
     if (!filePath.isEmpty())
     {
-        qDebug()
-            << "VisualizationService: The user started preprocessing. Path to image: "
-            << filePath;
+        qDebug() << "VisualizationService: The user started preprocessing. Path to image:"
+                 << filePath;
 
         //  Отправляем в ImageProcessingModule
         emit imagePreProcessingRequested(filePath);
@@ -162,11 +154,10 @@ void VisualizationService::onPreProcessingStartNotification(bool success)  //???
 //  Слот onImageProcessed (успех обработки)
 void VisualizationService::onImagePreProcessingFinished(const QString &filePath, bool success)  //???
 {
-    qDebug()
-        << "VisualizationService: Image preprocessing result for: "
-        << filePath
-        << " "
-        << success;
+    qDebug() << "VisualizationService: Image preprocessing result for:"
+             << filePath
+             << " "
+             << success;
 
     emit imagePreProcessingFinished(filePath);
 
@@ -230,6 +221,12 @@ void VisualizationService::onDetectionsReady(const QImage &frame,
                                              const QVector<Core::Detection> &detections)
 {
     emit detectionsReady(frame, detections);
+}
+
+void VisualizationService::onTriggered()
+{
+    //qDebug() << "VisualizationService::onTriggered()";
+    emit triggered();
 }
 
 void VisualizationService::onCropPCBReady(const QImage &cropPCB)

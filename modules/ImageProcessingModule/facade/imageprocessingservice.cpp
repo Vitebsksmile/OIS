@@ -33,20 +33,29 @@ bool ImageProcessingService::setDbService(IDatabaseService *dbService)
 bool ImageProcessingService::setCamService(ICameraManagerService *camService)
 {
     m_camService = camService;
+
     bool ok = false;
     ok = connect(m_camService, &ICameraManagerService::rawCVFrameReady,
                  this, &ImageProcessingService::onRawCVFrameReady);
     if (!ok) {
-        qCritical()
-        << "WARNING! ImageProcessingService: Failed to subscribe to CameraManagerService signals";
+        qCritical() << "WARNING! ImageProcessingService: Failed to subscribe to the rawCVFrameReady signal ICameraManagerService";
         return false;
     }
     return true;
 }
 
-void ImageProcessingService::readFrame(bool isRead)
+bool ImageProcessingService::setVisService(IVisualizationService *visService)
 {
-    m_procManager->setFlag_detections(isRead);
+    m_visService = visService;
+
+    bool ok = false;
+    ok = connect(m_visService, &IVisualizationService::triggered,
+                 this, &ImageProcessingService::onTriggered);
+    if (!ok) {
+        qCritical() << "WARNING! ImageProcessingService: Failed to subscribe to the triggered signal of the IVisualizationService";
+        return false;
+    }
+    return true;
 }
 
 //  Слот для получения пути из VisualizationModule
@@ -56,9 +65,8 @@ void ImageProcessingService::onImagePreProcessingRequested(const QString &filePa
     //  Базовая проверка: если путь пустой, то сразу выходим с ошибкой
     if (filePath.isEmpty())
     {
-        qDebug()
-            << "ImageProcessingService: The file path is empty! Path to image: "
-            << filePath;
+        qDebug() << "ImageProcessingService: The file path is empty! Path to image: "
+                 << filePath;
 
         emit prePreProcessingError(filePath, "Empty file path");
 
@@ -68,10 +76,9 @@ void ImageProcessingService::onImagePreProcessingRequested(const QString &filePa
     //  Запоминаем путь, чтобы потом передать его в сигнале завершения
     m_currentFilePath = filePath;
 
-    qDebug()
-        << "ImageProcessingService: The file path has been obtained! Path to image: "
-        << filePath
-        << ". I pass it to ProcessManager.";
+    qDebug() << "ImageProcessingService: The file path has been obtained! Path to image: "
+             << filePath
+             << ". I pass it to ProcessManager.";
 
     emit imagePreProcessingRequested(filePath);
 }
@@ -118,6 +125,12 @@ void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame,
 void ImageProcessingService::onDetectionsReady(const QImage &frame, const QVector<Core::Detection> &detections)
 {
     emit detectionsReady(frame, detections);
+}
+
+void ImageProcessingService::onTriggered()
+{
+    //qDebug() << "ImageProcessingService::onTriggered()";
+    m_procManager->toggle();
 }
 
 void ImageProcessingService::onCropPCBReady(const QImage &cropPCB)

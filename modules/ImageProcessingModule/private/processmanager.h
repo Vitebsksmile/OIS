@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QThread>
+#include <atomic>
 #include <QString>
 #include <QImage>
 #include <memory>
@@ -11,6 +12,7 @@
 #include "objectsfinder.h"
 #include "Frame.h"
 #include "yolodetectionworker.h"
+#include "yolodetectionworker_2.h"
 #include "Core.h"
 #include <QVector>
 
@@ -32,7 +34,7 @@ public:
     //  Geter
     ImagePreProcessing* imagePreProcessing() const { return m_imagePreProcessing.get(); }  //???
 
-    void setFlag_detections(bool flag);
+    void toggle();
 
 public slots:
     //  Слушает фасад для старта предобработки
@@ -41,11 +43,16 @@ public slots:
     //  ImageProcessingServise -> this
     void onProcessFrame(const cv::Mat &cvFrame);
 
-private slots:
-    //  Внутренний слот для перехвата
-    //void onFrameCaptured(const cv::Mat &cvFrame);
-    void onDetectionsReady(const QImage &frame,
+    void onDetectionsReady(const cv::Mat &mat,
                            const QVector<Core::Detection> &detections);
+
+    void onDetectionFinished();
+
+    void onWorkerError(const QString &message);
+
+private slots:
+    // void onDetectionsReady(const cv::Mat &mat,
+    //                        const QVector<Core::Detection> &detections);
 
 signals:
     //  this -> ImageProcessingService
@@ -79,11 +86,12 @@ private:
     void usePreProcessing(ImagePreProcessing *imagePreProcessing);  //???
 
     QImage matToQImage(const cv::Mat &mat);
+    QImage matToQImage_2(const cv::Mat &mat);
+    QImage cvMatToQImagePerfect(const cv::Mat& inMat);
     QImage matToGrayQImage(const cv::Mat &mat);
     OIS::Core::Frame matToFrame(const cv::Mat &mat) const;  //???
 
-    void startDetection(const cv::Mat &cvFrame);
-    void stopDetection();
+    //void startDetection(const cv::Mat &cvFrame);
 
 private:
     ImageProcessingService *m_service = nullptr;
@@ -96,10 +104,15 @@ private:
     std::unique_ptr<FrameProcessing> m_processing;
     std::unique_ptr<ObjectsFinder> m_finder {};
 
-    QThread m_workerThread;
+    QThread *m_workerThread;
     YoloDetectionWorker *m_worker;
 
-    bool m_flag_detections = false;
+    QThread *m_yoloThread = nullptr;
+    YoloDetectionWorker_2 *m_yoloWorker = nullptr;
+    //  true - кадр уже обрабатывается или ожидает обработки
+    std::atomic_bool m_yoloBusy{false};
+
+    std::atomic_bool m_triggered{false};
 };
 
 #endif // PROCESSMANAGER_H

@@ -76,6 +76,8 @@ signals:
     //  this -> ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
     void imagePreProcessingRequested(const QString &filePath);
+
+    void triggered();
 };
 
 //  Factory method

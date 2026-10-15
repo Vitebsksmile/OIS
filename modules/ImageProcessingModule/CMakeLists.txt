@@ -33,6 +33,7 @@ add_library(${IMAGE_PROCESSING_TARGET} STATIC
     ${MODULE_PRIVATE_HEADERS}
     ${MODULE_SOURCE_FILES}
     private/yolodetectionworker.h private/yolodetectionworker.cpp
+    private/yolodetectionworker_2.h private/yolodetectionworker_2.cpp
 )
 
 #   Include директории

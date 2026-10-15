@@ -12,6 +12,7 @@ namespace cv { class Mat; }
 
 class IDatabaseService;
 class ICameraManagerService;
+class IVisualizationService;
 
 class IImageProcessingService : public QObject
 {
@@ -24,8 +25,7 @@ public:
 
     virtual bool setDbService(IDatabaseService *dbService) = 0;
     virtual bool setCamService(ICameraManagerService *camService) = 0;
-
-    virtual void readFrame(bool isRead) = 0;
+    virtual bool setVisService(IVisualizationService *camService) = 0;
 
 public slots:
     //  VisualizationModule -> this
@@ -33,6 +33,8 @@ public slots:
 
     //  CameraManagerModule -> this
     virtual void onRawCVFrameReady(const cv::Mat &frame) = 0;
+
+    virtual void onTriggered() = 0;
 
 signals:
     //  For VisualizationService about Start

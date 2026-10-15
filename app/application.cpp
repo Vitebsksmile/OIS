@@ -104,7 +104,15 @@ bool Application::modulesIntegration()
     }
 
     if (m_imageProcessingService->setCamService(m_cameraManagerService.get())) {
-        qDebug() << "Application: DatabaseService object has been successfuly passed to ImageProcessingService";
+        qDebug() << "Application: CameraManagerService object has been successfuly passed to ImageProcessingService";
+        flag = true;
+    } else {
+        qCritical() << "WARNING! Application: Passing the DatabaseService object to ImageProcessingService failed!";
+        flag = false;
+    }
+
+    if (m_imageProcessingService->setVisService(m_visualizationService.get())) {
+        qDebug() << "Application: VisualizationService object has been successfuly passed to ImageProcessingService";
         flag = true;
     } else {
         qCritical() << "WARNING! Application: Passing the DatabaseService object to ImageProcessingService failed!";

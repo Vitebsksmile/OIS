@@ -14,7 +14,7 @@ Rectangle {
     color: "white"
     border.color: "#dcdcdc"
 
-    ColumnLayout {
+    RowLayout {
         id: rootLayout
         anchors.left: parent.left
         anchors.right: parent.right
@@ -23,62 +23,78 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         anchors.topMargin: 16
-        spacing: 14
+        spacing: 10
 
-        OISTitleLabel {
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-            text: "Image Processing"
-        }
-
-        OISNormalCheckBox {
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-            text: "Enable Noise Reduction"
-            checked: true
-        }
-
-        OISNormalCheckBox {
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-            text: "Enable Contrast Enhancement"
-            checked: true
-        }
-
-        OISNormalCheckBox {
-            Layout.preferredHeight: implicitHeight
-            Layout.alignment: Qt.AlignVCenter
-            text: "Enable Edge Detection"
-        }
-
-        RowLayout {
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
+            Layout.fillHeight: true
+            spacing: 10
 
-            OISNormalLabel {
-                Layout.preferredWidth: 180
+            OISTitleLabel {
                 Layout.preferredHeight: implicitHeight
                 Layout.alignment: Qt.AlignVCenter
-                text: "Blur Radius:"
+                text: "Image Processing"
             }
 
-            Slider {
-                id: blurSlider
+            OISNormalCheckBox {
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+                text: "Enable Noise Reduction"
+                checked: true
+            }
+
+            OISNormalCheckBox {
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+                text: "Enable Contrast Enhancement"
+                checked: true
+            }
+
+            OISNormalCheckBox {
+                Layout.preferredHeight: implicitHeight
+                Layout.alignment: Qt.AlignVCenter
+                text: "Enable Edge Detection"
+            }
+
+            RowLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: implicitHeight
-                Layout.alignment: Qt.AlignVCenter
 
-                from: 0
-                to: 20
-                value: 5
-            }
+                OISNormalLabel {
+                    Layout.preferredWidth: 180
+                    Layout.preferredHeight: implicitHeight
+                    Layout.alignment: Qt.AlignVCenter
+                    text: "Blur Radius:"
+                }
 
-            OISNormalLabel {
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: implicitHeight
-                Layout.alignment: Qt.AlignVCenter
-                text: Math.round(blurSlider.value)
+                Slider {
+                    id: blurSlider
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: implicitHeight
+                    Layout.alignment: Qt.AlignVCenter
+
+                    from: 0
+                    to: 20
+                    value: 5
+                }
+
+                OISNormalLabel {
+                    Layout.preferredWidth: 40
+                    Layout.preferredHeight: implicitHeight
+                    Layout.alignment: Qt.AlignVCenter
+                    text: Math.round(blurSlider.value)
+                }
             }
+        }
+
+        LifeView {
+            id: cameraView
+            Layout.preferredWidth: 200
+            Layout.fillHeight: true
+
+            radius: 12
+
+            frameSource: "object"
         }
     }
 }

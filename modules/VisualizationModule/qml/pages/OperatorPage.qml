@@ -237,69 +237,90 @@ Page {
                         text: "ТЕКУЩАЯ ИНСПЕКЦИЯ: КАРТА ДЕФЕКТОВ ПЛАТЫ";
                     }
 
-                    RowLayout {
-                        //Layout.alignment: 0
+                    ColumnLayout {
+                        RowLayout {
+                            //Layout.alignment: 0
 
-                        //  Интерактивная карта
-                        LifeView {
-                            id: sourceViewer
+                            //  Интерактивная карта
+                            LifeView {
+                                id: sourceViewer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                Layout.minimumWidth: 200
+                                Layout.minimumHeight: 200
+
+                                frameSource: "processor"
+                            }
+
+                            LifeView {
+                                id: processingView
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                Layout.minimumWidth: 200
+                                Layout.minimumHeight: 200
+
+                                frameSource: "object"
+                            }
+                        }
+
+                        Button {
+                            id: triggerButton
                             Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            Layout.minimumWidth: 200
-                            Layout.minimumHeight: 200
-
-                            frameSource: "processor"
+                            Layout.alignment: Qt.AlignVCenter
+                            text: qsTr("Connect a new camera")
+                            focus: true
+                            //highlighted: true
+                            Shortcut {
+                                sequence: "Space"
+                                onActivated: {
+                                    triggerButton.clicked()
+                                }
+                            }
+                            onClicked: {
+                                SessionController.toggleTrigger()
+                                //console.log("Срабатывание по клику или пробелу")
+                            }
                         }
 
-                        LifeView {
-                            id: processingView
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            Layout.minimumWidth: 200
-                            Layout.minimumHeight: 200
-
-                            frameSource: "object"
-                        }
-                    }
-
-                    /*
-                    // Сама интерактивная карта (.pcb-map)
-                    Rectangle {
-                        id: pcbMap
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.topMargin: 10
-                        color: "#065F46"
-                        border.color: "#047857"
-                        border.width: 2
-                        radius: 6
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "СХЕМА ПЕЧАТНОЙ ПЛАТЫ (LIVE)"
-                            color: Qt.rgba(1, 1, 1, 0.3)
-                            font.pixelSize: 16
-                            font.bold: true
-                        }
-
-                        // Точка дефекта (.defect-dot)
+                        /*
+                        // Сама интерактивная карта (.pcb-map)
                         Rectangle {
-                            width: 20; height: 20
-                            color: root.cDanger
-                            border.color: "white"
+                            id: pcbMap
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.topMargin: 10
+                            color: "#065F46"
+                            border.color: "#047857"
                             border.width: 2
-                            radius: 10
+                            radius: 6
 
-                            // Позиционирование в процентах (top: 40%, left: 65%)
-                            x: pcbMap.width * 0.65 - radius
-                            y: pcbMap.height * 0.40 - radius
+                            Text {
+                                anchors.centerIn: parent
+                                text: "СХЕМА ПЕЧАТНОЙ ПЛАТЫ (LIVE)"
+                                color: Qt.rgba(1, 1, 1, 0.3)
+                                font.pixelSize: 16
+                                font.bold: true
+                            }
 
-                            // Свечение (Тень) точки дефекта
-                            layer.enabled: true
-                        }
-                    }*/
+                            // Точка дефекта (.defect-dot)
+                            Rectangle {
+                                width: 20; height: 20
+                                color: root.cDanger
+                                border.color: "white"
+                                border.width: 2
+                                radius: 10
+
+                                // Позиционирование в процентах (top: 40%, left: 65%)
+                                x: pcbMap.width * 0.65 - radius
+                                y: pcbMap.height * 0.40 - radius
+
+                                // Свечение (Тень) точки дефекта
+                                layer.enabled: true
+                            }
+                        }*/
+                    }
                 }
             }
 
@@ -322,27 +343,15 @@ Page {
                         text: "ПОСЛЕДНИЙ ОБНАРУЖЕННЫЙ БРАК";
                     }
 
-                    // Окно имитации камеры (.live-cam)
-                    Rectangle {
+                    LifeView {
+                        id: mlView
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        color: "#374151"
-                        radius: 4
 
-                        Text {
-                            anchors.centerIn: parent
-                            text: OperatorModel.lastDefectPhoto
-                                  + "\nПозиция: "
-                                  + OperatorModel.lastDefectPosition
-                                  + "\nДефект: "
-                                  + OperatorModel.lastDefectType
+                        //Layout.minimumWidth: 200
+                        //Layout.minimumHeight: 200
 
-                            color: "white"
-                            font.family: Theme.fFamily
-                            font.pixelSize: 13
-                            lineHeight: 1.5
-                            horizontalAlignment: Text.AlignHCenter
-                        }
+                        frameSource: "yolo11"
                     }
 
                     // Кнопка подтверждения ремонтных операций (.btn)
@@ -362,6 +371,9 @@ Page {
                         NormalText {
                             text: "Подтвердить / Отправить в ремонт"
                             color: Theme.cTextDanger
+
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
                         }
 
                         // background: Rectangle {
