@@ -19,6 +19,11 @@ set(CMAKE_CXX_STANDARD 17)
 #   Отключаем специфичные для компилятора расширения C++. Чистый C++
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
+# Включаем тестирование на уровне CMake
+enable_testing()
+
+
 #   Добавляем определения (флаги) компиляции для передачи препроцессорных
 #   макросов (#define) в C++ код прямо из CMake
 add_definitions(
@@ -43,6 +48,7 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
     Multimedia
     Sql             #   модуль базы данных
     Network
+    Test
 )
 
 #   Ищет модуль OpenCV (модуль компьютерного зрения)
@@ -63,6 +69,11 @@ add_subdirectory(modules/CameraManagerModule)
 
 #   Подключает папку с основным исполняемым файлом приложения (точкой входа)
 add_subdirectory(app)
+
+
+# Подключаем модуль тестов (создадим на следующем шаге)
+add_subdirectory(tests)
+
 
 #   Создает "виртуальную" цель, чтобы файлы ниже отображались в дереве проекта в IDE
 add_custom_target(non-compiled-files SOURCES

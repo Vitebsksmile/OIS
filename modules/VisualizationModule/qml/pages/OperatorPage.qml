@@ -269,7 +269,7 @@ Page {
                             id: triggerButton
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            text: qsTr("Connect a new camera")
+                            text: qsTr("Сreate a trigger")
                             focus: true
                             //highlighted: true
                             Shortcut {
