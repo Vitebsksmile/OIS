@@ -6,7 +6,7 @@
 #include <QImage>
 #include <opencv2/opencv.hpp>
 #include "ICameraManagerService.h"
-#include "cvframebuffer.h"
+//#include "cvframebuffer.h"
 
 //class ICameraDriver;
 class VideoCaptureWorker;
@@ -30,7 +30,7 @@ public:
 private slots:
     void onRawCVFrameReady(const cv::Mat &cvFrame);
     void onRawImageFrameReady(const QImage &frame);
-    void onCustomFrameReady(const CVFrameBuffer &frame);
+    //void onCustomFrameReady(const CVFrameBuffer &frame);
 
 signals:
     //  Сигналы объявленные в Интерфейсе в наследнике не объявляются, но используются!!!

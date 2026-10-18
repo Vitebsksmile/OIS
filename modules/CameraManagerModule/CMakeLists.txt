@@ -27,9 +27,9 @@ set(MODULE_CONFIG_HEADERS
     config/cameraconfig.h
 )
 
-set(frame_headers
-    frame/cvframebuffer.h
-)
+#set(frame_headers
+#    frame/cvframebuffer.h
+#)
 
 set(MODULE_SOURCE_FILES
     facade/cameramanagerservice.cpp
@@ -63,7 +63,7 @@ target_include_directories(${CAMERA_MANAGER_TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/drivers
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/lib
-        ${CMAKE_CURRENT_SOURCE_DIR}/frame
+        #${CMAKE_CURRENT_SOURCE_DIR}/frame
 )
 
 #target_include_directories(${CAMERA_MANAGER_TARGET}

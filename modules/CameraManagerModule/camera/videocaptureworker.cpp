@@ -6,7 +6,7 @@ VideoCaptureWorker::VideoCaptureWorker(QObject *parent)
     : QObject(parent), m_timer(nullptr)
 {
     // Регистрируем тип, чтобы Qt умел копировать его между потоками (QueuedConnection)
-    qRegisterMetaType<CVFrameBuffer>("CVFrameBuffer");
+    //qRegisterMetaType<CVFrameBuffer>("CVFrameBuffer");
 
     m_timer = new QTimer(this);
 
@@ -86,14 +86,14 @@ void VideoCaptureWorker::processFrame()
             emit rawImageFrameReady(imageFrame);
         }
 
-        CVFrameBuffer customFrame = matToFrame(mat);
-        if (customFrame.data() != nullptr) {
-            emit customFrameReady(customFrame);
-        } else {
-            qCritical()
-                << "VideoCaptureWorker: Не удалось создать кадр. Возможно, неподдерживаемый формат матрицы:"
-                << mat.type();
-        }
+        // CVFrameBuffer customFrame = matToFrame(mat);
+        // if (customFrame.data() != nullptr) {
+        //     emit customFrameReady(customFrame);
+        // } else {
+        //     qCritical()
+        //         << "VideoCaptureWorker: Не удалось создать кадр. Возможно, неподдерживаемый формат матрицы:"
+        //         << mat.type();
+        // }
     }
 }
 
@@ -114,17 +114,17 @@ QImage VideoCaptureWorker::matToQImage(const cv::Mat &mat)
     return QImage();
 }
 
-CVFrameBuffer VideoCaptureWorker::matToFrame(const cv::Mat &mat)
-{
-    if (!mat.empty() && mat.type() == CV_8UC3) {
-        cv::Mat rgb;
-        cv::cvtColor(mat, rgb, cv::COLOR_BGR2RGBA);
+// CVFrameBuffer VideoCaptureWorker::matToFrame(const cv::Mat &mat)
+// {
+//     if (!mat.empty() && mat.type() == CV_8UC3) {
+//         cv::Mat rgb;
+//         cv::cvtColor(mat, rgb, cv::COLOR_BGR2RGBA);
 
-        //  Creat a CVFrameBuffer and forcibly copy the data to the heap
-        //return std::make_shared<CVFrameBuffer>(std::move(rgb));
-        return CVFrameBuffer(rgb.clone());
-    }
-    return CVFrameBuffer();
-}
+//         //  Creat a CVFrameBuffer and forcibly copy the data to the heap
+//         //return std::make_shared<CVFrameBuffer>(std::move(rgb));
+//         return CVFrameBuffer(rgb.clone());
+//     }
+//     return CVFrameBuffer();
+// }
 
 

@@ -22,8 +22,8 @@ CameraManagerService::CameraManagerService(QObject* parent)
     connect(m_worker, &VideoCaptureWorker::rawImageFrameReady,
             this, &CameraManagerService::onRawImageFrameReady);
 
-    connect (m_worker, &VideoCaptureWorker::customFrameReady,
-            this, &CameraManagerService::onCustomFrameReady);
+    // connect (m_worker, &VideoCaptureWorker::customFrameReady,
+    //         this, &CameraManagerService::onCustomFrameReady);
 }
 
 CameraManagerService::~CameraManagerService()
@@ -92,10 +92,10 @@ void CameraManagerService::onRawImageFrameReady(const QImage &frame)
     emit rawImageFrameReady(frame);
 }
 
-void CameraManagerService::onCustomFrameReady(const CVFrameBuffer &frame)
-{
-    //----------------------
-}
+// void CameraManagerService::onCustomFrameReady(const CVFrameBuffer &frame)
+// {
+//     //----------------------
+// }
 
 void CameraManagerService::startStream()
 {
