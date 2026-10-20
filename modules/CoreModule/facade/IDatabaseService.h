@@ -6,8 +6,6 @@
 #include "dbrecord.h"
 #include "Core.h"
 
-class IDbModel;
-
 class IDatabaseService : public QObject
 {
     Q_OBJECT
@@ -20,15 +18,13 @@ public:
     virtual bool initDatabase(const QString& dbName) = 0;
 
     //  Model returning a method
-    virtual IDbModel* itemModel() const = 0;
-    virtual IDbModel* model(const QString &tableName) const = 0;
     virtual QAbstractTableModel* abstractTableModel(const QString &tableName) = 0;
 
-    virtual bool logNewDefect(int boardId,
-                              int typeId,
-                              const QString &designator,
-                              double x,
-                              double y) = 0;
+    // virtual bool logNewDefect(int boardId,
+    //                           int typeId,
+    //                           const QString &designator,
+    //                           double x,
+    //                           double y) = 0;
 
     virtual const Core::AuthResult authenticate(const QString &username,
                                                 const QString &password,
@@ -44,10 +40,6 @@ public:
                                                       const QString &message = "New camera creat") = 0;
 
     virtual const Core::SessionContext creatSession(Core::AuthResult result) = 0;
-
-    // virtual const Core::DbOperationResult findRecord(const QString &tableName,
-    //                                                  const Core::DbRecord &record,
-    //                                                  const QString &message) = 0;
 
     //  Method that returning a list tables
     virtual const QStringList availableTables() const = 0;

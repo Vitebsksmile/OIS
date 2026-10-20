@@ -6,7 +6,7 @@
 
 namespace cv { class Mat; }
 
-class IFrameBuffer;
+class IFrameBuffer; //???
 
 class ICameraManagerService : public QObject
 {
@@ -38,7 +38,7 @@ signals:
     //  this -> VisualizationService
     void rawImageFrameReady(const QImage &frame);
 
-    void customFrameReady(const IFrameBuffer &frame);
+    void customFrameReady(const IFrameBuffer &frame); //???
 };
 
 //  Factory method

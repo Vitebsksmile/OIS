@@ -1,16 +1,3 @@
-//  Интерфейс модуля (публичное API)
-
-/*  Абстрактный — содержит только чисто виртуальные методы (pure virtual).
-*   Задаёт контракт — определяет, что должен уметь делать класс, но не содержит реализации.
-*   Предназначен для наследования — от него будут наследоваться конкретные реализации
-*
-*   Абстракция — клиентский код работает с IVisualizationService*, не привязываясь к конкретной реализации.
-*   Тестируемость — легко подменить реальный класс моком (mock) при юнит-тестировании.
-*   Разделение ответственности — интерфейсы можно выносить в отдельные модули/public-заголовки, скрывая реализации.
-*   Полиморфизм — позволяет использовать разные реализации через единый интерфейс.
-*/
-
-
 #ifndef IVISUALIZATIONSERVICE_H
 #define IVISUALIZATIONSERVICE_H
 
@@ -23,7 +10,6 @@ class IDatabaseService;
 class ICameraManagerService;
 class IImageProcessingService;
 
-//  Префикс I в названии — общепринятое обозначение интерфейса (Interface)
 class IVisualizationService : public QObject
 {
     Q_OBJECT
@@ -44,15 +30,15 @@ public:
 
 public slots:
     //  IImageProcessingModule -> this
-    virtual void onPreProcessingStartNotification(bool success) = 0;
+    virtual void onPreProcessingStartNotification(bool success) = 0;    //???
 
     //  IImageProcessingModule -> this
     virtual void onImagePreProcessingFinished(const QString &filePath,
-                                              bool success) = 0;
+                                              bool success) = 0;    //???
 
     //  IImageProcessingModule -> this
     virtual void onPreProcessingError(const QString &filePath,
-                                      const QString &error) = 0;
+                                      const QString &error) = 0;    //???
 
     //  CameraManagerModule -> this
     virtual void onRawImageFrameReady(const QImage &frame) = 0;
@@ -68,14 +54,14 @@ public slots:
     virtual void onDetectionsReady(const QImage &frame,
                                    const QVector<Core::Detection> &detections) = 0;
 
-    virtual void onCropPCBReady(const QImage &cropPCB) = 0;
+    virtual void onCropPCBReady(const QImage &cropPCB) = 0;    //???
 
     //virtual void onDbExecutionError(const QString &error) = 0;
 
 signals:
     //  this -> ImageProcessingModule
     //  Вызываем его через emit, когда в интерфейс приходит команда начать PreProcessing
-    void imagePreProcessingRequested(const QString &filePath);
+    void imagePreProcessingRequested(const QString &filePath);    //???
 
     void triggered();
 };

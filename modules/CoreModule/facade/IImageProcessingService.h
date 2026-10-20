@@ -1,5 +1,3 @@
-//  Интерфейс модуля (публичное API)
-
 #ifndef IIMAGEPROCESSINGSERVICE_H
 #define IIMAGEPROCESSINGSERVICE_H
 
@@ -20,7 +18,6 @@ class IImageProcessingService : public QObject
 
 public:
     explicit IImageProcessingService(QObject* parent = nullptr) : QObject(parent) {}
-
     virtual ~IImageProcessingService() = default;
 
     virtual bool setDbService(IDatabaseService *dbService) = 0;
@@ -29,7 +26,7 @@ public:
 
 public slots:
     //  VisualizationModule -> this
-    virtual void onImagePreProcessingRequested(const QString &filePath) = 0;
+    virtual void onImagePreProcessingRequested(const QString &filePath) = 0;    //???
 
     //  CameraManagerModule -> this
     virtual void onRawCVFrameReady(const cv::Mat &frame) = 0;
@@ -38,22 +35,22 @@ public slots:
 
 signals:
     //  For VisualizationService about Start
-    void preProcessingStartNotification(bool success);
+    void preProcessingStartNotification(bool success);    //???
 
     //  Сигнал, который должен быть отправлен (emitted) после завершения работы
     //  Сообщает путь к файлу и результат (true — успех, false — провал)
     //  (for QML about Finished)
     void imagePreProcessingFinished(const QString &filePath,
-                                    bool success);
+                                    bool success);    //???
 
     //  Сигнал для передачи конкретного текста ошибки, если что-то пошло не так,
     //  например, «файл не найден» или «недостаточно памяти»
     void prePreProcessingError(const QString &filePath,
-                               const QString &error);
+                               const QString &error);    //???
 
     //  this -> VisualizationModule
     void objectFound(const size_t &objectCount,
-                     const std::vector<std::vector<int>> &rectanglePoints);
+                     const std::vector<std::vector<int>> &rectanglePoints); //???
 
     //  this -> VisualizationModule
     void processedFrameReady(const QImage &frame);
@@ -66,7 +63,7 @@ signals:
     void detectionsReady(const QImage &frame,
                          const QVector<Core::Detection> &detections);
 
-    void cropPCBReady(const QImage &cropPCB);
+    void cropPCBReady(const QImage &cropPCB);    //???
 };
 
 //  Factory method

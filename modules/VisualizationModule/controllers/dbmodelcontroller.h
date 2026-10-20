@@ -7,7 +7,6 @@
 #include <QSharedPointer>
 #include <QAbstractItemModel>
 #include "VisualizationService.h"
-#include "IDbModel.h"
 #include "IDatabaseService.h"
 
 class DbModelController : public QObject

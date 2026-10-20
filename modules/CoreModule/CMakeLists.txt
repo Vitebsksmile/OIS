@@ -8,7 +8,7 @@ set(INTERFACE_FACADES
 )
 
 set(interface_models
-    models/IDbModel.h
+    #models/IDbModel.h
     #models/IDbSqlRelationTableModel.h
 )
 

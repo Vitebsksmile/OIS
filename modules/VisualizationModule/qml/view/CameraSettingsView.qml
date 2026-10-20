@@ -20,11 +20,25 @@ Rectangle {
         //anchors.fill: parent
         source: "../popups/CameraSettingsPopup.qml"
 
-        onLoaded: {
-            mainLoader.item.popupClosed.connect(function() {
+        // Connections {
+        //     target: mainLoader.item
+        //     function onOpen() {
+        //         mainLoader.active = false
+        //     }
+        // }
+
+        Connections {
+            target: mainLoader.item
+            function onPopupClosed() {
                 mainLoader.active = false
-            })
-            item.open()
+            }
+        }
+
+        onLoaded: {
+            // mainLoader.item.popupClosed.connect(function() {
+            //     mainLoader.active = false
+            // })
+            mainLoader.item.open()
         }
     }
 

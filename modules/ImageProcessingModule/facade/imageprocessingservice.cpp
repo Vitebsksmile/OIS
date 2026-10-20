@@ -119,7 +119,7 @@ void ImageProcessingService::onFrameWithBoxesReady(const QImage &frame,
     emit frameWithBoxesReady(frame,
                              rectanglePoints);
 
-    m_dbService -> logNewDefect(777, 1, "R105", 20, 45);
+    //m_dbService -> logNewDefect(777, 1, "R105", 20, 45);
 }
 
 void ImageProcessingService::onDetectionsReady(const QImage &frame, const QVector<Core::Detection> &detections)

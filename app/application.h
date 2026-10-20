@@ -18,7 +18,6 @@
 //  Компилятору достаточно знать, что это классы.
 class IDatabaseService;
 class IVisualizationService;
-
 class IImageProcessingService;
 class ICameraManagerService;
 

@@ -10,32 +10,35 @@
 #include <QTextStream>
 #include <QRandomGenerator>
 #include <QCryptographicHash>
+#include <systemenvironment.h>
+#include "sqlquerybuilder.h"
+#include "userrepository.h"
+#include "sessionrepository.h"
 
 DatabaseService::DatabaseService(QObject *parent)
     : IDatabaseService(parent)
-    , m_itemModel(nullptr)
 {
     //  Creat database if needded
     QString dbName = "ois_inspection.db";
     if (!this->initDatabase(dbName)) {
         qCritical() << "CRITICAL! DatabaseService: Failed to start the database!";
     }
+
+    m_sysEnvironment = new SystemEnvironment(this);
+
+    //  Создаем QueryBuilder, который берет на себя рутину SQL-запросов.
+    m_queryBuilder = new SqlQueryBuilder(this);
+
+    //  Передаем ему ссылку на QueryBuilder (Внедрение зависимости / DI)
+    m_userRepo = new UserRepository(m_queryBuilder, this);
+    m_sessionRepo = new SessionRepository(m_sysEnvironment, m_queryBuilder, this);
+
 }
 
 DatabaseService::~DatabaseService()
 {
     QSqlDatabase db = QSqlDatabase::database();
     if (db.isOpen()) { db.close(); }
-}
-
-IDbModel* DatabaseService::itemModel() const
-{
-    return m_itemModel;
-}
-
-IDbModel* DatabaseService::model(const QString &name) const
-{
-    return m_modelsMap[name];
 }
 
 QAbstractTableModel* DatabaseService::abstractTableModel(const QString &tableName)
@@ -59,110 +62,6 @@ QAbstractTableModel* DatabaseService::abstractTableModel(const QString &tableNam
     return relationalTableModel;
 }
 
-bool DatabaseService::logNewDefect(int boardId,
-                                   int typeId,
-                                   const QString &designator,
-                                   double x,
-                                   double y)
-{
-    DbModel *defectModel = m_modelsMap.value("defects");
-    if (!defectModel) {
-        return false;
-        qCritical()
-            << "WARNING!!! DatabaseService: defectModel ="
-            << defectModel;
-    }
-
-    auto sqlModel = qobject_cast<QSqlRelationalTableModel*>(defectModel->dbModel());
-    if (!sqlModel) {
-        return false;
-        qCritical()
-            << "WARNING!!! DatabaseService: sqlModel ="
-            << sqlModel;
-    }
-
-    QVariant trueTypeId;
-    QSqlDatabase db = QSqlDatabase::database();
-    // Защитная проверка: существует ли вообще такой typeId в справочнике ГОСТ?
-    // Это предотвратит падение базы, если алгоритм обработки изображений пришлет некорректный ID дефекта.
-    QSqlQuery checkQuery(db);
-    checkQuery.prepare("SELECT 1 FROM defect_types WHERE defect_type_id = :id LIMIT 1");
-    checkQuery.bindValue(":id", typeId);
-    if (!checkQuery.exec() || !checkQuery.next()) {
-        qCritical()
-            << "WARNING!!! DatabaseService: Попытка записать дефект с несуществующим defect_type_id:"
-            << typeId;
-        return false;
-    } else {
-        trueTypeId = checkQuery.boundValue(":id");
-        // qDebug()
-        //     << "DatabaseService: trueTypeId ="
-        //     << trueTypeId;
-    }
-
-    int newRow = sqlModel->rowCount();
-    if (!sqlModel->insertRow(newRow)) {
-        return false;
-        qCritical()
-            << "WARNING!!! DatabaseService: sqlModel->insertRow(newRow) ="
-            << sqlModel->insertRow(newRow);
-    }
-
-    // 🌟 ИСПРАВЛЕНИЕ 2: Для реляционных полей (колонка 2) в Qt
-    // безопаснее и правильнее использовать перегрузку setData, передавая QVariant(typeId).
-    // Это заставит внутренний драйвер Qt SQL правильно сопоставить числовой ключ с внешней таблицей.
-    sqlModel->setData(sqlModel->index(newRow, 1), QVariant(boardId));
-    // defect_type_id (REFERENCES defect_types)
-    sqlModel->setData(sqlModel->index(newRow, 2), trueTypeId);
-    sqlModel->setData(sqlModel->index(newRow, 3), designator);
-    sqlModel->setData(sqlModel->index(newRow, 4), x);
-    sqlModel->setData(sqlModel->index(newRow, 5), y);
-    sqlModel->setData(sqlModel->index(newRow, 6), "pending");
-
-    if (!sqlModel->submitAll()) {
-        // qCritical()
-        //     << "WARNING!!! DatabaseService: sqlModel->submitAll() ="
-        //     << sqlModel->submitAll()
-        //     << "WARNING!!! DatabaseService: Ошибка при физической записи дефекта в SQLite:"
-        //     << sqlModel->lastError().text();
-
-        // Откатываем незаписанную строку в кэше, чтобы модель не оставалась в испорченном состоянии
-        sqlModel->revertAll();
-        return false;
-    }
-
-    emit defectAdded();
-    return true;
-}
-
-// bool DatabaseService::logNewComputer()
-// {
-//     // 1. Получение сетевого имени ПК
-//     QString computerName = QHostInfo::localHostName();
-
-//     // 2. Получение данных об операционной системе
-//     QString osPrettyName = QSysInfo::prettyProductName(); // Полное красивое имя ОС
-
-//     // 3. Получение физического (MAC) адреса активной сетевой карты
-//     QString macAddress = "Not found";
-//     const auto interfaces = QNetworkInterface::allInterfaces();
-//     for (const QNetworkInterface &interface : interfaces) {
-//         // Отсекаем петлевой интерфейс (localhost) и неактивные карты
-//         if (interface.flags().testFlag(QNetworkInterface::IsLoopBack) ||
-//             !interface.flags().testFlag(QNetworkInterface::IsUp)) {
-//             continue;
-//         }
-
-//         QString hardwareAddress = interface.hardwareAddress();
-//         if (!hardwareAddress.isEmpty()) {
-//             macAddress = hardwareAddress;
-//             break; // Берем первый попавшийся активный физический адрес
-//         }
-//     }
-
-//     return true;
-// }
-
 const Core::AuthResult DatabaseService::authenticate(const QString &username,
                                                      const QString &password,
                                                      const QString &message)
@@ -177,8 +76,8 @@ const Core::AuthResult DatabaseService::authenticate(const QString &username,
                            ":username");
 
     if (!query.prepare(sql)) {
-        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
-        result.error = errorDetails;
+        //QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        //result.error = errorDetails;
         qWarning()
             << "DatabaseService: prepare INSERT failed:"
             << result.error;
@@ -190,7 +89,7 @@ const Core::AuthResult DatabaseService::authenticate(const QString &username,
     query.bindValue(":username", username);
 
     if (!query.exec()) {
-        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        //QString errorDetails = this->handleDatabaseError(query.lastError(), message);
         result.error = query.lastError().text();
         qWarning()
             << "DatabaseService: INSERT failed:"
@@ -234,27 +133,29 @@ const Core::DbOperationResult DatabaseService::creatUser(const QString &username
                                                          const QString &jobTitle,
                                                          const QString &message)
 {
-    if (password.isEmpty()) {
-        QString userMessage = QString("Не удалось выполнить операцию: %1.\n\n").arg(message);
-        Core::DbOperationResult result;
-        result.error = "Password is empty!";
-        return result;
-    }
-    // Генерация случайной соли (например, 16 символов)
-    QString salt = QString::number(QRandomGenerator::global()->generate64(), 36);
-    // Создание хэша
-    QByteArray hashPassword = QCryptographicHash::hash((password + salt).toUtf8(),
-                                                       QCryptographicHash::Sha256).toHex();
+    return m_userRepo->createUser(username, password, fullName, jobTitle, message);
 
-    Core::DbRecord record;
-    record.insert("username", username);
-    record.insert("full_name", fullName);
-    record.insert("password_hash", hashPassword);
-    record.insert("salt", salt);
+    // if (password.isEmpty()) {
+    //     QString userMessage = QString("Не удалось выполнить операцию: %1.\n\n").arg(message);
+    //     Core::DbOperationResult result;
+    //     result.error = "Password is empty!";
+    //     return result;
+    // }
+    // // Генерация случайной соли (например, 16 символов)
+    // QString salt = QString::number(QRandomGenerator::global()->generate64(), 36);
+    // // Создание хэша
+    // QByteArray hashPassword = QCryptographicHash::hash((password + salt).toUtf8(),
+    //                                                    QCryptographicHash::Sha256).toHex();
 
-    Core::DbOperationResult result = this->insertRecord("operators", record, message);
+    // Core::DbRecord record;
+    // record.insert("username", username);
+    // record.insert("full_name", fullName);
+    // record.insert("password_hash", hashPassword);
+    // record.insert("salt", salt);
 
-    return result;
+    // Core::DbOperationResult result = this->insertRecord("operators", record, message);
+
+    // return result;
 }
 
 const Core::DbOperationResult DatabaseService::creatCamera(const QString &address,
@@ -269,103 +170,36 @@ const Core::DbOperationResult DatabaseService::creatCamera(const QString &addres
 
 const Core::SessionContext DatabaseService::creatSession(Core::AuthResult authResult)
 {
-    QString tableName = "sessions";
-    Core::SessionContext context;
+    return m_sessionRepo->creatSession(authResult);
+    // QString tableName = "sessions";
+    // Core::SessionContext context;
 
-    // QList<QList<QString>> foreignList = findForeignTable(tableName);
-    // if (!foreignList.isEmpty()) {
-    //     qDebug()
-    //         << "DatabaseService: foreign keys found";
-    //     for (QList foreignTemp : foreignList) {
-    //         if (!foreignTemp.isEmpty())
-    //         for (QString temp : foreignTemp) {
-    //             qDebug() << temp;
-    //         }
-    //         qDebug() << "|||";
-    //     }
-    // } else {
-    //     qDebug() << "DatabaseService: foreign keys not found";
-    // }
+    // QString macAddress = currentMacAddress();
+    // int computerId = this->currentComputerId(macAddress);
 
-    QString macAddress = currentMacAddress();
-    int computerId = this->currentComputerId(macAddress);
+    // Core::DbRecord record;
+    // QDateTime startedAt = QDateTime::currentDateTime();
+    // record.insert("operator_id", authResult.operatorId);
+    // record.insert("computer_id", computerId);
+    // record.insert("started_at", startedAt);
 
-    Core::DbRecord record;
-    QDateTime startedAt = QDateTime::currentDateTime();
-    record.insert("operator_id", authResult.operatorId);
-    record.insert("computer_id", computerId);
-    record.insert("started_at", startedAt);
+    // Core::DbOperationResult operationResult = insertRecord(tableName, record, "Creat session");
+    // context.active = operationResult.success;
+    // context.context = operationResult.error;
+    // context.operatorId = authResult.operatorId;
+    // context.username = authResult.username;
+    // context.fullName = authResult.fullName;
+    // context.sessionId = operationResult.insertedId;
 
-    Core::DbOperationResult operationResult = insertRecord(tableName, record, "Creat session");
-    context.active = operationResult.success;
-    context.context = operationResult.error;
-    context.operatorId = authResult.operatorId;
-    context.username = authResult.username;
-    context.fullName = authResult.fullName;
-    context.sessionId = operationResult.insertedId;
+    // qDebug() << "context.active =" << context.active << "\n"
+    //          << "context.context =" << context.context << "\n"
+    //          << "context.operatorId =" << context.operatorId << "\n"
+    //          << "context.username =" << context.username << "\n"
+    //          << "context.fullName =" << context.fullName << "\n"
+    //          << "context.sessionId =" << context.sessionId;
 
-    return context;
+    // return context;
 }
-
-// const Core::DbOperationResult DatabaseService::findRecord(const QString &tableName,
-//                                                           const Core::DbRecord &record,
-//                                                           const QString &message)
-// {
-//     Core::DbOperationResult result;
-
-//     if (tableName.isEmpty() || record.isEmpty()) {
-//         result.error = "Invalid database operation";
-//         result.success = false;
-//         return result;
-//     }
-
-//     //  проверить существование такой таблицы
-//     //  проверить FK, если требуется
-
-//     //  Реализовать метод keys() в Core::DbRecord!!!!!!!
-//     //  чтобы избавиться от следующей строки: QVariantMap << QVariantMap
-//     const QVariantMap &values = record.values();
-//     QStringList fields = values.keys();
-//     QStringList placeholders;
-
-//     for (const QString &field : fields) { placeholders << ":" + field; }
-
-//     QSqlDatabase db = QSqlDatabase::database();
-//     QSqlQuery query(db);
-
-//     const QString sql = QString("SELECT * FROM %1 WHERE %2 LIMIT 1")
-//                             .arg(placeholders.join(" AND "),
-//                                  tableName);
-
-//     if (!query.prepare(sql)) {
-//         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
-//         result.error = errorDetails;
-//         qWarning()
-//             << "DatabaseService: prepare SELECT failed:"
-//             << result.error;
-//         result.success = false;
-
-//         return result;
-//     }
-
-//     for (const QString &field : fields) {
-//         query.bindValue(":" + field, values.value(field));
-//     }
-
-//     if (!query.exec()) {
-//         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
-//         result.error = query.lastError().text();
-//         qWarning()
-//             << "DatabaseService: SELECT failed:"
-//             << result.error;
-//         result.success = false;
-
-//         return result;
-//     }
-
-//     result.success = true;
-//     return result;
-// }
 
 const QStringList DatabaseService::availableTables() const
 {
@@ -391,24 +225,20 @@ bool DatabaseService::initDatabase(const QString &dbName)
     db.setDatabaseName(dbPath);
 
     if (!db.open()) {
-        qCritical()
-            << "CRITICAL! DatabaseService: Error opening database"
-            << db.lastError().text();
+        qCritical() << "CRITICAL! DatabaseService: Error opening database"
+                    << db.lastError().text();
         return false;
     }
 
     //  Enable Foreign Keys support
     QSqlQuery query(db);
     if (!query.exec("PRAGMA foreign_keys = ON;")) {
-        qCritical()
-            << "CRITICAL! DatabaseService: Failed to enable Foreign Key support: "
-            << query.lastError().text();
+        qCritical() << "CRITICAL! DatabaseService: Failed to enable Foreign Key support: "
+                    << query.lastError().text();
     }
 
     QString nameTable = "operators";
     this->creatTables();
-    this->creatModel(nameTable);
-    this->populateModelsMap();
 
     return true;
 }
@@ -663,7 +493,7 @@ bool DatabaseService::insertDefaultDataIfNeeded()
             QString osPrettyName = QSysInfo::prettyProductName();
 
             //  Получение физического (MAC) адреса активной сетевой карты
-            QString macAddress = currentMacAddress();
+            QString macAddress = m_sysEnvironment->currentMacAddress();
 
             QSqlQuery insertQuery;
             insertQuery.prepare("INSERT INTO computers (computer_name, os_info, mac_address)"
@@ -722,8 +552,8 @@ const Core::DbOperationResult DatabaseService::insertRecord(const QString &table
                                  placeholders.join(", "));
 
     if (!query.prepare(sql)) {
-        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
-        result.error = errorDetails;
+        //QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        //result.error = errorDetails;
         qWarning()
             << "DatabaseService: prepare INSERT failed:"
             << result.error;
@@ -738,7 +568,7 @@ const Core::DbOperationResult DatabaseService::insertRecord(const QString &table
     }
 
     if (!query.exec()) {
-        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        //QString errorDetails = this->handleDatabaseError(query.lastError(), message);
         result.error = query.lastError().text();
         qWarning()
             << "DatabaseService: INSERT failed:"
@@ -753,16 +583,6 @@ const Core::DbOperationResult DatabaseService::insertRecord(const QString &table
     result.success = true;
     result.insertedId = query.lastInsertId().toInt();
     return result;
-}
-
-bool DatabaseService::creatModel(const QString &nameTable)
-{
-    QSqlDatabase db = QSqlDatabase::database();
-    m_itemModel = new DbModel(this, db);
-    m_itemModel->setTable(nameTable);   //  Указываем, какую таблицу читать
-    m_itemModel->refreshData();         //  Делаем первый выбор данных (select)
-
-    return true;
 }
 
 void DatabaseService::autoPopulateRelations(QSqlRelationalTableModel *relationalTableModel, const QString &defaultDisplayField)
@@ -798,72 +618,7 @@ void DatabaseService::autoPopulateRelations(QSqlRelationalTableModel *relational
     }
 }
 
-bool DatabaseService::populateModelsMap()
-{
-    QSqlDatabase db = QSqlDatabase::database();
-    QStringList tables = db.tables(QSql::Tables);
-    m_modelsMap.clear();
 
-    for (const QString &tableName : tables) {
-        if (tableName.startsWith("sqlite_", Qt::CaseInsensitive)) continue;
-        if (tableName == "session_cameras") continue;
-
-        DbModel *model = new DbModel(this, db);
-        model->setParent(this);
-        model->setTable(tableName);
-
-        m_modelsMap.insert(tableName, model);
-    }
-    return true;
-}
-
-const QList<QList<QString>> DatabaseService::findForeignTable(const QString tableName)
-{
-    QList<QList<QString>> result;
-    QMap<QString, QMap<QString, QVariant>> resultMap;
-
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    QString sql = QString("PRAGMA foreign_key_list(%1);").arg(tableName);
-    query.prepare(sql);
-    if (!query.exec()) {
-        qCritical()
-            << "DatabaseService: prepare PRAGMA foreign_key_list failed:"
-            << query.lastError().text();
-    }
-
-    while (query.next()) {
-        QList<QString> temp;
-        temp << query.value("table").toString();
-        temp << query.value("from").toString();
-        temp << query.value("to").toString();
-
-        result.append(temp);
-    }
-
-    return result;
-}
-
-int DatabaseService::findId(const QString &tableName,
-                            const QString &field)
-{
-    QSqlDatabase db = QSqlDatabase::database();
-    QSqlQuery query(db);
-    QString sql = QString("SELECT %1 FROM %2 LIMIT 1")
-                      .arg(field, tableName);
-    query.prepare(sql);
-
-    if (!query.exec()) {
-        qCritical()
-            << "DatabaseService: prepare SELECT failed:"
-            << query.lastError().text();
-    }
-    int result = -1;
-    while (query.next()) {
-        result = query.value(field).toInt();
-    }
-    return result;
-}
 
 int DatabaseService::currentComputerId(const QString &macAddress)
 {
@@ -900,35 +655,35 @@ int DatabaseService::currentComputerId(const QString &macAddress)
     return computerId;
 }
 
-QString DatabaseService::handleDatabaseError(const QSqlError &error,
-                                             const QString &contextAction)
-{
-    // 1. Логируем подробную информацию для разработчика
-    qCritical() << "DB Error during:" << contextAction
-                << "| Type:" << error.type()
-                << "| Driver Text:" << error.driverText()
-                << "| Database Text:" << error.databaseText();
+// QString DatabaseService::handleDatabaseError(const QSqlError &error,
+//                                              const QString &contextAction)
+// {
+//     // 1. Логируем подробную информацию для разработчика
+//     qCritical() << "DB Error during:" << contextAction
+//                 << "| Type:" << error.type()
+//                 << "| Driver Text:" << error.driverText()
+//                 << "| Database Text:" << error.databaseText();
 
-    // 2. Формируем понятный текст для пользователя
-    QString userMessage = QString("Не удалось выполнить операцию: %1.\n\n").arg(contextAction);
+//     // 2. Формируем понятный текст для пользователя
+//     QString userMessage = QString("Не удалось выполнить операцию: %1.\n\n").arg(contextAction);
 
-    // Анализируем текст ошибки (для SQLite это самый надежный способ)
-    QString dbText = error.databaseText().toLower();
+//     // Анализируем текст ошибки (для SQLite это самый надежный способ)
+//     QString dbText = error.databaseText().toLower();
 
-    if (dbText.contains("locked") || dbText.contains("busy")) {
-        userMessage += "База данных временно заблокирована. Закройте другие программы, использующие этот файл, и повторите попытку.";
-    } else if (dbText.contains("unique constraint failed")) {
-        userMessage += "Такая запись уже существует (нарушена уникальность данных).";
-    } else if (dbText.contains("disk full") || dbText.contains("ioerr")) {
-        userMessage += "На устройстве недостаточно свободного места или произошел сбой диска.";
-    } else if (error.type() == QSqlError::ConnectionError) {
-        userMessage += "Отсутствует подключение к файлу базы данных. Проверьте путь к файлу.";
-    } else {
-        userMessage += "Произошла внутренняя ошибка системы. Код ошибки передан в службу поддержки.";
-    }
+//     if (dbText.contains("locked") || dbText.contains("busy")) {
+//         userMessage += "База данных временно заблокирована. Закройте другие программы, использующие этот файл, и повторите попытку.";
+//     } else if (dbText.contains("unique constraint failed")) {
+//         userMessage += "Такая запись уже существует (нарушена уникальность данных).";
+//     } else if (dbText.contains("disk full") || dbText.contains("ioerr")) {
+//         userMessage += "На устройстве недостаточно свободного места или произошел сбой диска.";
+//     } else if (error.type() == QSqlError::ConnectionError) {
+//         userMessage += "Отсутствует подключение к файлу базы данных. Проверьте путь к файлу.";
+//     } else {
+//         userMessage += "Произошла внутренняя ошибка системы. Код ошибки передан в службу поддержки.";
+//     }
 
-    return userMessage;
-}
+//     return userMessage;
+// }
 
 const QString DatabaseService::currentMacAddress() const
 {

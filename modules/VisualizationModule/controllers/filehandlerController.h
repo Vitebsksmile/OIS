@@ -11,7 +11,6 @@
 #include "filehandler.h"
 #include <QAbstractItemModel>
 #include <QSharedPointer>
-#include "IDbModel.h"
 
 class FileHandlerController : public QObject
 {
@@ -38,8 +37,6 @@ private:
     VisualizationService* m_service = nullptr;
 
     QList<QPointer<FileHandler>> m_fileHandlers;
-
-    QSharedPointer<IDbModel> m_dbModel;
 };
 
 #endif // FILEHANDLERCONTROLLER_H

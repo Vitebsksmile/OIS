@@ -69,6 +69,7 @@ Popup {
                     Layout.preferredHeight: implicitHeight
                     Layout.alignment: Qt.AlignHCenter
 
+                    //  currentIndex = 0
                     TabButton {
                         text: qsTr("USB camera")
 
@@ -76,6 +77,7 @@ Popup {
                             root.titlePopup = text
                         }
                     }
+                    //  currentIndex = 1
                     TabButton {
                         text: qsTr("URL camera")
 
