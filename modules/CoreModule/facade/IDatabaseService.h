@@ -40,6 +40,7 @@ public:
                                                       const QString &message = "New camera creat") = 0;
 
     virtual const Core::SessionContext creatSession(Core::AuthResult result) = 0;
+    virtual const Core::SessionContext finishSession(Core::SessionContext &context) = 0;
 
     //  Method that returning a list tables
     virtual const QStringList availableTables() const = 0;

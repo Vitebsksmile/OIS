@@ -40,9 +40,8 @@ const Core::DbOperationResult SqlQueryBuilder::insertRecord(const QString &table
     if (!query.prepare(sql)) {
         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
         result.error = errorDetails;
-        qWarning()
-            << "DatabaseService: prepare INSERT failed:"
-            << result.error;
+        qWarning() << "DatabaseService: prepare INSERT failed:"
+                   << result.error;
         result.success = false;
         //emit dbExecutionError(error);
 
@@ -56,9 +55,8 @@ const Core::DbOperationResult SqlQueryBuilder::insertRecord(const QString &table
     if (!query.exec()) {
         QString errorDetails = this->handleDatabaseError(query.lastError(), message);
         result.error = query.lastError().text();
-        qWarning()
-            << "DatabaseService: INSERT failed:"
-            << result.error;
+        qWarning() << "DatabaseService: INSERT failed:"
+                   << result.error;
         result.success = false;
         //emit dbExecutionError(error);
 
@@ -68,6 +66,64 @@ const Core::DbOperationResult SqlQueryBuilder::insertRecord(const QString &table
     //  emit apdateModel(tableName);
     result.success = true;
     result.insertedId = query.lastInsertId().toInt();
+    return result;
+}
+
+const Core::DbOperationResult SqlQueryBuilder::updateSession(const QString &tableName,
+                                                            int sessionId,
+                                                            const QDateTime &finishedAt,
+                                                            const QString &message)
+{
+    Core::DbOperationResult result;
+
+    if (tableName.isEmpty()) {
+        result.error = "Invalid database operation";
+        result.success = false;
+        return result;
+    }
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+
+    const QString sql = QString("UPDATE %1 SET finished_at = CURRENT_TIMESTAMP WHERE session_id = :sessionId AND finished_at IS NULL")
+                      .arg(tableName);
+
+    if (!query.prepare(sql)) {
+        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        result.error = errorDetails;
+        qWarning() << "SqlQueryBuilder: prepare UPDATE failed:"
+                   << result.error;
+        result.success = false;
+
+        return result;
+    }
+
+    query.bindValue(":sessionId", sessionId);
+
+    if (!query.exec()) {
+        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        result.error = query.lastError().text();
+        qWarning() << "SqlQueryBuilder: UPDATE failed:"
+                   << result.error;
+        result.success = false;
+
+        return result;
+    }
+
+    if (query.numRowsAffected() == 0) {
+        QString errorDetails = this->handleDatabaseError(query.lastError(), message);
+        result.error = query.lastError().text();
+        qWarning() << "SqlQueryBuilder: UPDATE failed:"
+                   << result.error;
+        result.success = false;
+
+        return result;
+    }
+
+    result.success = true;
+    result.insertedId = query.lastInsertId().toInt();
+    return result;
+
     return result;
 }
 

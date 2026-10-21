@@ -150,9 +150,9 @@ void Application::setupConnections()
     if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between ImageProcessingModule -> VisualizationModule";
 
     //  Связь: CameraManagerModule -> VisualizationModule
-    // ok = connect(m_cameraManagerService.get(), &ICameraManagerService::imageFrameReady,
-    //              m_visualizationService.get(), &IVisualizationService::onImageFrameReady);
-    // if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between CameraManagerModule -> VisualizationModule";
+    ok = connect(m_app.get(), &QCoreApplication::aboutToQuit,
+                 m_visualizationService.get(), &IVisualizationService::onApplicationAboutToQuit);
+    if (!ok) qCritical() << "WARNING! Application: Failed to establish connection between QCoreApplication -> VisualizationModule";
 }
 
 

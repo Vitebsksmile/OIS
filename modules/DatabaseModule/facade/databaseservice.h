@@ -38,6 +38,7 @@ public:
                                               const QString &message) override;
 
     const Core::SessionContext creatSession(Core::AuthResult authResult) override;
+    const Core::SessionContext finishSession(Core::SessionContext &context) override;
 
     const QStringList availableTables() const override;
 

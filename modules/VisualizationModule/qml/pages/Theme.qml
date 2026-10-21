@@ -9,7 +9,7 @@ QtObject {
     property color cBg: "#F0F0F0"               //  "#F0F0F0" // светло-серый
     property color cPanel: "#FFFFFF"            //  белый
     property color cBorder: "#DCDCDC"            //  серый ??"#D1D5DB"??
-    property color cText: "#1F2937"             //  темно-синий
+    property color cText: "#1F2937"             //  темно-синий ..#1e293b
     property color cTextMuted: "#6B7280"        //  темно-серый
     property color cTextDanger: "#991B1B"       //  грязно-красный
     property color cPrimary: "#2563EB"          //  синий

@@ -50,10 +50,6 @@ public slots:
 
     void onWorkerError(const QString &message);
 
-private slots:
-    // void onDetectionsReady(const cv::Mat &mat,
-    //                        const QVector<Core::Detection> &detections);
-
 signals:
     //  this -> ImageProcessingService
     void preProcessingStartNotification(bool success);  //???

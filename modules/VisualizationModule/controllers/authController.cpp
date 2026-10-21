@@ -56,7 +56,8 @@ bool AuthController::login(const QString &username, const QString &password)
 {
     m_authResult = m_service->dbService()->authenticate(username, password);
     if (m_authResult.success) {
-        this->creatSession();
+        //this->creatSession();
+        m_service->startSession(m_authResult);
         emit authenticationSuccess();
         return true;
     } else {
@@ -107,18 +108,13 @@ bool AuthController::registerUser(const QString &username,
     }
 }
 
-QString AuthController::operatorName() const
-{
-    return m_authResult.fullName;
-}
+// bool AuthController::creatSession()
+// {
+//     m_sessionContext = m_service->dbService()->creatSession(m_authResult);
 
-bool AuthController::creatSession()
-{
-    m_sessionContext = m_service->dbService()->creatSession(m_authResult);
+//     m_sessionContext.sessionId = m_authResult.operatorId;
+//     m_sessionContext.username = m_authResult.username;
+//     m_sessionContext.fullName = m_authResult.fullName;
 
-    m_sessionContext.sessionId = m_authResult.operatorId;
-    m_sessionContext.username = m_authResult.username;
-    m_sessionContext.fullName = m_authResult.fullName;
-
-    return true;
-}
+//     return true;
+// }

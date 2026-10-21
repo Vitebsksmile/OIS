@@ -83,6 +83,11 @@ bool VisualizationService::setProcService(IImageProcessingService *procService)
     return true;
 }
 
+void VisualizationService::onApplicationAboutToQuit()
+{
+    m_sessController->finishCurrentSession();
+}
+
 DbModelController* VisualizationService::dbController()
 {
     return m_dbController;
@@ -96,6 +101,11 @@ IDatabaseService *VisualizationService::dbService()
 IImageProcessingService *VisualizationService::procService()
 {
     return m_procService;
+}
+
+void VisualizationService::startSession(const Core::AuthResult &result)
+{
+    m_sessController->startSession(result);
 }
 
 bool VisualizationService::creatCamera(const QString &url)
@@ -220,7 +230,9 @@ void VisualizationService::onFrameWithBoxesReady(const QImage &frame,
 void VisualizationService::onDetectionsReady(const QImage &frame,
                                              const QVector<Core::Detection> &detections)
 {
+    qDebug() << "VisualizationService::onDetectionsReady()";
     emit detectionsReady(frame, detections);
+    emit defectiveBoard();
 }
 
 void VisualizationService::onTriggered()
@@ -231,7 +243,8 @@ void VisualizationService::onTriggered()
 
 void VisualizationService::onCropPCBReady(const QImage &cropPCB)
 {
-    // qDebug() << "VisualizationService::onCropPCBReady(). cropPCB =" << cropPCB;
+    qDebug() << "VisualizationService::onCropPCBReady(). cropPCB =" << cropPCB;
+    emit cropPCBReady(cropPCB);
 }
 
 //  Factory method

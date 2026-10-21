@@ -15,6 +15,11 @@ public:
                                                const Core::DbRecord &record,
                                                const QString &message = "Insert record");
 
+    const Core::DbOperationResult updateSession(const QString &tableName,
+                                               int sessionId,
+                                               const QDateTime &finishedAt,
+                                               const QString &message = "Update record");
+
     const Core::DbOperationResult findRecord(const QString &tableName,
                                              const Core::DbRecord &record,
                                              const QString &message = "Find record");

@@ -28,6 +28,8 @@ public:
     virtual bool setCamService(ICameraManagerService *camService) = 0;
     virtual bool setProcService(IImageProcessingService *procService) = 0;
 
+    virtual void onApplicationAboutToQuit() = 0;
+
 public slots:
     //  IImageProcessingModule -> this
     virtual void onPreProcessingStartNotification(bool success) = 0;    //???

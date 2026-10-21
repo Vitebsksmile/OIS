@@ -14,6 +14,7 @@ public:
     SessionRepository(SystemEnvironment *sysEnvironment, SqlQueryBuilder *builder, QObject *parent);
 
     const Core::SessionContext creatSession(Core::AuthResult authResult);
+    const Core::SessionContext finishSession(Core::SessionContext &context);
 
 private:
     SystemEnvironment *m_sysEnvironment;

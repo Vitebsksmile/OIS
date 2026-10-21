@@ -16,12 +16,6 @@ class AuthController : public QObject
     QML_SINGLETON
     QML_UNCREATABLE("Controllers")
 
-    Q_PROPERTY(
-        QString operatorName
-            READ operatorName
-                NOTIFY statusChanged
-        )
-
     static AuthController *s_instance;
 
 public:
@@ -45,8 +39,6 @@ public:
                                   const QString &fullname,
                                   const QString &password);
 
-    QString operatorName() const;
-
 signals:
     void identificationSuccess();
     void authenticationSuccess();
@@ -54,7 +46,6 @@ signals:
     void authFailed(const QString &errorTitle,
                     const QString &errorDetails = "");
     //void registrationModelReady();
-    void statusChanged();
 
 private slots:
     //void onRegistrationRequired();

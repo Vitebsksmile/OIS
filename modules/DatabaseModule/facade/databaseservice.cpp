@@ -171,34 +171,13 @@ const Core::DbOperationResult DatabaseService::creatCamera(const QString &addres
 const Core::SessionContext DatabaseService::creatSession(Core::AuthResult authResult)
 {
     return m_sessionRepo->creatSession(authResult);
-    // QString tableName = "sessions";
-    // Core::SessionContext context;
+}
 
-    // QString macAddress = currentMacAddress();
-    // int computerId = this->currentComputerId(macAddress);
-
-    // Core::DbRecord record;
-    // QDateTime startedAt = QDateTime::currentDateTime();
-    // record.insert("operator_id", authResult.operatorId);
-    // record.insert("computer_id", computerId);
-    // record.insert("started_at", startedAt);
-
-    // Core::DbOperationResult operationResult = insertRecord(tableName, record, "Creat session");
-    // context.active = operationResult.success;
-    // context.context = operationResult.error;
-    // context.operatorId = authResult.operatorId;
-    // context.username = authResult.username;
-    // context.fullName = authResult.fullName;
-    // context.sessionId = operationResult.insertedId;
-
-    // qDebug() << "context.active =" << context.active << "\n"
-    //          << "context.context =" << context.context << "\n"
-    //          << "context.operatorId =" << context.operatorId << "\n"
-    //          << "context.username =" << context.username << "\n"
-    //          << "context.fullName =" << context.fullName << "\n"
-    //          << "context.sessionId =" << context.sessionId;
-
-    // return context;
+const Core::SessionContext DatabaseService::finishSession(Core::SessionContext &context)
+{
+    qDebug() << "DatabaseService: context.sessionId =" << context.sessionId << "\n"
+             << "context.active =" << context.active;
+    return m_sessionRepo->finishSession(context);
 }
 
 const QStringList DatabaseService::availableTables() const
@@ -360,7 +339,7 @@ bool DatabaseService::creatTables()
     QString createBoards = "CREATE TABLE IF NOT EXISTS boards ("
                            "board_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                            "session_id INTEGER NOT NULL, "
-                           "serial_number TEXT NOT NULL UNIQUE, "
+                           //"serial_number TEXT NOT NULL UNIQUE, "
                            "scanned_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
                            "status TEXT CHECK(status IN ('PASS', 'FAIL', 'REWORK')) DEFAULT 'PASS', "
                            "FOREIGN KEY (session_id) REFERENCES sessions(session_id)"
@@ -654,36 +633,6 @@ int DatabaseService::currentComputerId(const QString &macAddress)
     computerId = query.value(0).toInt();
     return computerId;
 }
-
-// QString DatabaseService::handleDatabaseError(const QSqlError &error,
-//                                              const QString &contextAction)
-// {
-//     // 1. Логируем подробную информацию для разработчика
-//     qCritical() << "DB Error during:" << contextAction
-//                 << "| Type:" << error.type()
-//                 << "| Driver Text:" << error.driverText()
-//                 << "| Database Text:" << error.databaseText();
-
-//     // 2. Формируем понятный текст для пользователя
-//     QString userMessage = QString("Не удалось выполнить операцию: %1.\n\n").arg(contextAction);
-
-//     // Анализируем текст ошибки (для SQLite это самый надежный способ)
-//     QString dbText = error.databaseText().toLower();
-
-//     if (dbText.contains("locked") || dbText.contains("busy")) {
-//         userMessage += "База данных временно заблокирована. Закройте другие программы, использующие этот файл, и повторите попытку.";
-//     } else if (dbText.contains("unique constraint failed")) {
-//         userMessage += "Такая запись уже существует (нарушена уникальность данных).";
-//     } else if (dbText.contains("disk full") || dbText.contains("ioerr")) {
-//         userMessage += "На устройстве недостаточно свободного места или произошел сбой диска.";
-//     } else if (error.type() == QSqlError::ConnectionError) {
-//         userMessage += "Отсутствует подключение к файлу базы данных. Проверьте путь к файлу.";
-//     } else {
-//         userMessage += "Произошла внутренняя ошибка системы. Код ошибки передан в службу поддержки.";
-//     }
-
-//     return userMessage;
-// }
 
 const QString DatabaseService::currentMacAddress() const
 {

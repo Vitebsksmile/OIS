@@ -6,8 +6,44 @@ Page {
     id: root
     title: "Operator"
 
+    property int countTotal: 0
+    property int countFail: 0
+    property int countPass: 0
+
+    property bool warning: false
+
+    property bool triggered: false
+
+    Connections {
+        target: SessionController
+
+        function oncountPassChanged() {
+            root.countPass = SessionController.countPass
+        }
+    }
+
+    Connections {
+        target: SessionController
+
+        function onCountFailChanged() {
+            root.countFail = SessionController.countFail
+            console.log("QML: Счетчик бракованных плат countFail успешно обновлен:", root.countFail)
+        }
+    }
+
+    Connections {
+        target: SessionController
+
+        function onDefectiveBoard() {
+            root.triggered = true
+            root.warning = true
+            console.log("сработал onDefectiveBoard(). root.triggered = " + root.triggered)
+        }
+    }
+
     signal closeRequested()
-    signal repairConfirmed()
+    //signal warning()
+    signal repairRejected()
 
     /// Main background layer
     background: Rectangle {
@@ -57,35 +93,48 @@ Page {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            // 1. Панель предупреждения (.alarm) - Занимает 12 колонок
             Rectangle {
                 Layout.columnSpan: 12
                 Layout.fillWidth: true
                 implicitHeight: 54
-                color: Theme.cDanger
-                border.color: Theme.cBorderDanger
-                border.width: 2
+                color: "transparent"
+                border.color: "transparent"
+                border.width: 0
                 radius: 6
 
-                //  Видимость панели предупреждения зависит от модели
-                visible: OperatorModel.hasAlarm
+                // 1. Панель предупреждения (.alarm) - Занимает 12 колонок
+                Rectangle {
+                    // Layout.columnSpan: 12
+                    // Layout.fillWidth: true
+                    // implicitHeight: 54
+                    anchors.fill: parent
+                    color: Theme.cDanger
+                    border.color: Theme.cBorderDanger
+                    border.width: 2
+                    radius: 6
 
-                // Анимация мигания (blink)
-                SequentialAnimation on opacity {
-                    loops: Animation.Infinite
-                    NumberAnimation {
-                        to: 0.6
-                        duration: 1000
-                        easing.type: Easing.InOutQuad }
-                    NumberAnimation {
-                        to: 1.0
-                        duration: 1000
-                        easing.type: Easing.InOutQuad }
-                }
+                    //  Видимость панели предупреждения зависит от модели
+                    //visible: OperatorModel.hasAlarm
+                    visible: root.warning
 
-                TitleText {
-                    anchors.centerIn: parent
-                    text: OperatorModel.alarmMessage
+
+                    // Анимация мигания (blink)
+                    SequentialAnimation on opacity {
+                        loops: Animation.Infinite
+                        NumberAnimation {
+                            to: 0.6
+                            duration: 1000
+                            easing.type: Easing.InOutQuad }
+                        NumberAnimation {
+                            to: 1.0
+                            duration: 1000
+                            easing.type: Easing.InOutQuad }
+                    }
+
+                    TitleText {
+                        anchors.centerIn: parent
+                        text: OperatorModel.alarmMessage
+                    }
                 }
             }
 
@@ -129,43 +178,43 @@ Page {
             }
 
             // 3. KPI FPY - Занимает 3 колонки
-            Rectangle {
-                Layout.columnSpan: 3
-                Layout.fillWidth: true
-                implicitHeight: 120
-                color: Theme.cPanel
-                border.color: Theme.cBorder
-                radius: 6
+            // Rectangle {
+            //     Layout.columnSpan: 3
+            //     Layout.fillWidth: true
+            //     implicitHeight: 120
+            //     color: Theme.cPanel
+            //     border.color: Theme.cBorder
+            //     radius: 6
 
-                Rectangle {
-                    width: 5;
-                    height: parent.height
-                    color: Theme.cSuccess
-                    anchors.left: parent.left
-                    radius: 3
-                }
+            //     Rectangle {
+            //         width: 5;
+            //         height: parent.height
+            //         color: Theme.cSuccess
+            //         anchors.left: parent.left
+            //         radius: 3
+            //     }
 
-                ColumnLayout {
-                    anchors.fill: parent;
-                    anchors.margins: 15;
-                    spacing: 5
-                    HeadingText {
-                        text: "FIRST PASS YIELD (FPY)"
-                    }
-                    KpiText {
-                        text: OperatorModel.fpyValue
-                        color: Theme.cSuccess
-                    }
-                    Item { Layout.fillHeight: true }
-                    MutedText {
-                        text: "Порог нормы: " + OperatorModel.fpyThreshold
-                    }
-                }
-            }
+            //     ColumnLayout {
+            //         anchors.fill: parent;
+            //         anchors.margins: 15;
+            //         spacing: 5
+            //         HeadingText {
+            //             text: "FIRST PASS YIELD (FPY)"
+            //         }
+            //         KpiText {
+            //             text: OperatorModel.fpyValue
+            //             color: Theme.cSuccess
+            //         }
+            //         Item { Layout.fillHeight: true }
+            //         MutedText {
+            //             text: "Порог нормы: " + OperatorModel.fpyThreshold
+            //         }
+            //     }
+            // }
 
             // 4. Счетчики смены - Занимает 6 колонок
             Rectangle {
-                Layout.columnSpan: 6
+                Layout.columnSpan: 9
                 Layout.fillWidth: true
                 implicitHeight: 120
                 color: Theme.cPanel
@@ -190,7 +239,8 @@ Page {
                                 text: "Проверено:"
                             }
                             KpiText {
-                                text: OperatorModel.countTotal.toString()
+                                //text: OperatorModel.countTotal.toString()
+                                text: root.countPass + root.countFail
                                 color: Theme.cText
                             }
                         }
@@ -200,7 +250,8 @@ Page {
                                 text: "Годны (Pass):"
                             }
                             KpiText {
-                                text: OperatorModel.countPass.toString()
+                                //text: OperatorModel.countPass.toString()
+                                text: root.countPass
                                 color: Theme.cSuccess
                             }
                         }
@@ -210,7 +261,8 @@ Page {
                                 text: "Брак (Fail):"
                             }
                             KpiText {
-                                text: OperatorModel.countFail.toString()
+                                //text: OperatorModel.countFail.toString()
+                                text: root.countFail
                                 color: Theme.cTextDanger
                             }
                         }
@@ -221,7 +273,7 @@ Page {
 
             // 5. Карта дефектов (.pcb-map) - Занимает 8 колонок
             Rectangle {
-                Layout.columnSpan: 8
+                Layout.columnSpan: 6
                 Layout.rowSpan: 2
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -238,20 +290,21 @@ Page {
                     }
 
                     ColumnLayout {
+
                         RowLayout {
                             //Layout.alignment: 0
 
                             //  Интерактивная карта
-                            LifeView {
-                                id: sourceViewer
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                            // LifeView {
+                            //     id: sourceViewer
+                            //     Layout.fillWidth: true
+                            //     Layout.fillHeight: true
 
-                                Layout.minimumWidth: 200
-                                Layout.minimumHeight: 200
+                            //     Layout.minimumWidth: 200
+                            //     Layout.minimumHeight: 200
 
-                                frameSource: "processor"
-                            }
+                            //     frameSource: "processor"
+                            // }
 
                             LifeView {
                                 id: processingView
@@ -326,7 +379,9 @@ Page {
 
             // 6. Последний обнаруженный брак - Занимает 4 колонки
             Rectangle {
-                Layout.columnSpan: 4
+                id: fail
+
+                Layout.columnSpan: 6
                 Layout.rowSpan: 2
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -348,50 +403,66 @@ Page {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        //Layout.minimumWidth: 200
-                        //Layout.minimumHeight: 200
+                        Layout.minimumWidth: 200
+                        Layout.minimumHeight: 200
 
                         frameSource: "yolo11"
                     }
 
-                    // Кнопка подтверждения ремонтных операций (.btn)
-                    Button {
-                        id: repairBtn
+                    RowLayout {
                         Layout.fillWidth: true
-                        implicitHeight: 40
-                        // Text {
-                        //     text: "Подтвердить / Отправить в ремонт"
-                        //     color: Theme.cText
-                        //     font.family: Theme.fFamily
-                        //     font.pixelSize: 14
-                        //     font.bold: true
-                        //     horizontalAlignment: Text.AlignHCenter
-                        //     verticalAlignment: Text.AlignVCenter
-                        // }
-                        NormalText {
-                            text: "Подтвердить / Отправить в ремонт"
-                            color: Theme.cTextDanger
+                        Layout.preferredHeight: 30
 
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
+                        // Кнопка подтверждения ремонтных операций (.btn)
+                        Button {
+                            id: acceptBtn
+                            Layout.preferredWidth: 290
+                            Layout.preferredHeight: 30
+                            Layout.alignment: Qt.AlignVCenter
+                            //implicitHeight: 30
+
+                            // NormalText {
+                            //     text: qsTr("Accept")
+                            //     color: Theme.cTextDanger
+
+                            //     horizontalAlignment: Text.AlignHCenter
+                            //     verticalAlignment: Text.AlignVCenter
+                            // }
+                            text: qsTr("Accept")
+
+                            onClicked: {
+                                if (root.triggered) {
+                                    SessionController.setCountFail()
+                                    root.triggered = false
+                                }
+                            }
                         }
 
-                        // background: Rectangle {
-                        //     color: repairBtn.pressed ? "#D97706" : (repairBtn.hovered ? "#F59E0B" : "#FBBF24")
-                        //     radius: 4
-                        // }
+                        Button {
+                            id: declineBtn
+                            Layout.preferredWidth: 290
+                            Layout.preferredHeight: 30
+                            Layout.alignment: Qt.AlignVCenter
+                            //implicitHeight: 40
 
-                        // contentItem: Text {
-                        //     text: "Подтвердить / Отправить в ремонт"
-                        //     color: Theme.cText
-                        //     font.family: Theme.fFamily
-                        //     font.pixelSize: 14
-                        //     font.bold: true
-                        //     horizontalAlignment: Text.AlignHCenter
-                        //     verticalAlignment: Text.AlignVCenter
-                        // }
+                            // NormalText {
+                            //     text: qsTr("Decline")
+                            //     color: Theme.cTextDanger
 
-                        onClicked: root.repairConfirmed()
+                            //     horizontalAlignment: Text.AlignHCenter
+                            //     verticalAlignment: Text.AlignVCenter
+                            // }
+                            text: qsTr("Decline")
+
+                            onClicked: {
+                                if (root.triggered) {
+                                    SessionController.setCountPass()
+                                    console.log("отклонить")
+                                    root.triggered = false
+                                    root.warning = false
+                                }
+                            }
+                        }
                     }
                 }
             }

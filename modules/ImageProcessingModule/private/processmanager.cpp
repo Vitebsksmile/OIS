@@ -141,6 +141,8 @@ void ProcessManager::onProcessFrame(const cv::Mat &cvFrame)
         //          << "aspect ratio:"
         //          << static_cast<double>(cvCropPCB.cols) / cvCropPCB.rows;
 
+        //emit cropPCBReady(this->matToQImage(cvCropPCB).copy());
+
         YoloDetectionWorker *worker = m_worker;
         const bool invoked = QMetaObject::invokeMethod(worker, [this, cvFrame = std::move(cvCropPCB)] () {
             m_worker->processFrame(cvFrame);
@@ -168,7 +170,11 @@ void ProcessManager::onWorkerError(const QString &message)
 void ProcessManager::onDetectionsReady(const cv::Mat &mat,
                                        const QVector<Core::Detection> &detections)
 {
-    emit detectionsReady(this->matToQImage(mat), detections);
+    if (!detections.empty()) {
+        emit detectionsReady(this->matToQImage(mat), detections);
+    } else {
+        emit cropPCBReady(this->matToQImage(mat));
+    }
 }
 //  --- END PUBLIC SLOTS ---
 

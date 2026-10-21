@@ -10,7 +10,7 @@ QtObject {
 
     //  --- Данные статуса оператора ---
     property string currentStatus: "РАБОТА"
-    property string operatorName: AuthController.operatorName
+    property string operatorName: SessionController.operatorName
 
     //Метрики эффективности (KPI) ---
     property string fpyValue: "98.4 %"
@@ -27,9 +27,9 @@ QtObject {
     property string lastDefectPhoto: "[ ФОТО С КАМЕРЫ ]"    //  Здесь может быть путь к картинке
 
     //  --- пример функции для обновления данных из C++ бэкенда ---
-    function updateCounters(total, pass, fail) {
-        countTotal = total;
-        countPass = pass;
-        countFail = fail;
-    }
+    // function updateCounters(total, pass, fail) {
+    //     countTotal = total;
+    //     countPass = pass;
+    //     countFail = fail;
+    // }
 }

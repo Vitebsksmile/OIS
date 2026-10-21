@@ -41,6 +41,7 @@ public:
 
     //IDbModel* dbModel()
 
+    void startSession(const Core::AuthResult &result);
     bool creatCamera(const QString &url);
     bool creatCamera(int cameraIndex);
     void disconnectCamera();
@@ -75,7 +76,9 @@ public slots:
 
     void onTriggered();
 
-    void onCropPCBReady(const QImage &cropPCB) override;
+    void onCropPCBReady(const QImage &cropPCB) override;  //???
+
+    void onApplicationAboutToQuit() override;
 
     //void onDbExecutionError(const QString &error) override;  //???
 
@@ -100,6 +103,10 @@ signals:
     // this ->
     void detectionsReady(const QImage &frame,
                          const QVector<Core::Detection> &detections);
+
+    void defectiveBoard();
+
+    void cropPCBReady(const QImage &cropPCB);
 
 private:
     IDatabaseService *m_dbService = nullptr;
